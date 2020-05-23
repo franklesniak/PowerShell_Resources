@@ -1,7 +1,10 @@
 # Split-StringOnLiteralString.ps1 contains one function (Split-StringOnLiteralString) that is
-# designed to split a string the way the way that I expected it to be done (as opposed to the
-# way that the -split operator does it). This function splits strings the way that VBScript's
-# Split function did it, and it's compatible with all versions of PowerShell.
+# designed to split a string the way the way that I expected it to be done - using a literal
+# string (as opposed to regex). It's also designed to be backward-compatible with all versions
+# of PowerShell and has been tested successfully on PowerShell v1. My motivation for creating
+# this function was 1) I wanted a split function that behaved more like VBScript's Split
+# function, 2) I do not want to be messing around with RegEx, and 3) I needed code that was
+# backward-compatible with all versions of PowerShell.
 
 #region License
 ###############################################################################################
