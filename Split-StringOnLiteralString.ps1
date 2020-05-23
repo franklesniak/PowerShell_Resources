@@ -48,12 +48,12 @@ function Split-StringOnLiteralString {
         if ($null -eq $args[0]) {
             # String to be split was $null; return an empty array. Leading comma ensures that
             # PowerShell cooperates and returns the array as desired (without collapsing it)
-            ,@()
+            , @()
         } elseif ($null -eq $args[1]) {
             # Splitter was $null; return string to be split within an array (of one element).
             # Leading comma ensures that PowerShell cooperates and returns the array as desired
             # (without collapsing it
-            ,($args[0])
+            , ($args[0])
         } else {
             if (($args[0]).GetType().Name -ne "String") {
                 Write-Warning "The first argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString."
@@ -75,7 +75,7 @@ function Split-StringOnLiteralString {
 
             # With the leading comma, force encapsulation into an array so that an array is
             # returned even when there is one element:
-            ,[regex]::Split($strToSplit, $strSplitterInRegEx)
+            , [regex]::Split($strToSplit, $strSplitterInRegEx)
         }
     }
 }
