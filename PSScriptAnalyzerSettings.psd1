@@ -122,8 +122,9 @@
             # Allow small exceptions, e.g.,: if ($true) { "blah" } else { "blah blah" }
             IgnoreOneLineBlock = $true
 
-            # A new line should follow a close brace
-            NewLineAfter = $true
+            # Use K&R; historically I've used Allman, but Raspberry Pi will not tolerate Allman
+            # PowerShell at all, so I'm forcing myself to change
+            NewLineAfter = $false
         }
         PSUseConsistentIndentation = @{
             # Turn the rule on
@@ -136,7 +137,7 @@
             # Multi-line pipeline statements should indent every line following the second only once
             PipelineIndentation = 'IncreaseIndentationForFirstPipeline'
         }
-	    PSUseConsistentWhitespace  = @{
+        PSUseConsistentWhitespace  = @{
             # Turn the rule on
             Enable = $true
 
