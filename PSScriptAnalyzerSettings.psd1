@@ -1,14 +1,22 @@
 # PSScriptAnalyzerSettings.psd1
 # Settings for PSScriptAnalyzer invocation
 # Last updated for PSScriptAnalyzer v1.19.0
+#
 # Note that VS Code will use whichever version is newer between the PSScriptAnalyzer version
 # bundled with the PowerShell extension and the module version installed in PowerShell.
-# On Windows, if PSScriptAnalyzer is installed in PowerShell, its compatibility profiles were
-# located here:
+# On Windows, if PSScriptAnalyzer is installed in PowerShell, the compatibility profiles used
+# by PSUseCompatibleCommands / UseCompatibileCommands and PSUseCompatibileTypes /
+# UseCompatibleTypes were located here:
 # C:\Program Files\WindowsPowerShell\Modules\PSScriptAnalyzer\1.19.0\compatibility_profiles
-#
 # Additional compatibility profiles can be downloaded from here and placed in the above folder:
 # https://github.com/PowerShell/PSScriptAnalyzer/tree/master/PSCompatibilityCollector/optional_profiles
+#
+# Likewise, on Windows, if PSScriptAnalyzer is installed in PowerShell, the compatibility
+# profiles used by PSUseCompatibileCmdlets / UseCompatibileCmdlets are located here:
+# C:\Program Files\WindowsPowerShell\Modules\PSScriptAnalyzer\1.19.0\Settings
+# Additional compatibility profiles can be generated using the New-CommandDataFile.ps1 script
+# located here:
+# https://github.com/PowerShell/PSScriptAnalyzer/blob/development/Utils/New-CommandDataFile.ps1
 
 #region License
 ###############################################################################################
