@@ -1,5 +1,5 @@
-# Create-BackwardCompatibleCaseInsensitiveHashtable.ps1 contains one function
-# (Create-BackwardCompatibleCaseInsensitiveHashtable) that is designed to create a case-
+# New-BackwardCompatibleCaseInsensitiveHashtable.ps1 contains one function
+# (New-BackwardCompatibleCaseInsensitiveHashtable) that is designed to create a case-
 # insensitive hashtable that is backward-compatible all the way to PowerShell v1, yet forward-
 # compatible to all versions of PowerShell. It replaces other constructors on newer versions of
 # PowerShell such as:
@@ -28,7 +28,9 @@
 ###############################################################################################
 #endregion License
 
-function Create-BackwardCompatibleCaseInsensitiveHashtable {
+function New-BackwardCompatibleCaseInsensitiveHashtable {
+    # Usage:
+    # $hashtable = New-BackwardCompatibleCaseInsensitiveHashtable
     $cultureDoNotCare = [System.Globalization.CultureInfo]::InvariantCulture
     $caseInsensitiveHashCodeProvider = New-Object -TypeName "System.Collections.CaseInsensitiveHashCodeProvider" -ArgumentList @($cultureDoNotCare)
     $caseInsensitiveComparer = New-Object -TypeName "System.Collections.CaseInsensitiveComparer" -ArgumentList @($cultureDoNotCare)
