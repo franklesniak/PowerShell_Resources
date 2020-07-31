@@ -1,3 +1,8 @@
+# Get-PSVersion
+$strThisScriptLoadedFlagVariableName = "__FRANKLESNIAK__GETPSVERSION__LOADED"
+$strThisScriptVersionNumberVariableName = "__FRANKLESNIAK__GETPSVERSION__NUMBER"
+$strThisScriptVersionNumber = [version]"1.0.0.20200730"
+
 #region License
 ###############################################################################################
 # Copyright 2020 Frank Lesniak
@@ -18,6 +23,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ###############################################################################################
 #endregion License
+
+#region PreventReruns
+if (Test-Path ("variable:\" + $strThisScriptLoadedFlagVariableName)) {
+    if (Test-Path ("variable:\" + $strThisScriptVersionNumberVariableName)) {
+        if ((Get-Variable -Name $strThisScriptVersionNumberVariableName).Value -ge $strThisScriptVersionNumber) {
+            break
+        } else {
+            (Get-Variable -Name $strThisScriptVersionNumberVariableName).Value = $strThisScriptVersionNumber
+        }
+    } else {
+        New-Variable -Name $strThisScriptVersionNumberVariableName -Value $strThisScriptVersionNumber
+    }
+} else {
+    New-Variable -Name $strThisScriptLoadedFlagVariableName -Value $true
+    if (Test-Path ("variable:\" + $strThisScriptVersionNumberVariableName)) {
+        (Get-Variable -Name $strThisScriptVersionNumberVariableName).Value = $strThisScriptVersionNumber
+    } else {
+        New-Variable -Name $strThisScriptVersionNumberVariableName -Value $strThisScriptVersionNumber
+    }
+}
+#endregion PreventReruns
 
 function Get-PSVersion {
     if (Test-Path variable:\PSVersionTable) {
