@@ -3,7 +3,7 @@
 # insensitive hashtable that is backward-compatible all the way to PowerShell v1, yet forward-
 # compatible to all versions of PowerShell. It replaces other constructors on newer versions of
 # PowerShell such as:
-# $hashtable = @{{}}
+# $hashtable = @{}
 # This function is useful if you need to work with hashtables (key-value pairs), but also need
 # your code to be able to run on any version of PowerShell.
 
@@ -29,10 +29,18 @@
 #endregion License
 
 function New-BackwardCompatibleCaseInsensitiveHashtable {
+    # New-BackwardCompatibleCaseInsensitiveHashtable is designed to create a case-insensitive
+    # hashtable that is backward-compatible all the way to PowerShell v1, yet forward-
+    # compatible to all versions of PowerShell. It replaces other constructors on newer
+    # versions of PowerShell such as:
+    # $hashtable = @{}
+    # This function is useful if you need to work with hashtables (key-value pairs), but also
+    # need your code to be able to run on any version of PowerShell.
+    #
     # Usage:
     # $hashtable = New-BackwardCompatibleCaseInsensitiveHashtable
     $cultureDoNotCare = [System.Globalization.CultureInfo]::InvariantCulture
-    $caseInsensitiveHashCodeProvider = New-Object -TypeName "System.Collections.CaseInsensitiveHashCodeProvider" -ArgumentList @($cultureDoNotCare)
-    $caseInsensitiveComparer = New-Object -TypeName "System.Collections.CaseInsensitiveComparer" -ArgumentList @($cultureDoNotCare)
-    New-Object -TypeName "System.Collections.Hashtable" -ArgumentList @($caseInsensitiveHashCodeProvider, $caseInsensitiveComparer)
+    $caseInsensitiveHashCodeProvider = New-Object -TypeName 'System.Collections.CaseInsensitiveHashCodeProvider' -ArgumentList @($cultureDoNotCare)
+    $caseInsensitiveComparer = New-Object -TypeName 'System.Collections.CaseInsensitiveComparer' -ArgumentList @($cultureDoNotCare)
+    New-Object -TypeName 'System.Collections.Hashtable' -ArgumentList @($caseInsensitiveHashCodeProvider, $caseInsensitiveComparer)
 }
