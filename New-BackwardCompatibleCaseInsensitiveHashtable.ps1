@@ -7,6 +7,8 @@
 # This function is useful if you need to work with hashtables (key-value pairs), but also need
 # your code to be able to run on any version of PowerShell.
 
+$strThisScriptVersionNumber = [version]'1.0.20200817.0'
+
 #region License
 ###############################################################################################
 # Copyright 2020 Frank Lesniak
@@ -28,6 +30,11 @@
 ###############################################################################################
 #endregion License
 
+#region DownloadLocationNotice
+# The most up-to-date version of this script can be found on the author's GitHub repository
+# at https://github.com/franklesniak/PowerShell_Resources
+#endregion DownloadLocationNotice
+
 function New-BackwardCompatibleCaseInsensitiveHashtable {
     # New-BackwardCompatibleCaseInsensitiveHashtable is designed to create a case-insensitive
     # hashtable that is backward-compatible all the way to PowerShell v1, yet forward-
@@ -39,6 +46,9 @@ function New-BackwardCompatibleCaseInsensitiveHashtable {
     #
     # Usage:
     # $hashtable = New-BackwardCompatibleCaseInsensitiveHashtable
+
+    $strThisFunctionVersionNumber = [version]'1.0.20200817.0'
+
     $cultureDoNotCare = [System.Globalization.CultureInfo]::InvariantCulture
     $caseInsensitiveHashCodeProvider = New-Object -TypeName 'System.Collections.CaseInsensitiveHashCodeProvider' -ArgumentList @($cultureDoNotCare)
     $caseInsensitiveComparer = New-Object -TypeName 'System.Collections.CaseInsensitiveComparer' -ArgumentList @($cultureDoNotCare)
