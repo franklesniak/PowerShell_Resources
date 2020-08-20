@@ -6,6 +6,8 @@
 # function, 2) I do not want to be messing around with RegEx, and 3) I needed code that was
 # backward-compatible with all versions of PowerShell.
 
+$strThisScriptVersionNumber = [version]'2.0.20200820.0'
+
 #region License
 ###############################################################################################
 # Copyright 2020 Frank Lesniak
@@ -27,6 +29,11 @@
 ###############################################################################################
 #endregion License
 
+#region DownloadLocationNotice
+# The most up-to-date version of this script can be found on the author's GitHub repository
+# at https://github.com/franklesniak/PowerShell_Resources
+#endregion DownloadLocationNotice
+
 function Split-StringOnLiteralString {
     # This function takes two positional arguments
     # The first argument is a string, and the string to be split
@@ -35,52 +42,75 @@ function Split-StringOnLiteralString {
     # Note: This function always returns an array, even when there is zero or one element in it.
     #
     # Example:
-    # $result = Split-StringOnLiteralString "foo" " "
+    # $result = Split-StringOnLiteralString 'foo' ' '
     # # $result.GetType().FullName is System.Object[]
     # # $result.Count is 1
     #
     # Example 2:
-    # $result = Split-StringOnLiteralString "What do you think of this function?" " "
+    # $result = Split-StringOnLiteralString 'What do you think of this function?' ' '
     # # $result.Count is 7
 
+    $strThisFunctionVersionNumber = [version]'2.0.20200820.0'
+
     trap {
-        Write-Error "An error occurred using the Split-StringOnLiteralString function. This was most likely caused by the arguments supplied not being strings"
+        Write-Error 'An error occurred using the Split-StringOnLiteralString function. This was most likely caused by the arguments supplied not being strings'
     }
 
     if ($args.Length -ne 2) {
-        Write-Error "Split-StringOnLiteralString was called without supplying two arguments. The first argument should be the string to be split, and the second should be the string or character on which to split the string."
+        Write-Error 'Split-StringOnLiteralString was called without supplying two arguments. The first argument should be the string to be split, and the second should be the string or character on which to split the string.'
+        $result = @()
     } else {
-        if ($null -eq $args[0]) {
-            # String to be split was $null; return an empty array. Leading comma ensures that
-            # PowerShell cooperates and returns the array as desired (without collapsing it)
-            , @()
-        } elseif ($null -eq $args[1]) {
+        $objToSplit = $args[0]
+        $objSplitter = $args[1]
+        if ($null -eq $objToSplit) {
+            $result = @()
+        } elseif ($null -eq $objSplitter) {
             # Splitter was $null; return string to be split within an array (of one element).
-            # Leading comma ensures that PowerShell cooperates and returns the array as desired
-            # (without collapsing it
-            , ($args[0])
+            $result = @($objToSplit)
         } else {
-            if (($args[0]).GetType().Name -ne "String") {
-                Write-Warning "The first argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString."
-                $strToSplit = [string]$args[0]
+            if ($objToSplit.GetType().Name -ne 'String') {
+                Write-Warning 'The first argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString.'
+                $strToSplit = [string]$objToSplit
             } else {
-                $strToSplit = $args[0]
+                $strToSplit = $objToSplit
             }
 
-            if ((($args[1]).GetType().Name -ne "String") -and (($args[1]).GetType().Name -ne "Char")) {
-                Write-Warning "The second argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString."
-                $strSplitter = [string]$args[1]
-            } elseif (($args[1]).GetType().Name -eq "Char") {
-                $strSplitter = [string]$args[1]
+            if (($objSplitter.GetType().Name -ne 'String') -and ($objSplitter.GetType().Name -ne 'Char')) {
+                Write-Warning 'The second argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString.'
+                $strSplitter = [string]$objSplitter
+            } elseif ($objSplitter.GetType().Name -eq 'Char') {
+                $strSplitter = [string]$objSplitter
             } else {
-                $strSplitter = $args[1]
+                $strSplitter = $objSplitter
             }
 
             $strSplitterInRegEx = [regex]::Escape($strSplitter)
 
             # With the leading comma, force encapsulation into an array so that an array is
             # returned even when there is one element:
-            , [regex]::Split($strToSplit, $strSplitterInRegEx)
+            $result = @([regex]::Split($strToSplit, $strSplitterInRegEx))
         }
+    }
+
+    # The following code forces the function to return an array, always, even when there are
+    # zero or one elements in the array
+    $intElementCount = 1
+    if ($null -ne $result) {
+        if ($result.GetType().FullName.Contains('[]')) {
+            if (($result.Count -ge 2) -or ($result.Count -eq 0)) {
+                $intElementCount = $result.Count
+            }
+        }
+    }
+    $strLowercaseFunctionName = $MyInvocation.InvocationName.ToLower()
+    $boolArrayEncapsulation = $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ')') -or $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ' ')
+    if ($boolArrayEncapsulation) {
+        $result
+    } elseif ($intElementCount -eq 0) {
+        , @()
+    } elseif ($intElementCount -eq 1) {
+        , (, ($args[0]))
+    } else {
+        $result
     }
 }
