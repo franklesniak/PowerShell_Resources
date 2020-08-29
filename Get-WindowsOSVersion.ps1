@@ -1,3 +1,9 @@
+# This script loads the function Get-WindowsOSVersion into memory, where it is then available
+# for execution. Accordingly, this script is designed to be dot-sourced or have its code
+# copied-and-pasted into another script.
+
+$strThisScriptVersionNumber = [version]'1.0.20200829.0'
+
 #region License
 ###############################################################################################
 # Copyright 2020 Frank Lesniak
@@ -19,6 +25,11 @@
 ###############################################################################################
 #endregion License
 
+#region DownloadLocationNotice
+# The most up-to-date version of this script can be found on the author's GitHub repository
+# at https://github.com/franklesniak/PowerShell_Resources
+#endregion DownloadLocationNotice
+
 function Get-PSVersion {
     if (Test-Path variable:\PSVersionTable) {
         $PSVersionTable.PSVersion
@@ -37,11 +48,12 @@ function Test-Windows {
 }
 
 function Get-WindowsOSVersion {
+    $strThisFunctionVersionNumber = [version]'1.0.20200829.0'
     $boolWindows = Test-Windows
     if ($boolWindows) {
         $versionPS = Get-PSVersion
         if ($versionPS.Major -ge 3) {
-            $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Version from Win32_OperatingSystem")
+            $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Version from Win32_OperatingSystem" -ErrorAction Ignore)
             if ($arrCIMInstanceOS.Count -eq 0) {
                 Write-Error "No instances of Win32_OperatingSystem found!"
                 $null
@@ -53,7 +65,7 @@ function Get-WindowsOSVersion {
                 [System.Version](($arrCIMInstanceOS[0]).Version)
             }
         } else {
-            $arrManagementObjectOS = @(Get-WmiObject -Query "Select Version from Win32_OperatingSystem")
+            $arrManagementObjectOS = @(Get-WmiObject -Query "Select Version from Win32_OperatingSystem" -ErrorAction SilentlyContinue)
             if ($arrManagementObjectOS.Count -eq 0) {
                 Write-Error "No instances of Win32_OperatingSystem found!"
                 $null
