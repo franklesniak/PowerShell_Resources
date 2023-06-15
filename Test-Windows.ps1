@@ -79,6 +79,62 @@ function Get-PSVersion {
 }
 
 function Test-Windows {
+    <#
+    .SYNOPSIS
+    Returns a boolean ($true or $false) indicating whether the current PowerShell
+    session is running on Windows
+
+    .DESCRIPTION
+    Returns a boolean ($true or $false) indicating whether the current PowerShell
+    session is running on Windows. This function is useful for writing scripts that
+    need to behave differently on Windows and non-Windows platforms (Linux, macOS,
+    etc.). Additionally, this function is useful because it works on Windows PowerShell
+    1.0 through 5.1, which do not have the $IsWindows global variable.
+
+    .EXAMPLE
+    Test-Windows
+
+    This example returns $true if the current PowerShell session is running on Windows,
+    and $false if the current PowerShell session is running on a non-Windows platform
+    (Linux, macOS, etc.)
+
+    .OUTPUTS
+    A [bool] (boolean) object representing whether the current platform is Windows
+    ($true) or non-Windows ($false)
+
+    .NOTES
+    PowerShell 1.0 through 5.1 do not have a built-in $IsWindows global variable,
+    making the test for whether the current platform is Windows a bit more complicated
+    #>
+
+    [CmdletBinding()]
+    [OutputType([bool])]
+
+    param ()
+
+    #region License ################################################################
+    # Copyright (c) 2023 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining a copy of
+    # this software and associated documentation files (the "Software"), to deal in the
+    # Software without restriction, including without limitation the rights to use,
+    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+    # Software, and to permit persons to whom the Software is furnished to do so,
+    # subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be included in all
+    # copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    #endregion License ################################################################
+
+    $versionThisFunction = [version]('1.0.20230613.0')
+
     $versionPS = Get-PSVersion
     if ($versionPS.Major -ge 6) {
         $IsWindows
