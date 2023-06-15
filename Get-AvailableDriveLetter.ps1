@@ -225,7 +225,7 @@ function Get-AvailableDriveLetter {
     }
     #endregion Process Input ##########################################################
 
-    if (Test-Windows -eq $true) {
+    if ((Test-Windows) -eq $true) {
 
         $arrAllPossibleLetters = 65..90 | ForEach-Object { [char]$_ }
 
