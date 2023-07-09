@@ -229,7 +229,8 @@ function Invoke-SimpleFunction {
     #endregion Original Licenses ######################################################
 
     trap {
-        # Intentionally left empty to prevent terminating errors from halting processing
+        # Intentionally left empty to prevent terminating errors from halting
+        # processing
     }
 
     ################### ASSIGN EACH POSITIONAL ARGUMENT TO A VARIABLE TO AVOID SCOPING ISSUES ###################
