@@ -131,7 +131,7 @@ function Test-ErrorOccurred {
 }
 #endregion FunctionsToSupportErrorHandling ############################################
 
-function Do-SimpleFunction {
+function Invoke-SimpleFunction {
     #region FunctionHeader #########################################################
     ################### PUT A DESCRIPTION OF THIS FUNCTION ON THE FOLLLOWING LINE; ADD LINES AS NECESSARY ###################
     # Description of Function
@@ -168,7 +168,7 @@ function Do-SimpleFunction {
     ################### PROVIDE EXAMPLE USAGE ###################
     # Example usage:
     # $hashtableConfigIni = $null
-    # $intReturnCode = Do-SimpleFunction ([ref]$hashtableConfigIni) ".\config.ini" @(";") $true $true "NoSection" $true
+    # $intReturnCode = Invoke-SimpleFunction ([ref]$hashtableConfigIni) ".\config.ini" @(";") $true $true "NoSection" $true
     #
     ################### DESCRIBE THE FUNCTION'S VERSION ###################
     # Version: 1.0.YYYYMMDD.0
@@ -205,7 +205,7 @@ function Do-SimpleFunction {
     #region Original Licenses ######################################################
     ################### INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE ###################
     # Although substantial modifications have been made, the original portions of
-    # Get-FooInfo that are incorporated into Do-SimpleFunction are subject to the
+    # Get-FooInfo that are incorporated into Invoke-SimpleFunction are subject to the
     # following license:
     #
     # Copyright 20xx First Last

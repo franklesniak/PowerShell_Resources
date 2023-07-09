@@ -200,7 +200,7 @@ function Get-DataFromCloudServiceCmdletRobust {
     # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ################################################################
-    
+
     #region Acknowledgements #######################################################
     ################### GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE ###################
     # This function is derived from Get-FooInfo at the website:
