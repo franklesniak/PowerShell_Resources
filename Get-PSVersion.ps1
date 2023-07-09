@@ -1,31 +1,19 @@
 function Get-PSVersion {
-    <#
-    .SYNOPSIS
-    Returns the version of PowerShell that is running
-
-    .DESCRIPTION
-    Returns the version of PowerShell that is running, including on the original
-    release of Windows PowerShell (version 1.0)
-
-    .EXAMPLE
-    Get-PSVersion
-
-    This example returns the version of PowerShell that is running. On versions of
-    PowerShell greater than or equal to version 2.0, this function returns the
-    equivalent of $PSVersionTable.PSVersion
-
-    .OUTPUTS
-    A [version] object representing the version of PowerShell that is running
-
-    .NOTES
-    PowerShell 1.0 does not have a $PSVersionTable variable, so this function returns
-    [version]('1.0') on PowerShell 1.0
-    #>
-
-    [CmdletBinding()]
-    [OutputType([version])]
-
-    param ()
+    # Returns the version of PowerShell that is running, including on the original
+    # release of Windows PowerShell (version 1.0)
+    #
+    # Example:
+    # Get-PSVersion
+    #
+    # This example returns the version of PowerShell that is running. On versions of
+    # PowerShell greater than or equal to version 2.0, this function returns the
+    # equivalent of $PSVersionTable.PSVersion
+    #
+    # The function outputs a [version] object representing the version of PowerShell
+    # that is running
+    #
+    # PowerShell 1.0 does not have a $PSVersionTable variable, so this function returns
+    # [version]('1.0') on PowerShell 1.0
 
     #region License ################################################################
     # Copyright (c) 2023 Frank Lesniak
@@ -48,7 +36,12 @@ function Get-PSVersion {
     # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ################################################################
 
-    $versionThisFunction = [version]('1.0.20230613.0')
+    #region DownloadLocationNotice #################################################
+    # The most up-to-date version of this script can be found on the author's GitHub
+    # repository at https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #################################################
+
+    $versionThisFunction = [version]('1.0.20230709.0')
 
     if (Test-Path variable:\PSVersionTable) {
         $PSVersionTable.PSVersion
