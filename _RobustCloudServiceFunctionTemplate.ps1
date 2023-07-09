@@ -350,8 +350,9 @@ function Get-DataFromCloudServiceCmdletRobust {
             ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS *NOT* SUCCESSFULLY EXECUTED ###################
             # <Placeholder>
 
+            # Return failure indicator:
             ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-            $false
+            return $false
         }
     } else {
         # No error occurred
@@ -364,7 +365,8 @@ function Get-DataFromCloudServiceCmdletRobust {
         ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED AND AFTER THE OUTPUT OBJECT IS COPIED ###################
         # <Placeholder>
 
+        # Return success indicator:
         ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A SUCCESS ###################
-        $true
+        return $true
     }
 }
