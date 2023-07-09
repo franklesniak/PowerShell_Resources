@@ -1,40 +1,12 @@
-# Split-StringOnLiteralString.ps1 contains one function (Split-StringOnLiteralString) that is
-# designed to split a string the way the way that I expected it to be done - using a literal
-# string (as opposed to regex). It's also designed to be backward-compatible with all versions
-# of PowerShell and has been tested successfully on PowerShell v1. My motivation for creating
-# this function was 1) I wanted a split function that behaved more like VBScript's Split
-# function, 2) I do not want to be messing around with RegEx, and 3) I needed code that was
-# backward-compatible with all versions of PowerShell.
-
-$strThisScriptVersionNumber = [version]'2.0.20200820.0'
-
-#region License
-###############################################################################################
-# Copyright 2020 Frank Lesniak
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-# and associated documentation files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all copies or
-# substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-# BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-###############################################################################################
-#endregion License
-
-#region DownloadLocationNotice
-# The most up-to-date version of this script can be found on the author's GitHub repository
-# at https://github.com/franklesniak/PowerShell_Resources
-#endregion DownloadLocationNotice
-
 function Split-StringOnLiteralString {
+    # Split-StringOnLiteralString is designed to split a string the way the way that I
+    # expected it to be done - using a literal string (as opposed to regex). It's also
+    # designed to be backward-compatible with all versions of PowerShell and has been
+    # tested successfully on PowerShell v1. My motivation for creating this function
+    # was 1) I wanted a split function that behaved more like VBScript's Split
+    # function, 2) I did not want to be messing around with RegEx, and 3) I needed code
+    # that was backward-compatible with all versions of PowerShell.
+    #
     # This function takes two positional arguments
     # The first argument is a string, and the string to be split
     # The second argument is a string or char, and it is that which is to split the string in the first parameter
@@ -50,7 +22,33 @@ function Split-StringOnLiteralString {
     # $result = Split-StringOnLiteralString 'What do you think of this function?' ' '
     # # $result.Count is 7
 
-    $strThisFunctionVersionNumber = [version]'2.0.20200820.0'
+    #region License ################################################################
+    # Copyright 2023 Frank Lesniak
+
+    # Permission is hereby granted, free of charge, to any person obtaining a copy of
+    # this software and associated documentation files (the "Software"), to deal in the
+    # Software without restriction, including without limitation the rights to use,
+    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+    # Software, and to permit persons to whom the Software is furnished to do so,
+    # subject to the following conditions:
+
+    # The above copyright notice and this permission notice shall be included in all
+    # copies or substantial portions of the Software.
+
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    #endregion License ################################################################
+
+    #region DownloadLocationNotice
+    # The most up-to-date version of this script can be found on the author's GitHub
+    # repository at https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice
+
+    $strThisFunctionVersionNumber = [version]'2.0.20230708.0'
 
     trap {
         Write-Error 'An error occurred using the Split-StringOnLiteralString function. This was most likely caused by the arguments supplied not being strings'
