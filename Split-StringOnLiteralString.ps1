@@ -43,10 +43,10 @@ function Split-StringOnLiteralString {
     # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ################################################################
 
-    #region DownloadLocationNotice
+    #region DownloadLocationNotice #################################################
     # The most up-to-date version of this script can be found on the author's GitHub
     # repository at https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice
+    #endregion DownloadLocationNotice #################################################
 
     $strThisFunctionVersionNumber = [version]'2.0.20230708.0'
 
