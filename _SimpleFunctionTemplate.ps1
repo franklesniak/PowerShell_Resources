@@ -19,43 +19,46 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 1.1.20230709.0
+# Function template version: 1.1.20240127.0
 
 ################### THE FOLLOWING FUNCTIONS MUST BE INCLUDED FOR ERROR HANDLING TO WORK  ###################
+################### YOU MAY ALSO EMBED THEM INTO THE FUNCTION YOU ARE CREATING  ###################
 #region FunctionsToSupportErrorHandling ############################################
 function Get-ReferenceToLastError {
-    #region FunctionHeader #########################################################
+    #region FunctionHeader #####################################################
     # Function returns $null if no errors on on the $error stack;
-    # Otherwise, function returns a reference (memory pointer) to the last error that occurred.
+    # Otherwise, function returns a reference (memory pointer) to the last error
+    # that occurred.
     #
-    # Version: 1.0.20230709.0
-    #endregion FunctionHeader #########################################################
+    # Version: 1.0.20240127.0
+    #endregion FunctionHeader #####################################################
 
-    #region License ################################################################
-    # Copyright (c) 2023 Frank Lesniak
+    #region License ############################################################
+    # Copyright (c) 2024 Frank Lesniak
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in the
-    # Software without restriction, including without limitation the rights to use,
-    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-    # Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
     #
     # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    #endregion License ################################################################
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
 
-    #region DownloadLocationNotice #################################################
-    # The most up-to-date version of this script can be found on the author's GitHub
-    # repository at https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice #################################################
+    #region DownloadLocationNotice #############################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #############################################
 
     if ($error.Count -gt 0) {
         [ref]($error[0])
@@ -65,46 +68,47 @@ function Get-ReferenceToLastError {
 }
 
 function Test-ErrorOccurred {
-    #region FunctionHeader #########################################################
+    #region FunctionHeader #####################################################
     # Function accepts two positional arguments:
     #
     # The first argument is a reference (memory pointer) to the last error that had
-    # occurred prior to calling the command in question - that is, the command that we
-    # want to test to see if an error occurred.
+    # occurred prior to calling the command in question - that is, the command that
+    # we want to test to see if an error occurred.
     #
-    # The second argument is a reference to the last error that had occurred as-of the
-    # completion of the command in question
+    # The second argument is a reference to the last error that had occurred as-of
+    # the completion of the command in question.
     #
     # Function returns $true if it appears that an error occurred; $false otherwise
     #
-    # Version: 1.0.20230709.0
-    #endregion FunctionHeader #########################################################
+    # Version: 1.0.20240127.0
+    #endregion FunctionHeader #####################################################
 
-    #region License ################################################################
-    # Copyright (c) 2023 Frank Lesniak
+    #region License ############################################################
+    # Copyright (c) 2024 Frank Lesniak
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in the
-    # Software without restriction, including without limitation the rights to use,
-    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-    # Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
     #
     # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    #endregion License ################################################################
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
 
-    #region DownloadLocationNotice #################################################
-    # The most up-to-date version of this script can be found on the author's GitHub
-    # repository at https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice #################################################
+    #region DownloadLocationNotice #############################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #############################################
 
     # TO-DO: Validate input
 
