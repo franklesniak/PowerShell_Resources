@@ -63,7 +63,7 @@ function Test-NuGetDotOrgRegisteredAsPackageSource {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20240312.0
+    # Version 1.1.20240312.0
 
     [CmdletBinding()]
     [OutputType([Boolean])]
@@ -71,6 +71,10 @@ function Test-NuGetDotOrgRegisteredAsPackageSource {
         [Parameter(Mandatory = $false)][switch]$ThrowErrorIfNuGetDotOrgNotRegistered,
         [Parameter(Mandatory = $false)][switch]$ThrowWarningIfNuGetDotOrgNotRegistered
     )
+
+    $WarningPreferenceAtStartOfFunction = $WarningPreference
+    $VerbosePreferenceAtStartOfFunction = $VerbosePreference
+    $DebugPreferenceAtStartOfFunction = $DebugPreference
 
     $boolThrowErrorForMissingPackageSource = $false
     $boolThrowWarningForMissingPackageSource = $false
@@ -82,7 +86,14 @@ function Test-NuGetDotOrgRegisteredAsPackageSource {
     }
 
     $boolPackageSourceFound = $true
-    $arrPackageSources = @(Get-PackageSource -WarningAction SilentlyContinue)
+    Write-Debug ('Checking for registered package sources (Get-PackageSource)...')
+    $WarningPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    $VerbosePreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    $DebugPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    $arrPackageSources = @(Get-PackageSource)
+    $WarningPreference = $WarningPreferenceAtStartOfFunction
+    $VerbosePreference = $VerbosePreferenceAtStartOfFunction
+    $DebugPreference = $DebugPreferenceAtStartOfFunction
     if (@($arrPackageSources | Where-Object { $_.Location -eq 'https://api.nuget.org/v3/index.json' }).Count -eq 0) {
         $boolPackageSourceFound = $false
     }
