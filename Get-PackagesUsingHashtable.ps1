@@ -16,12 +16,12 @@ function Get-PackagesUsingHashtable {
     to be $null.
 
     .EXAMPLE
-    $hashtablePackageNameToInstalledPackages = @{}
-    $hashtablePackageNameToInstalledPackages.Add('Accord', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Accord.Math', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Accord.Statistics', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Accord.MachineLearning', $null)
-    $refHashtablePackageNameToInstalledPackages = [ref]$hashtablePackageNameToInstalledPackages
+    $hashtablePackageNameToInstalledPackageMetadata = @{}
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Accord', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Accord.Math', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Accord.Statistics', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Accord.MachineLearning', $null)
+    $refHashtablePackageNameToInstalledPackages = [ref]$hashtablePackageNameToInstalledPackageMetadata
     Get-PackagesUsingHashtable -ReferenceToHashtable $refHashtablePackageNameToInstalledPackages
 
     This example checks each of the four software packages specified. For each software
@@ -62,7 +62,7 @@ function Get-PackagesUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20240312.0
+    # Version 1.0.20240314.0
 
     [CmdletBinding()]
     param (

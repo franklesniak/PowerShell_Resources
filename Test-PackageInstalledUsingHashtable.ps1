@@ -67,12 +67,12 @@ function Test-PackageInstalledUsingHashtable {
     to the array.
 
     .EXAMPLE
-    $hashtablePackageNameToInstalledPackages = @{}
-    $hashtablePackageNameToInstalledPackages.Add('Azure.Core', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Microsoft.Identity.Client', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Azure.Identity', $null)
-    $hashtablePackageNameToInstalledPackages.Add('Accord', $null)
-    $refHashtablePackageNameToInstalledPackages = [ref]$hashtablePackageNameToInstalledPackages
+    $hashtablePackageNameToInstalledPackageMetadata = @{}
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Azure.Core', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Microsoft.Identity.Client', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Azure.Identity', $null)
+    $hashtablePackageNameToInstalledPackageMetadata.Add('Accord', $null)
+    $refHashtablePackageNameToInstalledPackages = [ref]$hashtablePackageNameToInstalledPackageMetadata
     Get-PackagesUsingHashtable -ReferenceToHashtable $refHashtablePackageNameToInstalledPackages
     $hashtableCustomNotInstalledMessageToPackageNames = @{}
     $strAzureIdentityNotInstalledMessage = 'Azure.Core, Microsoft.Identity.Client, and/or Azure.Identity packages were not found. Please install the Azure.Identity package and its dependencies and then try again.' + [System.Environment]::NewLine + 'You can install the Azure.Identity package and its dependencies by running the following command:' + [System.Environment]::NewLine + 'Install-Package -ProviderName NuGet -Name 'Azure.Identity' -Force -Scope CurrentUser;' + [System.Environment]::NewLine + [System.Environment]::NewLine
@@ -121,7 +121,7 @@ function Test-PackageInstalledUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20240314.0
+    # Version 1.0.20240314.1
 
     [CmdletBinding()]
     [OutputType([Boolean])]
