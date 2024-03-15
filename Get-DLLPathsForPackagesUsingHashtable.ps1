@@ -18,7 +18,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
     Get-Package). If a software package is not installed, the value of the hashtable
     entry should be $null.
 
-    .PARAMETER $ReferenceToHashtableOfDotNETVersions
+    .PARAMETER $ReferenceToHashtableOfSpecifiedDotNETVersions
     Is an optional parameter. If supplied, it must be a reference to a hashtable. The
     hashtable must have keys that are the names of software packages with each key's
     value populated with a string that is the version of .NET Framework that the
@@ -26,6 +26,18 @@ function Get-DLLPathsForPackagesUsingHashtable {
     hashtable for a given software package, the function will default to doing its best
     to select the most appropriate version of the software package given the current
     operating environment and PowerShell version.
+
+    .PARAMETER $ReferenceToHashtableOfEffectiveDotNETVersions
+    Is initially a reference to an empty hashtable. When execution completes, the
+    hashtable will be populated with keys that are the names of the software packages
+    specified in the hashtable referenced by the
+    ReferenceToHashtableOfInstalledPackages parameter. The value of each entry will be
+    a string that is the folder corresponding to the version of .NET that makes the
+    most sense given the current platform and .NET Framework version. If no suitable
+    folder is found, the value of the hashtable entry remains an empty string.
+
+    For example, reference the following folder name taxonomy at nuget.org:
+    https://www.nuget.org/packages/System.Text.Json#supportedframeworks-body-tab
 
     .PARAMETER $ReferenceToHashtableOfDLLPaths
     Is initially a reference to an empty hashtable. When execution completes, the
@@ -50,9 +62,11 @@ function Get-DLLPathsForPackagesUsingHashtable {
     $refhashtableCustomNotInstalledMessageToPackageNames = [ref]$hashtableCustomNotInstalledMessageToPackageNames
     $boolResult = Test-PackageInstalledUsingHashtable -ReferenceToHashtableOfInstalledPackages $refHashtablePackageNameToInstalledPackages -ThrowErrorIfPackageNotInstalled -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToPackageNames
     if ($boolResult -eq $false) { return }
+    $hashtablePackageNameToEffectiveDotNETVersions = @{}
+    $refHashtablePackageNameToEffectiveDotNETVersions = [ref]$hashtablePackageNameToEffectiveDotNETVersions
     $hashtablePackageNameToDLLPaths = @{}
     $refHashtablePackageNameToDLLPaths = [ref]$hashtablePackageNameToDLLPaths
-    Get-DLLPathsForPackagesUsingHashtable -ReferenceToHashtableOfInstalledPackages $refHashtablePackageNameToInstalledPackages -ReferenceToHashtableOfDLLPaths $refHashtablePackageNameToDLLPaths
+    Get-DLLPathsForPackagesUsingHashtable -ReferenceToHashtableOfInstalledPackages $refHashtablePackageNameToInstalledPackages -ReferenceToHashtableOfEffectiveDotNETVersions $refHashtablePackageNameToEffectiveDotNETVersions -ReferenceToHashtableOfDLLPaths $refHashtablePackageNameToDLLPaths
 
     This example checks each of the four software packages specified. For each software
     package specified, if the software package is installed, the value of the hashtable
@@ -94,12 +108,13 @@ function Get-DLLPathsForPackagesUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20240315.0
+    # Version 1.1.20240315.0
 
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)][ref]$ReferenceToHashtableOfInstalledPackages,
-        [Parameter(Mandatory = $false)][ref]$ReferenceToHashtableOfDotNETVersions,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToHashtableOfSpecifiedDotNETVersions,
+        [Parameter(Mandatory = $true)][ref]$ReferenceToHashtableOfEffectiveDotNETVersions,
         [Parameter(Mandatory = $true)][ref]$ReferenceToHashtableOfDLLPaths
     )
 
@@ -119,7 +134,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
         #
         # PowerShell 1.0 does not have a $PSVersionTable variable, so this function returns
         # [version]('1.0') on PowerShell 1.0
-
+    
         #region License ################################################################
         # Copyright (c) 2023 Frank Lesniak
         #
@@ -140,14 +155,14 @@ function Get-DLLPathsForPackagesUsingHashtable {
         # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
         # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################################
-
+    
         #region DownloadLocationNotice #################################################
         # The most up-to-date version of this script can be found on the author's GitHub
         # repository at https://github.com/franklesniak/PowerShell_Resources
         #endregion DownloadLocationNotice #################################################
-
+    
         $versionThisFunction = [version]('1.0.20230709.0')
-
+    
         if (Test-Path variable:\PSVersionTable) {
             $PSVersionTable.PSVersion
         } else {
@@ -157,6 +172,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
 
     $arrPackageNames = @(($ReferenceToHashtableOfInstalledPackages.Value).Keys)
     foreach ($strPackageName in $arrPackageNames) {
+        ($ReferenceToHashtableOfEffectiveDotNETVersions.Value).Add($strPackageName, '')
         ($ReferenceToHashtableOfDLLPaths.Value).Add($strPackageName, @())
     }
 
@@ -338,9 +354,9 @@ function Get-DLLPathsForPackagesUsingHashtable {
             $strBaseFolderPath = ($hashtablePackageNameToBaseFolderPath.Item($strPackageName))
 
             $strDLLFolderPath = ''
-            if ($null -ne $ReferenceToHashtableOfDotNETVersions) {
-                if ($null -ne ($ReferenceToHashtableOfDotNETVersions.Value).Item($strPackageName)) {
-                    $strDotNETVersion = ($ReferenceToHashtableOfDotNETVersions.Value).Item($strPackageName)
+            if ($null -ne $ReferenceToHashtableOfSpecifiedDotNETVersions) {
+                if ($null -ne ($ReferenceToHashtableOfSpecifiedDotNETVersions.Value).Item($strPackageName)) {
+                    $strDotNETVersion = ($ReferenceToHashtableOfSpecifiedDotNETVersions.Value).Item($strPackageName)
 
                     if ([string]::IsNullOrEmpty($strDotNETVersion) -eq $false) {
                         $strDLLFolderPath = Join-Path -Path $strBaseFolderPath -ChildPath 'lib'
@@ -350,6 +366,8 @@ function Get-DLLPathsForPackagesUsingHashtable {
                         if (Test-Path -Path $strDLLFolderPath -PathType Container) {
                             $arrDLLFiles = @(Get-ChildItem -Path $strDLLFolderPath -Filter '*.dll' -File -Recurse)
                             if ($arrDLLFiles.Count -gt 0) {
+                                # One or more DLL files found
+                                ($ReferenceToHashtableOfEffectiveDotNETVersions.Value).Item($strPackageName) = $strDotNETVersion
                                 ($ReferenceToHashtableOfDLLPaths.Value).Item($strPackageName) = @($arrDLLFiles | ForEach-Object {
                                         $_.FullName
                                     })
@@ -374,6 +392,8 @@ function Get-DLLPathsForPackagesUsingHashtable {
                     if (Test-Path -Path $strDLLFolderPath -PathType Container) {
                         $arrDLLFiles = @(Get-ChildItem -Path $strDLLFolderPath -Filter '*.dll' -File -Recurse)
                         if ($arrDLLFiles.Count -gt 0) {
+                            # One or more DLL files found
+                            ($ReferenceToHashtableOfEffectiveDotNETVersions.Value).Item($strPackageName) = $strDotNETVersion
                             ($ReferenceToHashtableOfDLLPaths.Value).Item($strPackageName) = @($arrDLLFiles | ForEach-Object {
                                     $_.FullName
                                 })
