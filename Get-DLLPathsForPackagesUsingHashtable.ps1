@@ -108,7 +108,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.1.20240315.0
+    # Version 1.1.20240319.0
 
     [CmdletBinding()]
     param (
@@ -134,7 +134,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
         #
         # PowerShell 1.0 does not have a $PSVersionTable variable, so this function returns
         # [version]('1.0') on PowerShell 1.0
-    
+
         #region License ################################################################
         # Copyright (c) 2023 Frank Lesniak
         #
@@ -155,14 +155,14 @@ function Get-DLLPathsForPackagesUsingHashtable {
         # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
         # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################################
-    
+
         #region DownloadLocationNotice #################################################
         # The most up-to-date version of this script can be found on the author's GitHub
         # repository at https://github.com/franklesniak/PowerShell_Resources
         #endregion DownloadLocationNotice #################################################
-    
+
         $versionThisFunction = [version]('1.0.20230709.0')
-    
+
         if (Test-Path variable:\PSVersionTable) {
             $PSVersionTable.PSVersion
         } else {
@@ -301,27 +301,68 @@ function Get-DLLPathsForPackagesUsingHashtable {
         } elseif (($versionPS -ge [version]'5.0') -and ($versionPS -lt [version]'6.0')) {
             if ((Test-Path 'HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full') -eq $true) {
                 $intDotNETFrameworkRelease = (Get-ItemPropertyValue -LiteralPath 'HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full' -Name Release)
+                # if ($intDotNETFrameworkRelease -ge 533320) {
+                #     # .NET Framework 4.8.1
+                #     $arrDotNETVersionPreferenceOrder = @('net481', 'net48', 'net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 528040) {
+                #     # .NET Framework 4.8
+                #     $arrDotNETVersionPreferenceOrder = @('net48', 'net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 461808) {
+                #     # .NET Framework 4.7.2
+                #     $arrDotNETVersionPreferenceOrder = @('net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 461308) {
+                #     # .NET Framework 4.7.1
+                #     $arrDotNETVersionPreferenceOrder = @('net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 460798) {
+                #     # .NET Framework 4.7
+                #     $arrDotNETVersionPreferenceOrder = @('net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 394802) {
+                #     # .NET Framework 4.6.2
+                #     $arrDotNETVersionPreferenceOrder = @('net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 394254) {
+                #     # .NET Framework 4.6.1
+                #     $arrDotNETVersionPreferenceOrder = @('net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 393295) {
+                #     # .NET Framework 4.6
+                #     $arrDotNETVersionPreferenceOrder = @('net46', 'net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 379893) {
+                #     # .NET Framework 4.5.2
+                #     $arrDotNETVersionPreferenceOrder = @('net452', 'net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 378675) {
+                #     # .NET Framework 4.5.1
+                #     $arrDotNETVersionPreferenceOrder = @('net451', 'net45', 'net40')
+                # } elseif ($intDotNETFrameworkRelease -ge 378389) {
+                #     # .NET Framework 4.5
+                #     $arrDotNETVersionPreferenceOrder = @('net45', 'net40')
+                # } else {
+                #     # .NET Framework 4.5 or newer not found?
+                #     # This should not be possible since this function requires
+                #     # PowerShell 5.0 or newer, PowerShell 5.0 requires WMF 5.0, and
+                #     # WMF 5.0 requires .NET Framework 4.5 or newer.
+                #     Write-Warning 'The .NET Framework 4.5 or newer was not found. This should not be possible since this function requires PowerShell 5.0 or newer, PowerShell 5.0 requires WMF 5.0, and WMF 5.0 requires .NET Framework 4.5 or newer.'
+                #     return
+                # }
                 if ($intDotNETFrameworkRelease -ge 533320) {
                     # .NET Framework 4.8.1
-                    $arrDotNETVersionPreferenceOrder = @('net481', 'net48', 'net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net481', 'net48', 'net472', 'net471', 'net47', 'net463', 'net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard2.0', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 528040) {
                     # .NET Framework 4.8
-                    $arrDotNETVersionPreferenceOrder = @('net48', 'net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net48', 'net472', 'net471', 'net47', 'net463', 'net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard2.0', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 461808) {
                     # .NET Framework 4.7.2
-                    $arrDotNETVersionPreferenceOrder = @('net472', 'net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net472', 'net471', 'net47', 'net463', 'net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard2.0', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 461308) {
                     # .NET Framework 4.7.1
-                    $arrDotNETVersionPreferenceOrder = @('net471', 'netstandard2.0', 'net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net471', 'net47', 'net463', 'net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard2.0', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 460798) {
                     # .NET Framework 4.7
-                    $arrDotNETVersionPreferenceOrder = @('net47', 'net463', 'net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net47', 'net463', 'net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 394802) {
                     # .NET Framework 4.6.2
-                    $arrDotNETVersionPreferenceOrder = @('net462', 'net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net462', 'net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 394254) {
                     # .NET Framework 4.6.1
-                    $arrDotNETVersionPreferenceOrder = @('net461', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4', 'net46', 'net452', 'net451', 'net45', 'net40')
+                    $arrDotNETVersionPreferenceOrder = @('net461', 'net46', 'net452', 'net451', 'net45', 'net40', 'netstandard1.6', 'netstandard1.5', 'netstandard1.4')
                 } elseif ($intDotNETFrameworkRelease -ge 393295) {
                     # .NET Framework 4.6
                     $arrDotNETVersionPreferenceOrder = @('net46', 'net452', 'net451', 'net45', 'net40')
