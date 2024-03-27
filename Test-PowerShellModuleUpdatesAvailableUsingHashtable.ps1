@@ -7,7 +7,7 @@ function Get-PowerShellModuleUsingHashtable {
     The Get-PowerShellModuleUsingHashtable function steps through each entry in the
     supplied hashtable and gets a list of installed PowerShell modules for each entry.
 
-    .PARAMETER $ReferenceToHashtable
+    .PARAMETER ReferenceToHashtable
     Is a reference to a hashtable. The value of the reference should be a hashtable
     with keys that are the names of PowerShell modules and values that are initialized
     to be enpty arrays.
@@ -30,7 +30,7 @@ function Get-PowerShellModuleUsingHashtable {
     #>
 
     #region License
-    # Copyright 2023 Frank Lesniak
+    # Copyright 2024 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy of this
     # software and associated documentation files (the “Software”), to deal in the
@@ -55,7 +55,7 @@ function Get-PowerShellModuleUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20230327.0
+    # Version 1.0.20240326.0
 
     [CmdletBinding()]
     param (
@@ -88,32 +88,32 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     modules are installed and up to date, the function returns $true; otherwise, if any
     module is not installed or not up to date, the function returns $false.
 
-    .PARAMETER $ReferenceToHashtableOfInstalledModules
+    .PARAMETER ReferenceToHashtableOfInstalledModules
     Is a reference to a hashtable. The hashtable must have keys that are the names of
     PowerShell modules with each key's value populated with arrays of
     ModuleInfoGrouping objects (the result of Get-Module).
 
-    .PARAMETER $ThrowErrorIfModuleNotInstalled
+    .PARAMETER ThrowErrorIfModuleNotInstalled
     Is a switch parameter. If this parameter is specified, an error is thrown for each
     module that is not installed. If this parameter is not specified, no error is
     thrown.
 
-    .PARAMETER $ThrowWarningIfModuleNotInstalled
+    .PARAMETER ThrowWarningIfModuleNotInstalled
     Is a switch parameter. If this parameter is specified, a warning is thrown for each
     module that is not installed. If this parameter is not specified, or if the
     ThrowErrorIfModuleNotInstalled parameter was specified, no warning is thrown.
 
-    .PARAMETER $ThrowErrorIfModuleNotUpToDate
+    .PARAMETER ThrowErrorIfModuleNotUpToDate
     Is a switch parameter. If this parameter is specified, an error is thrown for each
     module that is not up to date. If this parameter is not specified, no error is
     thrown.
 
-    .PARAMETER $ThrowWarningIfModuleNotUpToDate
+    .PARAMETER ThrowWarningIfModuleNotUpToDate
     Is a switch parameter. If this parameter is specified, a warning is thrown for each
     module that is not up to date. If this parameter is not specified, or if the
     ThrowErrorIfModuleNotUpToDate parameter was specified, no warning is thrown.
 
-    .PARAMETER $ReferenceToHashtableOfCustomNotInstalledMessages
+    .PARAMETER ReferenceToHashtableOfCustomNotInstalledMessages
     Is a reference to a hashtable. The hashtable must have keys that are custom error
     or warning messages (string) to be displayed if one or more modules are not
     installed. The value for each key must be an array of PowerShell module names
@@ -135,7 +135,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force;
     Install-Module PowerShellGet -MinimumVersion 2.2.4 -SkipPublisherCheck -Force -AllowClobber;
 
-    .PARAMETER $ReferenceToHashtableOfCustomNotUpToDateMessages
+    .PARAMETER ReferenceToHashtableOfCustomNotUpToDateMessages
     Is a reference to a hashtable. The hashtable must have keys that are custom error
     or warning messages (string) to be displayed if one or more modules are not
     up to date. The value for each key must be an array of PowerShell module names
@@ -156,11 +156,11 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force;
     Install-Module PowerShellGet -MinimumVersion 2.2.4 -SkipPublisherCheck -Force -AllowClobber;
 
-    .PARAMETER $ReferenceToArrayOfMissingModules
+    .PARAMETER ReferenceToArrayOfMissingModules
     Is a reference to an array. The array must be initialized to be empty. If any
     modules are not installed, the names of those modules are added to the array.
 
-    .PARAMETER $ReferenceToArrayOfOutOfDateModules
+    .PARAMETER ReferenceToArrayOfOutOfDateModules
     Is a reference to an array. The array must be initialized to be empty. If any
     modules are not up to date, the names of those modules are added to the array.
 
@@ -194,10 +194,13 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     .OUTPUTS
     [boolean] - Returns $true if all modules are installed and up to date; otherwise,
     returns $false.
+
+    .NOTES
+    Requires PowerShell v5.0 or newer
     #>
 
     #region License
-    # Copyright 2023 Frank Lesniak
+    # Copyright 2024 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy of this
     # software and associated documentation files (the “Software”), to deal in the
@@ -222,21 +225,80 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.1.20231004.0
+    # Version 1.1.20240326.0
 
     [CmdletBinding()]
     [OutputType([Boolean])]
     param (
-        [Parameter(Mandatory = $true)] [ref] $ReferenceToHashtableOfInstalledModules,
-        [switch] $ThrowErrorIfModuleNotInstalled,
-        [switch] $ThrowWarningIfModuleNotInstalled,
-        [switch] $ThrowErrorIfModuleNotUpToDate,
-        [switch] $ThrowWarningIfModuleNotUpToDate,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToHashtableOfCustomNotInstalledMessages,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToHashtableOfCustomNotUpToDateMessages,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToArrayOfMissingModules,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToArrayOfOutdatedModules
+        [Parameter(Mandatory = $true)][ref]$ReferenceToHashtableOfInstalledModules,
+        [switch]$ThrowErrorIfModuleNotInstalled,
+        [switch]$ThrowWarningIfModuleNotInstalled,
+        [switch]$ThrowErrorIfModuleNotUpToDate,
+        [switch]$ThrowWarningIfModuleNotUpToDate,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToHashtableOfCustomNotInstalledMessages,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToHashtableOfCustomNotUpToDateMessages,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToArrayOfMissingModules,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToArrayOfOutdatedModules
     )
+
+    function Get-PSVersion {
+        # Returns the version of PowerShell that is running, including on the original
+        # release of Windows PowerShell (version 1.0)
+        #
+        # Example:
+        # Get-PSVersion
+        #
+        # This example returns the version of PowerShell that is running. On versions
+        # of PowerShell greater than or equal to version 2.0, this function returns the
+        # equivalent of $PSVersionTable.PSVersion
+        #
+        # The function outputs a [version] object representing the version of
+        # PowerShell that is running
+        #
+        # PowerShell 1.0 does not have a $PSVersionTable variable, so this function
+        # returns [version]('1.0') on PowerShell 1.0
+
+        #region License ############################################################
+        # Copyright (c) 2024 Frank Lesniak
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining a copy
+        # of this software and associated documentation files (the "Software"), to deal
+        # in the Software without restriction, including without limitation the rights
+        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the Software is
+        # furnished to do so, subject to the following conditions:
+        #
+        # The above copyright notice and this permission notice shall be included in
+        # all copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #endregion License ############################################################
+
+        #region DownloadLocationNotice #############################################
+        # The most up-to-date version of this script can be found on the author's
+        # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+        #endregion DownloadLocationNotice #############################################
+
+        $versionThisFunction = [version]('1.0.20240326.0')
+
+        if (Test-Path variable:\PSVersionTable) {
+            return ($PSVersionTable.PSVersion)
+        } else {
+            return ([version]('1.0'))
+        }
+    }
+
+    $versionPS = Get-PSVersion
+    if ($versionPS -lt ([version]'5.0')) {
+        Write-Warning 'Test-PowerShellModuleUpdatesAvailableUsingHashtable requires PowerShell version 5.0 or newer.'
+        return $false
+    }
 
     $boolThrowErrorForMissingModule = $false
     $boolThrowWarningForMissingModule = $false

@@ -11,14 +11,14 @@ function Get-DLLPathsForPackagesUsingHashtable {
     most appropriate to use is stored in the value of the hashtable entry corresponding
     to the software package.
 
-    .PARAMETER $ReferenceToHashtableOfInstalledPackages
+    .PARAMETER ReferenceToHashtableOfInstalledPackages
     Is a reference to a hashtable. The hashtable must have keys that are the names of
     software packages with each key's value populated with
     Microsoft.PackageManagement.Packaging.SoftwareIdentity objects (the result of
     Get-Package). If a software package is not installed, the value of the hashtable
     entry should be $null.
 
-    .PARAMETER $ReferenceToHashtableOfSpecifiedDotNETVersions
+    .PARAMETER ReferenceToHashtableOfSpecifiedDotNETVersions
     Is an optional parameter. If supplied, it must be a reference to a hashtable. The
     hashtable must have keys that are the names of software packages with each key's
     value populated with a string that is the version of .NET Framework that the
@@ -27,7 +27,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
     to select the most appropriate version of the software package given the current
     operating environment and PowerShell version.
 
-    .PARAMETER $ReferenceToHashtableOfEffectiveDotNETVersions
+    .PARAMETER ReferenceToHashtableOfEffectiveDotNETVersions
     Is initially a reference to an empty hashtable. When execution completes, the
     hashtable will be populated with keys that are the names of the software packages
     specified in the hashtable referenced by the
@@ -39,7 +39,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
     For example, reference the following folder name taxonomy at nuget.org:
     https://www.nuget.org/packages/System.Text.Json#supportedframeworks-body-tab
 
-    .PARAMETER $ReferenceToHashtableOfDLLPaths
+    .PARAMETER ReferenceToHashtableOfDLLPaths
     Is initially a reference to an empty hashtable. When execution completes, the
     hashtable will be populated with keys that are the names of the software packages
     specified in the hashtable referenced by the
@@ -108,7 +108,7 @@ function Get-DLLPathsForPackagesUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.1.20240319.0
+    # Version 1.1.20240326.0
 
     [CmdletBinding()]
     param (
@@ -125,49 +125,56 @@ function Get-DLLPathsForPackagesUsingHashtable {
         # Example:
         # Get-PSVersion
         #
-        # This example returns the version of PowerShell that is running. On versions of
-        # PowerShell greater than or equal to version 2.0, this function returns the
+        # This example returns the version of PowerShell that is running. On versions
+        # of PowerShell greater than or equal to version 2.0, this function returns the
         # equivalent of $PSVersionTable.PSVersion
         #
-        # The function outputs a [version] object representing the version of PowerShell
-        # that is running
+        # The function outputs a [version] object representing the version of
+        # PowerShell that is running
         #
-        # PowerShell 1.0 does not have a $PSVersionTable variable, so this function returns
-        # [version]('1.0') on PowerShell 1.0
+        # PowerShell 1.0 does not have a $PSVersionTable variable, so this function
+        # returns [version]('1.0') on PowerShell 1.0
 
-        #region License ################################################################
-        # Copyright (c) 2023 Frank Lesniak
+        #region License ############################################################
+        # Copyright (c) 2024 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining a copy of
-        # this software and associated documentation files (the "Software"), to deal in the
-        # Software without restriction, including without limitation the rights to use,
-        # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-        # Software, and to permit persons to whom the Software is furnished to do so,
-        # subject to the following conditions:
+        # Permission is hereby granted, free of charge, to any person obtaining a copy
+        # of this software and associated documentation files (the "Software"), to deal
+        # in the Software without restriction, including without limitation the rights
+        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the Software is
+        # furnished to do so, subject to the following conditions:
         #
-        # The above copyright notice and this permission notice shall be included in all
-        # copies or substantial portions of the Software.
+        # The above copyright notice and this permission notice shall be included in
+        # all copies or substantial portions of the Software.
         #
         # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-        # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-        # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-        # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-        # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-        #endregion License ################################################################
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #endregion License ############################################################
 
-        #region DownloadLocationNotice #################################################
-        # The most up-to-date version of this script can be found on the author's GitHub
-        # repository at https://github.com/franklesniak/PowerShell_Resources
-        #endregion DownloadLocationNotice #################################################
+        #region DownloadLocationNotice #############################################
+        # The most up-to-date version of this script can be found on the author's
+        # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
+        #endregion DownloadLocationNotice #############################################
 
-        $versionThisFunction = [version]('1.0.20230709.0')
+        $versionThisFunction = [version]('1.0.20240326.0')
 
         if (Test-Path variable:\PSVersionTable) {
-            $PSVersionTable.PSVersion
+            return ($PSVersionTable.PSVersion)
         } else {
-            [version]('1.0')
+            return ([version]('1.0'))
         }
+    }
+
+    $versionPS = Get-PSVersion
+    if ($versionPS -lt ([version]'5.0')) {
+        Write-Warning 'Get-DLLPathsForPackagesUsingHashtable requires PowerShell version 5.0 or newer.'
+        return
     }
 
     $arrPackageNames = @(($ReferenceToHashtableOfInstalledPackages.Value).Keys)
@@ -202,8 +209,6 @@ function Get-DLLPathsForPackagesUsingHashtable {
             $boolIsMacOS = $true
         }
     }
-
-    $versionPS = Get-PSVersion
 
     if ($boolIsLinux -eq $true) {
         if (($versionPS -ge [version]'7.5') -and ($versionPS -lt [version]'7.6')) {

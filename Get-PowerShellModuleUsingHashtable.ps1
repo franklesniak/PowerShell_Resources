@@ -7,7 +7,7 @@ function Get-PowerShellModuleUsingHashtable {
     The Get-PowerShellModuleUsingHashtable function steps through each entry in the
     supplied hashtable and gets a list of installed PowerShell modules for each entry.
 
-    .PARAMETER $ReferenceToHashtable
+    .PARAMETER ReferenceToHashtable
     Is a reference to a hashtable. The value of the reference should be a hashtable
     with keys that are the names of PowerShell modules and values that are initialized
     to be enpty arrays.
@@ -30,7 +30,7 @@ function Get-PowerShellModuleUsingHashtable {
     #>
 
     #region License
-    # Copyright 2023 Frank Lesniak
+    # Copyright 2024 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy of this
     # software and associated documentation files (the “Software”), to deal in the
@@ -55,11 +55,11 @@ function Get-PowerShellModuleUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20230327.0
+    # Version 1.0.20240326.0
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $true)] [ref] $ReferenceToHashtable
+        [Parameter(Mandatory = $true)][ref]$ReferenceToHashtable
     )
 
     $VerbosePreferenceAtStartOfFunction = $VerbosePreference

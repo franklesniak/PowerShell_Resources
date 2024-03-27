@@ -7,7 +7,7 @@ function Get-PowerShellModuleUsingHashtable {
     The Get-PowerShellModuleUsingHashtable function steps through each entry in the
     supplied hashtable and gets a list of installed PowerShell modules for each entry.
 
-    .PARAMETER $ReferenceToHashtable
+    .PARAMETER ReferenceToHashtable
     Is a reference to a hashtable. The value of the reference should be a hashtable
     with keys that are the names of PowerShell modules and values that are initialized
     to be enpty arrays.
@@ -30,7 +30,7 @@ function Get-PowerShellModuleUsingHashtable {
     #>
 
     #region License
-    # Copyright 2023 Frank Lesniak
+    # Copyright 2024 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy of this
     # software and associated documentation files (the “Software”), to deal in the
@@ -55,7 +55,7 @@ function Get-PowerShellModuleUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.0.20230327.0
+    # Version 1.0.20240326.0
 
     [CmdletBinding()]
     param (
@@ -88,22 +88,22 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     modules are installed, the function returns $true; otherwise, if any module is not
     installed, the function returns $false.
 
-    .PARAMETER $ReferenceToHashtableOfInstalledModules
+    .PARAMETER ReferenceToHashtableOfInstalledModules
     Is a reference to a hashtable. The hashtable must have keys that are the names of
     PowerShell modules with each key's value populated with arrays of
     ModuleInfoGrouping objects (the result of Get-Module).
 
-    .PARAMETER $ThrowErrorIfModuleNotInstalled
+    .PARAMETER ThrowErrorIfModuleNotInstalled
     Is a switch parameter. If this parameter is specified, an error is thrown for each
     module that is not installed. If this parameter is not specified, no error is
     thrown.
 
-    .PARAMETER $ThrowWarningIfModuleNotInstalled
+    .PARAMETER ThrowWarningIfModuleNotInstalled
     Is a switch parameter. If this parameter is specified, a warning is thrown for each
     module that is not installed. If this parameter is not specified, or if the
     ThrowErrorIfModuleNotInstalled parameter was specified, no warning is thrown.
 
-    .PARAMETER $ReferenceToHashtableOfCustomNotInstalledMessages
+    .PARAMETER ReferenceToHashtableOfCustomNotInstalledMessages
     Is a reference to a hashtable. The hashtable must have keys that are custom error
     or warning messages (string) to be displayed if one or more modules are not
     installed. The value for each key must be an array of PowerShell module names
@@ -125,7 +125,7 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force;
     Install-Module PowerShellGet -MinimumVersion 2.2.4 -SkipPublisherCheck -Force -AllowClobber;
 
-    .PARAMETER $ReferenceToArrayOfMissingModules
+    .PARAMETER ReferenceToArrayOfMissingModules
     Is a reference to an array. The array must be initialized to be empty. If any
     modules are not installed, the names of those modules are added to the array.
 
@@ -154,7 +154,7 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     #>
 
     #region License
-    # Copyright 2023 Frank Lesniak
+    # Copyright 2024 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy of this
     # software and associated documentation files (the “Software”), to deal in the
@@ -179,16 +179,16 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice
 
-    # Version 1.1.20231004.0
+    # Version 1.1.20240326.0
 
     [CmdletBinding()]
     [OutputType([Boolean])]
     param (
-        [Parameter(Mandatory = $true)] [ref] $ReferenceToHashtableOfInstalledModules,
-        [switch] $ThrowErrorIfModuleNotInstalled,
-        [switch] $ThrowWarningIfModuleNotInstalled,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToHashtableOfCustomNotInstalledMessages,
-        [Parameter(Mandatory = $false)] [ref] $ReferenceToArrayOfMissingModules
+        [Parameter(Mandatory = $true)][ref]$ReferenceToHashtableOfInstalledModules,
+        [switch]$ThrowErrorIfModuleNotInstalled,
+        [switch]$ThrowWarningIfModuleNotInstalled,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToHashtableOfCustomNotInstalledMessages,
+        [Parameter(Mandatory = $false)][ref]$ReferenceToArrayOfMissingModules
     )
 
     $boolThrowErrorForMissingModule = $false
