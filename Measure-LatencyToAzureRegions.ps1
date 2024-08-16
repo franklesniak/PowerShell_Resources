@@ -4,6 +4,8 @@
 # Adapted from https://github.com/blrchen/azure-speed-test, which is copyright (c) 2014 blchen
 # Thanks also to https://www.azurespeed.com/
 
+# Version 1.1.20240816.0
+
 # TODO: Make these parameters
 $doubleNumberOfSecondsBetweenTests = [double]2.5
 $doubleNumberOfMinutesOfTesting = [double]5
@@ -111,7 +113,9 @@ if ($versionPS -le ([version]'2.0')) {
     return
 }
 
-$strCSharpCode = @"
+# Add the reference to the System.Net.Http.dll
+if ($versionPS -ge ([version]'6.0')) {
+    $strCSharpCode = @"
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -143,9 +147,8 @@ public class LatencyTester
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"Error pinging URL: {url}, Error: {ex.Message}");
             return -1; // Indicate failure
         }
 
@@ -156,6 +159,54 @@ public class LatencyTester
     }
 }
 "@
+} else {
+    $strCSharpCode = @"
+using System;
+using System.Diagnostics;
+using System.Net;
+using System.Reflection;
+
+public class LatencyTester
+{
+    public double PingUrl(string url)
+    {
+        return PingUrlInternal(url);
+    }
+
+    private double PingUrlInternal(string url)
+    {
+        var request = (HttpWebRequest)WebRequest.Create(url);
+        request.Method = "GET";
+        request.Headers.Add("Cache-Control", "no-cache");
+        request.Accept = "*/*";
+
+        var pingStartTime = Stopwatch.GetTimestamp();
+
+        try
+        {
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return -1; // Indicate failure
+                }
+            }
+        }
+        catch
+        {
+            return -1; // Indicate failure
+        }
+
+        var pingEndTime = Stopwatch.GetTimestamp();
+        var pingDuration = (pingEndTime - pingStartTime) * 1000.0 / Stopwatch.Frequency;
+
+        return pingDuration;
+    }
+}
+"@
+    # $httpClientAssembly = 'C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Net.Http.dll'
+    # Add-Type -Path $httpClientAssembly
+}
 
 # Compile the C# code
 Add-Type -Language CSharp -TypeDefinition $strCSharpCode
@@ -165,13 +216,26 @@ $latencyTester = New-Object LatencyTester
 
 # Build hashtable of URIs and results
 # Based on https://www.azurespeed.com/Azure/Latency
+$hashtableGlobalRegionToRegionNames = @{}
 $hashtableRegionNamesToURIs = @{}
 $hashtableURIsToTestResults = @{}
 
 # Central US
 if ($boolCentralUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'Central US'
     $strURI = 'https://s8centralus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -182,8 +246,20 @@ if ($boolCentralUS -eq $true) {
 
 # East US
 if ($boolEastUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'East US'
     $strURI = 'https://s8eastus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -194,8 +270,20 @@ if ($boolEastUS -eq $true) {
 
 # East US 2
 if ($boolEastUS2 -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'East US 2'
     $strURI = 'https://s8eastus2.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -206,8 +294,20 @@ if ($boolEastUS2 -eq $true) {
 
 # North Central US
 if ($boolNorthCentralUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'North Central US'
     $strURI = 'https://s9northcentralus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -218,8 +318,20 @@ if ($boolNorthCentralUS -eq $true) {
 
 # South Central US
 if ($boolSouthCentralUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'South Central US'
     $strURI = 'https://s9southcentralus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -230,8 +342,20 @@ if ($boolSouthCentralUS -eq $true) {
 
 # West Central US
 if ($boolWestCentralUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'West Central US'
     $strURI = 'https://s8westcentralus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -242,8 +366,20 @@ if ($boolWestCentralUS -eq $true) {
 
 # West US
 if ($boolWestUS -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'West US'
     $strURI = 'https://s9westus.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -254,8 +390,20 @@ if ($boolWestUS -eq $true) {
 
 # West US 2
 if ($boolWestUS2 -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'West US 2'
     $strURI = 'https://h3westus2.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -266,8 +414,20 @@ if ($boolWestUS2 -eq $true) {
 
 # West US 3
 if ($boolWestUS3 -eq $true) {
+    $strGlobalRegion = 'US'
     $strRegionName = 'West US 3'
     $strURI = 'https://s9westus3.blob.core.windows.net/public/latency-test.json'
+    if ($versionPS -ge ([version]'6.0')) {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.Generic.List[String]))
+        }
+        $hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName)
+    } else {
+        if ($hashtableGlobalRegionToRegionNames.ContainsKey($strGlobalRegion) -eq $false) {
+            $hashtableGlobalRegionToRegionNames.Add($strGlobalRegion, (New-Object System.Collections.ArrayList))
+        }
+        [void]($hashtableGlobalRegionToRegionNames[$strGlobalRegion].Add($strRegionName))
+    }
     $hashtableRegionNamesToURIs.Add($strRegionName, $strURI)
     if ($versionPS -ge ([version]'6.0')) {
         $hashtableURIsToTestResults.Add($strURI, (New-Object System.Collections.Generic.List[System.Double]))
@@ -359,22 +519,28 @@ if ($versionPS -ge ([version]'6.0')) {
 } else {
     $listOutput = New-Object System.Collections.ArrayList
 }
-$arrRegions = @($hashtableRegionNamesToURIs.Keys)
-foreach ($strRegionName in $arrRegions) {
-    $strURI = $hashtableRegionNamesToURIs[$strRegionName]
-    $psobjectStats = $hashtableURIsToStatistics[$strURI]
 
-    $psobjectFinal = New-Object -TypeName PSObject
-    $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Region' -Value $strRegionName
-    # $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'URI' -Value $strURI
-    $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Minimum' -Value $psobjectStats.Minimum
-    $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Maximum' -Value $psobjectStats.Maximum
-    $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Average' -Value $psobjectStats.Average
-    $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Jitter' -Value $psobjectStats.Jitter
-    if ($versionPS -ge ([version]'6.0')) {
-        $listOutput.Add($psobjectFinal)
-    } else {
-        [void]($listOutput.Add($psobjectFinal))
+$arrGlobalRegions = @($hashtableGlobalRegionToRegionNames.Keys) | Sort-Object
+
+foreach ($strGlobalRegion in $arrGlobalRegions) {
+    $arrRegions = @($hashtableGlobalRegionToRegionNames[$strGlobalRegion]) | Sort-Object
+    foreach ($strRegionName in $arrRegions) {
+        $strURI = $hashtableRegionNamesToURIs[$strRegionName]
+        $psobjectStats = $hashtableURIsToStatistics[$strURI]
+
+        $psobjectFinal = New-Object -TypeName PSObject
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'GlobalRegion' -Value $strGlobalRegion
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Region' -Value $strRegionName
+        # $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'URI' -Value $strURI
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Minimum' -Value $psobjectStats.Minimum
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Maximum' -Value $psobjectStats.Maximum
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Average' -Value $psobjectStats.Average
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Jitter' -Value $psobjectStats.Jitter
+        if ($versionPS -ge ([version]'6.0')) {
+            $listOutput.Add($psobjectFinal)
+        } else {
+            [void]($listOutput.Add($psobjectFinal))
+        }
     }
 }
 
