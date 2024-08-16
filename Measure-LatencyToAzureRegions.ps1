@@ -4,7 +4,7 @@
 # Adapted from https://github.com/blrchen/azure-speed-test, which is copyright (c) 2014 blchen
 # Thanks also to https://www.azurespeed.com/
 
-# Version 1.1.20240816.0
+# Version 1.2.20240816.0
 
 # TODO: Make these parameters
 $doubleNumberOfSecondsBetweenTests = [double]2.5
@@ -532,10 +532,10 @@ foreach ($strGlobalRegion in $arrGlobalRegions) {
         $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'GlobalRegion' -Value $strGlobalRegion
         $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Region' -Value $strRegionName
         # $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'URI' -Value $strURI
-        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Minimum' -Value $psobjectStats.Minimum
-        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Maximum' -Value $psobjectStats.Maximum
-        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Average' -Value $psobjectStats.Average
-        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'Jitter' -Value $psobjectStats.Jitter
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'MinimumLatencyMilliseconds' -Value $psobjectStats.Minimum
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'MaximumLatencyMilliseconds' -Value $psobjectStats.Maximum
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'AverageLatencyMilliseconds' -Value $psobjectStats.Average
+        $psobjectFinal | Add-Member -MemberType NoteProperty -Name 'JitterMilliseconds' -Value $psobjectStats.Jitter
         if ($versionPS -ge ([version]'6.0')) {
             $listOutput.Add($psobjectFinal)
         } else {
