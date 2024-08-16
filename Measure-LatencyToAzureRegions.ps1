@@ -4,7 +4,7 @@
 # Adapted from https://github.com/blrchen/azure-speed-test, which is copyright (c) 2014 blchen
 # Thanks also to https://www.azurespeed.com/
 
-# Version 1.2.20240816.0
+# Version 1.3.20240816.0
 
 # TODO: Make these parameters
 $doubleNumberOfSecondsBetweenTests = [double]2.5
@@ -213,6 +213,29 @@ Add-Type -Language CSharp -TypeDefinition $strCSharpCode
 
 # Create an instance of the LatencyTester class
 $latencyTester = New-Object LatencyTester
+
+# Fix TLS protocol if necessary
+$strURI = 'https://s8centralus.blob.core.windows.net/public/latency-test.json'
+$doubleLatency = $latencyTester.PingUrl($strURI)
+if ($doubleLatency -eq -1) {
+    $actionPreferencePreviousError = $ErrorActionPreference
+    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls13
+    $doubleLatency = $latencyTester.PingUrl($strURI)
+    if ($doubleLatency -eq -1) {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $doubleLatency = $latencyTester.PingUrl($strURI)
+        if ($doubleLatency -eq -1) {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls11
+            $doubleLatency = $latencyTester.PingUrl($strURI)
+            if ($doubleLatency -eq -1) {
+                Write-Error ('Cannot reach testing endpoint: "' + $strURI + '". Please check your internet connection and review your TLS settings and try again.')
+                return
+            }
+        }
+    }
+    $ErrorActionPreference = $actionPreferencePreviousError
+}
 
 # Build hashtable of URIs and results
 # Based on https://www.azurespeed.com/Azure/Latency
