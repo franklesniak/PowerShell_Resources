@@ -14,6 +14,8 @@ function Get-PSVersion {
     #
     # PowerShell 1.0 does not have a $PSVersionTable variable, so this function
     # returns [version]('1.0') on PowerShell 1.0
+    #
+    # Version 1.0.20240917.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -41,8 +43,6 @@ function Get-PSVersion {
     # The most up-to-date version of this script can be found on the author's
     # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
     #endregion DownloadLocationNotice #############################################
-
-    $versionThisFunction = [version]('1.0.20240326.0')
 
     if (Test-Path variable:\PSVersionTable) {
         return ($PSVersionTable.PSVersion)
