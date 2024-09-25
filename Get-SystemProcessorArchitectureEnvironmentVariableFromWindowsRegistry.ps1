@@ -177,7 +177,7 @@ function Get-SystemProcessorArchitectureEnvironmentVariableFromWindowsRegistry {
     # Attempt to retrieve the system-context PROCESSOR_ARCHITECTURE environment
     # variable from the registry. This has to be done in one line for effective error
     # handling
-    $object = (Get-ItemProperty $regKey).PROCESSOR_ARCHITECTURE
+    $output = (Get-ItemProperty $regKey).PROCESSOR_ARCHITECTURE
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
