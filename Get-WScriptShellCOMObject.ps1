@@ -1,4 +1,4 @@
-function New-WScriptShellCOMObject {
+function Get-WScriptShellCOMObject {
     #region FunctionHeader #########################################################
     # Attempts to create a new COM object "WScript.Shell"; if successful, it returns it
     #
@@ -12,10 +12,10 @@ function New-WScriptShellCOMObject {
     #
     # # Example usage:
     # $objWScriptShell = $null
-    # $boolResult = New-WScriptShellCOMObject ([ref]$objWScriptShell)
+    # $boolResult = Get-WScriptShellCOMObject ([ref]$objWScriptShell)
     # # If $boolResult is $true, then $objWScriptShell is a WScript.Shell object
     #
-    # Version: 1.0.20240924.0
+    # Version: 1.0.20240925.0
     #endregion FunctionHeader #########################################################
 
     #region License ################################################################
