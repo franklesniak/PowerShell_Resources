@@ -13,7 +13,7 @@ function Get-FolderPathContainingScript {
     # PowerShell v1 - v2 do not have a $PSScriptRoot variable, so this function uses
     # other methods to determine the script directory
     #
-    # Version 1.0.20240930.0
+    # Version 1.0.20240930.1
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -105,27 +105,33 @@ function Get-FolderPathContainingScript {
 
     if ([string]::IsNullOrEmpty($strFolderPathContainingScript)) {
         # $PSScriptRoot does not exist or is empty
+        # Either PowerShell v1 or v2 is running, or there may not be a script running
 
+        $strScriptPath = ''
         if (Test-Path variable:\hostinvocation) {
             $strScriptPath = $hostinvocation.MyCommand.Path
-        } else {
+        } elseif (Test-Path variable:script:MyInvocation) {
             $strScriptPath = (Get-Variable MyInvocation -Scope Script).Value.MyCommand.Definition
         }
 
-        if (Test-Path $strScriptPath) {
-            $strFolderPathContainingScript = (Split-Path $strScriptPath)
-        } else {
+        if (-not [string]::IsNullOrEmpty($strScriptPath)) {
+            if (Test-Path $strScriptPath) {
+                $strFolderPathContainingScript = (Split-Path $strScriptPath)
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($strFolderPathContainingScript)) {
             $strFolderPathContainingScript = (Get-Location).Path
-            if ($Host.Name -eq 'ConsoleHost') {
+            if ($Host.Name -eq 'ConsoleHost' -or $Host.Name -eq 'ServerRemoteHost' -or $Host.Name -eq 'Windows PowerShell ISE Host' -or $Host.Name -eq 'Visual Studio Code Host') {
                 $versionPS = Get-PSVersion
-                $strMessage = 'Get-FolderPathContainingScript: The script path <' + $strScriptPath + '> does not exist, the current directory <' + $strFolderPathContainingScript + '> will be used.'
+                $strMessage = 'Get-FolderPathContainingScript: There does not appear to be a script running; the current directory <' + $strFolderPathContainingScript + '> will be used.'
                 if ($versionPS.Major -ge 5) {
                     Write-Information $strMessage
                 } else {
                     Write-Host $strMessage
                 }
             } else {
-                Write-Warning ('Get-FolderPathContainingScript: Powershell Host <' + $Host.Name + '> may not be compatible with this function, the current directory <' + (Get-Location).Path + '> will be used.')
+                Write-Warning ('Get-FolderPathContainingScript: Powershell Host <' + $Host.Name + '> may not be compatible with this function, the current directory <' + $strFolderPathContainingScript + '> will be used.')
             }
         }
     }
