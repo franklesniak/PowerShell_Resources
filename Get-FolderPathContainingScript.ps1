@@ -108,13 +108,18 @@ function Get-FolderPathContainingScript {
         # Either PowerShell v1 or v2 is running, or there may not be a script running
 
         $strScriptPath = ''
-        if (Test-Path variable:\hostinvocation) {
-            $strScriptPath = $hostinvocation.MyCommand.Path
+        if (Test-Path variable:\HostInvocation) {
+            # Edge case for Sapien PrimalScript/PowerShell Studio
+            $strScriptPath = $HostInvocation.MyCommand.Path
         } elseif (Test-Path variable:script:MyInvocation) {
             $strScriptPath = (Get-Variable MyInvocation -Scope Script).Value.MyCommand.Definition
         }
 
         if (-not [string]::IsNullOrEmpty($strScriptPath)) {
+            # $strScriptPath would be the path to a script file, if we are, in fact,
+            # running inside a script.
+            # Otherwise, $strScriptPath would be the last command that was run, in
+            # which case Test-Path would fail.
             if (Test-Path $strScriptPath) {
                 $strFolderPathContainingScript = (Split-Path $strScriptPath)
             }
