@@ -7,37 +7,44 @@ function Convert-IniToHashTable {
     #
     # Seven or eight positional arguments are required:
     #
-    # - The first argument is a reference to an object that will be used to store
-    #   output
-    # - The second argument is a string representing the file path to the ini file
-    # - The third argument is an array of characters that represent the characters
-    #   allowed to indicate the start of a comment. Usually, this should be set to
-    #   @(';'), but if hashtags are also allowed as comments for a given
-    #   application, then it should be set to @(';', '#') or @('#')
-    # - The fourth argument is a boolean value that indicates whether comments
-    #   should be ignored. Normally, comments should be ignored, and so this should
-    #   be set to $true
-    # - The fifth argument is a boolean value that indicates whether comments must
-    #   be on their own line in order to be considered a comment. If set to $false,
-    #   and if the semicolon is the character allowed to indicate the start of a
-    #   comment, then the text after the semicolon in this example would not be
-    #   considered a comment:
-    #   key=value ; this text would not be considered a comment
-    #   in this example, the value would be:
-    #   value ; this text would not be considered a comment
-    # - The sixth argument is a string representation of the null section name. In
-    #   other words, if a key-value pair is found outside of a section, what should
-    #   be used as its fake section name? As an example, this can be set to
-    #   'NoSection' as long as their is no section in the ini file like [NoSection]
-    # - The seventh argument is a boolean value that indicates whether it is
-    #   permitted for keys in the ini file to be supplied without an equal sign (if
-    #   $true, the key is ingested but the value is regarded as $null). If set to
-    #   false, lines that lack an equal sign are considered invalid and ignored.
-    # - If supplied, the eighth argument is a string representation of the comment
-    #   prefix and is to being the name of the 'key' representing the comment (and
-    #   appended with an index number beginning with 1). If argument four is set to
-    #   $false, then this argument is required. Usually 'Comment' is OK to use,
-    #   unless there are keys in the file named like 'Comment1', 'Comment2', etc.
+    # The first argument is a reference to an object that will be used to store
+    # output
+    #
+    # The second argument is a string representing the file path to the ini file
+    #
+    # The third argument is an array of characters that represent the characters
+    # allowed to indicate the start of a comment. Usually, this should be set to
+    # @(';'), but if hashtags are also allowed as comments for a given
+    # application, then it should be set to @(';', '#') or @('#')
+    #
+    # The fourth argument is a boolean value that indicates whether comments should
+    # be ignored. Normally, comments should be ignored, and so this should be set
+    # to $true
+    #
+    # The fifth argument is a boolean value that indicates whether comments must be
+    # on their own line in order to be considered a comment. If set to $false, and
+    # if the semicolon is the character allowed to indicate the start of a comment,
+    # then the text after the semicolon in this example would not be considered a
+    # comment:
+    # key=value ; this text would not be considered a comment
+    # in this example, the value would be:
+    # value ; this text would not be considered a comment
+    #
+    # The sixth argument is a string representation of the null section name. In
+    # other words, if a key-value pair is found outside of a section, what should
+    # be used as its fake section name? As an example, this can be set to
+    # 'NoSection' as long as their is no section in the ini file like [NoSection]
+    #
+    # The seventh argument is a boolean value that indicates whether it is
+    # permitted for keys in the ini file to be supplied without an equal sign (if
+    # $true, the key is ingested but the value is regarded as $null). If set to
+    # false, lines that lack an equal sign are considered invalid and ignored.
+    #
+    # If supplied, the eighth argument is a string representation of the comment
+    # prefix and is to being the name of the 'key' representing the comment (and
+    # appended with an index number beginning with 1). If argument four is set to
+    # $false, then this argument is required. Usually 'Comment' is OK to use,
+    # unless there are keys in the file named like 'Comment1', 'Comment2', etc.
     #
     # The function returns a 0 if successful, non-zero otherwise.
     #
