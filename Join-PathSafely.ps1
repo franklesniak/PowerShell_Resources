@@ -1,11 +1,56 @@
 function Join-PathSafely {
-    # Usage:
+    #region FunctionHeader #####################################################
+    # Combines two paths into a single path. This function is intended to be
+    # used in situations where the Join-Path cmdlet may fail due to a variety
+    # of reasons. This function is designed to suppress errors and return a
+    # boolean value indicating whether the operation was successful.
+    #
+    # Three positional arguments are required:
+    #
+    # The first argument is a reference to a string variable that will be populated
+    # with the joined path (parent path + child path). If the# operation was
+    # successful, the variable will be populated with the joined path. If the
+    # operation was unsuccessful, the variable will be left unchanged.
+    #
+    # The second argument is a string representing the parent part of the path.
+    #
+    # The third argument is the child part of the path.
+    #
+    # The function returns a boolean value indicating whether the operation was
+    # successful. If the operation was successful, the joined path will be
+    # populated in the variable referenced in the first argument. If the operation
+    # was unsuccessful, the variable will be left unchanged.
+    #
+    # Example usage:
     # $strParentPartOfPath = 'Z:'
     # $strChildPartOfPath = '####FAKE####'
     # $strJoinedPath = $null
     # $boolSuccess = Join-PathSafely ([ref]$strJoinedPath) $strParentPartOfPath $strChildPartOfPath
+    #
+    # Version 1.0.20241107.0
+    #endregion FunctionHeader #####################################################
 
-    # TODO: Write a proper function header
+    #region License ############################################################
+    # Copyright (c) 2024 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
 
     function Get-ReferenceToLastError {
         #region FunctionHeader #################################################
