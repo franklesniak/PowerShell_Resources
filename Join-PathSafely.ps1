@@ -7,10 +7,11 @@ function Join-PathSafely {
     #
     # Three positional arguments are required:
     #
-    # The first argument is a reference to a string variable that will be populated
-    # with the joined path (parent path + child path). If the# operation was
-    # successful, the variable will be populated with the joined path. If the
-    # operation was unsuccessful, the variable will be left unchanged.
+    # The first argument is a reference to a string object that will be populated
+    # with the joined path (parent path + child path). If the operation was
+    # successful, the referenced string object will be populated with the joined
+    # path. If the operation was unsuccessful, the referenced string will be left
+    # unchanged.
     #
     # The second argument is a string representing the parent part of the path.
     #
@@ -18,8 +19,9 @@ function Join-PathSafely {
     #
     # The function returns a boolean value indicating whether the operation was
     # successful. If the operation was successful, the joined path will be
-    # populated in the variable referenced in the first argument. If the operation
-    # was unsuccessful, the variable will be left unchanged.
+    # populated in the string object referenced in the first argument. If the
+    # operation was unsuccessful, the referenced string object will be left
+    # unchanged.
     #
     # Example usage:
     # $strParentPartOfPath = 'Z:'
@@ -27,7 +29,7 @@ function Join-PathSafely {
     # $strJoinedPath = $null
     # $boolSuccess = Join-PathSafely ([ref]$strJoinedPath) $strParentPartOfPath $strChildPartOfPath
     #
-    # Version 1.0.20241110.0
+    # Version 1.0.20241110.1
     #endregion FunctionHeader #####################################################
 
     #region License ############################################################
