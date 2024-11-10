@@ -52,6 +52,12 @@ function Join-PathSafely {
     # SOFTWARE.
     #endregion License ############################################################
 
+    #region DownloadLocationNotice #############################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at:
+    # https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #############################################
+
     function Get-ReferenceToLastError {
         #region FunctionHeader #################################################
         # Function returns $null if no errors on on the $error stack;
