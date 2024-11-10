@@ -27,7 +27,7 @@ function Join-PathSafely {
     # $strJoinedPath = $null
     # $boolSuccess = Join-PathSafely ([ref]$strJoinedPath) $strParentPartOfPath $strChildPartOfPath
     #
-    # Version 1.0.20241107.0
+    # Version 1.0.20241110.0
     #endregion FunctionHeader #####################################################
 
     #region License ############################################################
