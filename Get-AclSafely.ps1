@@ -1,11 +1,75 @@
 function Get-AclSafely {
-    # Usage:
+    #region FunctionHeader #####################################################
+    # Gets and returns the access control list (ACL) from a path or object. This
+    # function is intended to be used in situations where the Get-Acl cmdlet may
+    # fail due to a variety of reasons. This function is designed to suppress
+    # errors and return a boolean value indicating whether the operation was
+    # successful.
+    #
+    # Three positional arguments are required:
+    #
+    # The first argument is a reference to an object (the specific object type will
+    # vary depending on the type of object/path supplied in the third argument). If
+    # the operation was successful, the referenced object will be populated with
+    # the object resulting from Get-Acl. If the operation was unsuccessful, the
+    # referenced object will be left unchanged.
+    #
+    # The second argument is a reference to an object (the specific object type will
+    # vary depending on the type of object/path supplied in the third argument). In
+    # cases where this function needs to retrieve the object (using Get-Item) to
+    # retrieve the access control entry (ACL), the referenced object will be
+    # populated with the object resulting from Get-Item. If the function did not
+    # need to use Get-Item, the referenced object will be left unchanged.
+    #
+    # The third argument is a string representing the path to the object for which
+    # the ACL is to be retrieved. This path can be a file or folder path, or it can
+    # be a registry path (for example).
+    #
+    # The function returns a boolean value indicating whether the operation was
+    # successful. If the operation was successful, the object referenced in the
+    # first argument will be populated with the ACL (otherwise the object
+    # referenced in the first argument is not changed). If the function needed to
+    # retrieve the object (using Get-Item) to get its access control list (ACL),
+    # the object referenced in the second argument will be populated with the
+    # object (from Get-Item), otherwise the object referenced in the second
+    # argument is not changed.
+    #
+    # Example usage:
     # $objThisFolderPermission = $null
     # $objThis = $null
     # $strThisObjectPath = 'D:\Shares\Share\Accounting'
     # $boolSuccess = Get-AclSafely ([ref]$objThisFolderPermission) ([ref]$objThis) $strThisObjectPath
+    #
+    # Version 1.0.20241110.0
+    #endregion FunctionHeader #####################################################
 
-    # TODO: Write a proper function header
+    #region License ############################################################
+    # Copyright (c) 2024 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
+
+    #region DownloadLocationNotice #########################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at:
+    # https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #########################################
 
     function Get-ReferenceToLastError {
         #region FunctionHeader #################################################
@@ -122,6 +186,63 @@ function Get-AclSafely {
         return $boolErrorOccurred
     }
 
+    function Get-PSVersion {
+        #region FunctionHeader #################################################
+        # Returns the version of PowerShell that is running, including on the
+        # original release of Windows PowerShell (version 1.0)
+        #
+        # Example:
+        # Get-PSVersion
+        #
+        # This example returns the version of PowerShell that is running. On
+        # versions of PowerShell greater than or equal to version 2.0, this
+        # function returns the equivalent of $PSVersionTable.PSVersion
+        #
+        # The function outputs a [version] object representing the version of
+        # PowerShell that is running
+        #
+        # PowerShell 1.0 does not have a $PSVersionTable variable, so this function
+        # returns [version]('1.0') on PowerShell 1.0
+        #
+        # Version 1.0.20241105.0
+        #endregion FunctionHeader #################################################
+
+        #region License ########################################################
+        # Copyright (c) 2024 Frank Lesniak
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining a
+        # copy of this software and associated documentation files (the
+        # "Software"), to deal in the Software without restriction, including
+        # without limitation the rights to use, copy, modify, merge, publish,
+        # distribute, sublicense, and/or sell copies of the Software, and to permit
+        # persons to whom the Software is furnished to do so, subject to the
+        # following conditions:
+        #
+        # The above copyright notice and this permission notice shall be included
+        # in all copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+        # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+        # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+        # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+        # USE OR OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ########################################################
+
+        #region DownloadLocationNotice #########################################
+        # The most up-to-date version of this script can be found on the author's
+        # GitHub repository at:
+        # https://github.com/franklesniak/PowerShell_Resources
+        #endregion DownloadLocationNotice #########################################
+
+        if (Test-Path variable:\PSVersionTable) {
+            return ($PSVersionTable.PSVersion)
+        } else {
+            return ([version]('1.0'))
+        }
+    }
+
     trap {
         # Intentionally left empty to prevent terminating errors from halting processing
     }
@@ -152,8 +273,10 @@ function Get-AclSafely {
     # when copy-pasted into the shell (despite there not being any apparent error):
     ###################################################################################
     # TODO: Get-Acl is slow if there is latency between the folder structure and the domain controller, probably because of SID lookups. See if there is a way to speed this up without introducing external dependencies.
+    # TODO: Get-Acl allegedly does not exist on PowerShell on Linux (specifically at least not on PowerShell Core v6.2.4 on Ubuntu 18.04.4 or PowerShell v7.0.0 on Ubuntu 18.04.4). Confirm this and then re-work the below to get around the issue.
     # if ($strThisObjectPath.Contains('[') -or $strThisObjectPath.Contains(']') -or $strThisObjectPath.Contains('`')) {
     #     # Can't use Get-Acl because Get-Acl doesn't support paths with brackets
+    #     # or grave accent marks (backticks)
     #     $versionPS = Get-PSVersion
     #     if ($versionPS.Major -ge 3) {
     #         # PowerShell v3 and newer supports -LiteralPath
@@ -176,6 +299,7 @@ function Get-AclSafely {
     #         # We don't need to escape the right square bracket based on testing, but
     #         # we do need to escape the left square bracket. Nevertheless, escaping
     #         # both brackets does work and seems like the safest option.
+    #         # Additionally, escape the grave accent mark (backtick).
     #         $objThis = Get-Item -Path ((($strThisObjectPath.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force # -Force parameter is required to get hidden items
     #         $objThisFolderPermission = $objThis.GetAccessControl()
     #     } else {
@@ -183,11 +307,12 @@ function Get-AclSafely {
     #         # Get-Item -> GetAccessControl() does not work and returns $null on
     #         # PowerShell v1 for some reason.
     #         # And, unfortunately, there is no apparent way to escape left square
-    #         # brackets with Get-Acl
+    #         # brackets with Get-Acl. However, we can escape the grave accent mark
+    #         # (backtick).
     #         $objThisFolderPermission = Get-Acl -Path ($strThisObjectPath.Replace('`', '``'))
     #     }
     # } else {
-    #     # No square brackets; use Get-Acl
+    #     # No square brackets or grave accent marks (backticks); use Get-Acl
     #     $objThisFolderPermission = Get-Acl -Path $strThisObjectPath
     # }
     ###################################################################################
@@ -202,12 +327,12 @@ function Get-AclSafely {
         if ($null -ne $objThis) {
             $refOutputObjThis.Value = $objThis
         }
-        $false
+        return $false
     } else {
         $refOutputObjThisFolderPermission.Value = $objThisFolderPermission
         if ($null -ne $objThis) {
             $refOutputObjThis.Value = $objThis
         }
-        $true
+        return $true
     }
 }
