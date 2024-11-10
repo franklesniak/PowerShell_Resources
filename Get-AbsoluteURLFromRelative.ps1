@@ -31,7 +31,7 @@ function Get-AbsoluteURLFromRelative {
     # $strURLAbsolute = Get-AbsoluteURLFromRelative $strURLBase $strURLRelative
     # # $strURLAbsolute is 'http://foo.net/stuff/downloads/list.txt'
     #
-    # Version 1.0.20241105.0
+    # Version 1.0.20241110.0
     #endregion FunctionHeader #####################################################
 
     #region License ################################################################
@@ -60,6 +60,12 @@ function Get-AbsoluteURLFromRelative {
     # https://stackoverflow.com/a/34603567/2134110
     # Thanks to Vikash Rathee for pointing me in the right direction
     #endregion Acknowledgements #######################################################
+
+    #region DownloadLocationNotice #########################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at:
+    # https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #########################################
 
     $strURLBase = $args[0]
     $strURLRelative = $args[1]
