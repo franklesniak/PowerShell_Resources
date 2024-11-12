@@ -29,7 +29,7 @@ function Join-PathSafely {
     # $strJoinedPath = $null
     # $boolSuccess = Join-PathSafely ([ref]$strJoinedPath) $strParentPartOfPath $strChildPartOfPath
     #
-    # Version 1.0.20241110.1
+    # Version 1.0.20241112.1
     #endregion FunctionHeader #####################################################
 
     #region License ############################################################
@@ -176,7 +176,8 @@ function Join-PathSafely {
     }
 
     trap {
-        # Intentionally left empty to prevent terminating errors from halting processing
+        # Intentionally left empty to prevent terminating errors from halting
+        # processing
     }
 
     $refOutputJoinedPath = $args[0]
@@ -191,10 +192,11 @@ function Join-PathSafely {
     # Store current error preference; we will restore it after we do our work
     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
 
-    # Set ErrorActionPreference to SilentlyContinue; this will suppress error output.
-    # Terminating errors will not output anything, kick to the empty trap statement and then
-    # continue on. Likewise, non-terminating errors will also not output anything, but they
-    # do not kick to the trap statement; they simply continue on.
+    # Set ErrorActionPreference to SilentlyContinue; this will suppress error
+    # output. Terminating errors will not output anything, kick to the empty trap
+    # statement and then continue on. Likewise, non-terminating errors will also
+    # not output anything, but they do not kick to the trap statement; they simply
+    # continue on.
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Attempt to join the path
