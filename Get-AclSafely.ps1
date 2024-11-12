@@ -14,12 +14,12 @@ function Get-AclSafely {
     # the object resulting from Get-Acl. If the operation was unsuccessful, the
     # referenced object will be left unchanged.
     #
-    # The second argument is a reference to an object (the specific object type will
-    # vary depending on the type of object/path supplied in the third argument). In
-    # cases where this function needs to retrieve the object (using Get-Item) to
-    # retrieve the access control entry (ACL), the referenced object will be
-    # populated with the object resulting from Get-Item. If the function did not
-    # need to use Get-Item, the referenced object will be left unchanged.
+    # The second argument is a reference to an object (the specific object type
+    # will vary depending on the type of object/path supplied in the third
+    # argument). In cases where this function needs to retrieve the object (using
+    # Get-Item) to retrieve the access control entry (ACL), the referenced object
+    # will be populated with the object resulting from Get-Item. If the function
+    # did not need to use Get-Item, the referenced object will be left unchanged.
     #
     # The third argument is a string representing the path to the object for which
     # the ACL is to be retrieved. This path can be a file or folder path, or it can
@@ -40,7 +40,7 @@ function Get-AclSafely {
     # $strThisObjectPath = 'D:\Shares\Share\Accounting'
     # $boolSuccess = Get-AclSafely ([ref]$objThisFolderPermission) ([ref]$objThis) $strThisObjectPath
     #
-    # Version 1.0.20241110.0
+    # Version 1.0.20241112.0
     #endregion FunctionHeader #####################################################
 
     #region License ############################################################
@@ -244,7 +244,8 @@ function Get-AclSafely {
     }
 
     trap {
-        # Intentionally left empty to prevent terminating errors from halting processing
+        # Intentionally left empty to prevent terminating errors from halting
+        # processing
     }
 
     $refOutputObjThisFolderPermission = $args[0]
@@ -260,20 +261,27 @@ function Get-AclSafely {
     # Store current error preference; we will restore it after we do our work
     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
 
-    # Set ErrorActionPreference to SilentlyContinue; this will suppress error output.
-    # Terminating errors will not output anything, kick to the empty trap statement and then
-    # continue on. Likewise, non-terminating errors will also not output anything, but they
-    # do not kick to the trap statement; they simply continue on.
+    # Set ErrorActionPreference to SilentlyContinue; this will suppress error
+    # output. Terminating errors will not output anything, kick to the empty trap
+    # statement and then continue on. Likewise, non-terminating errors will also
+    # not output anything, but they do not kick to the trap statement; they simply
+    # continue on.
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # This needs to be a one-liner for error handling to work!:
     if ($strThisObjectPath.Contains('[') -or $strThisObjectPath.Contains(']') -or $strThisObjectPath.Contains('`')) { $versionPS = Get-PSVersion; if ($versionPS.Major -ge 3) { $objThis = Get-Item -LiteralPath $strThisObjectPath -Force; if ($versionPS -ge ([version]'7.3')) { if (@(Get-Module Microsoft.PowerShell.Security).Count -eq 0) { Import-Module Microsoft.PowerShell.Security } $objThisFolderPermission = [System.IO.FileSystemAclExtensions]::GetAccessControl($objThis) } else { $objThisFolderPermission = $objThis.GetAccessControl() } } elseif ($versionPS.Major -eq 2) { $objThis = Get-Item -Path ((($strThisObjectPath.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force; $objThisFolderPermission = $objThis.GetAccessControl() } else { $objThisFolderPermission = Get-Acl -Path ($strThisObjectPath.Replace('`', '``')) } } else { $objThisFolderPermission = Get-Acl -Path $strThisObjectPath }
     # The above one-liner is a messy variant of the following, which had to be
-    # converted to one line to prevent PowerShell v3 from throwing errors on the stack
-    # when copy-pasted into the shell (despite there not being any apparent error):
-    ###################################################################################
-    # TODO: Get-Acl is slow if there is latency between the folder structure and the domain controller, probably because of SID lookups. See if there is a way to speed this up without introducing external dependencies.
-    # TODO: Get-Acl allegedly does not exist on PowerShell on Linux (specifically at least not on PowerShell Core v6.2.4 on Ubuntu 18.04.4 or PowerShell v7.0.0 on Ubuntu 18.04.4). Confirm this and then re-work the below to get around the issue.
+    # converted to one line to prevent PowerShell v3 from throwing errors on the
+    # stack when copy-pasted into the shell (despite there not being any apparent
+    # error):
+    ###############################################################################
+    # TODO: Get-Acl is slow if there is latency between the folder structure and
+    # the domain controller, probably because of SID lookups. See if there is a way
+    # to speed this up without introducing external dependencies.
+    # TODO: Get-Acl allegedly does not exist on PowerShell on Linux (specifically
+    # at least not on PowerShell Core v6.2.4 on Ubuntu 18.04.4 or PowerShell v7.0.0
+    # on Ubuntu 18.04.4). Confirm this and then re-work the below to get around the
+    # issue.
     # if ($strThisObjectPath.Contains('[') -or $strThisObjectPath.Contains(']') -or $strThisObjectPath.Contains('`')) {
     #     # Can't use Get-Acl because Get-Acl doesn't support paths with brackets
     #     # or grave accent marks (backticks)
@@ -282,10 +290,11 @@ function Get-AclSafely {
     #         # PowerShell v3 and newer supports -LiteralPath
     #         $objThis = Get-Item -LiteralPath $strThisObjectPath -Force # -Force parameter is required to get hidden items
     #         if ($versionPS -ge ([version]'7.3')) {
-    #             # PowerShell v7.3 and newer do not have Microsoft.PowerShell.Security
-    #             # automatically loaded; likewise, the .GetAccessControl() method of
-    #             # a folder or file object is missing. So, we need to load the
-    #             # Microsoft.PowerShell.Security module and then call
+    #             # PowerShell v7.3 and newer do not have
+    #             # Microsoft.PowerShell.Security automatically loaded; likewise,
+    #             # the .GetAccessControl() method of a folder or file object is
+    #             # missing. So, we need to load the Microsoft.PowerShell.Security
+    #             # module and then call
     #             # [System.IO.FileSystemAclExtensions]::GetAccessControl()
     #             if (@(Get-Module Microsoft.PowerShell.Security).Count -eq 0) {
     #                 Import-Module Microsoft.PowerShell.Security
@@ -296,9 +305,9 @@ function Get-AclSafely {
     #             $objThisFolderPermission = $objThis.GetAccessControl()
     #         }
     #     } elseif ($versionPS.Major -eq 2) {
-    #         # We don't need to escape the right square bracket based on testing, but
-    #         # we do need to escape the left square bracket. Nevertheless, escaping
-    #         # both brackets does work and seems like the safest option.
+    #         # We don't need to escape the right square bracket based on testing,
+    #         # but we do need to escape the left square bracket. Nevertheless,
+    #         # escaping both brackets does work and seems like the safest option.
     #         # Additionally, escape the grave accent mark (backtick).
     #         $objThis = Get-Item -Path ((($strThisObjectPath.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force # -Force parameter is required to get hidden items
     #         $objThisFolderPermission = $objThis.GetAccessControl()
@@ -315,7 +324,7 @@ function Get-AclSafely {
     #     # No square brackets or grave accent marks (backticks); use Get-Acl
     #     $objThisFolderPermission = Get-Acl -Path $strThisObjectPath
     # }
-    ###################################################################################
+    ###############################################################################
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
