@@ -41,7 +41,7 @@ function Get-AvailableDriveLetter {
     # Note: it is conventional that A: and B: drives be reserved for floppy drives,
     # and that C: be reserved for the system drive.
     #
-    # Version 1.0.20241105.0
+    # Version 1.0.20241112.0
     #endregion FunctionHeader #####################################################
 
     #region License ############################################################
@@ -270,7 +270,6 @@ function Get-AvailableDriveLetter {
     $VerbosePreferenceAtStartOfFunction = $VerbosePreference
 
     if ((Test-Windows) -eq $true) {
-
         $arrAllPossibleLetters = 65..90 | ForEach-Object { [char]$_ }
 
         $versionPS = Get-PSVersion
@@ -281,10 +280,11 @@ function Get-AvailableDriveLetter {
                 ForEach-Object { $_.DeviceID } | Where-Object { $_.Length -eq 2 } |
                 Where-Object { $_[1] -eq ':' } | ForEach-Object { $_.ToUpper() } |
                 ForEach-Object { $_[0] } | Where-Object { $arrAllPossibleLetters -contains $_ }
-            # fifth-, fourth-, and third-to-last bits of pipeline ensures that we have a device ID like
-            # "C:" second-to-last bit of pipeline strips off the ':', leaving just the capital drive
-            # letter last bit of pipeline ensure that the drive letter is actually a letter; addresses
-            # legacy Netware edge cases
+            # fifth-, fourth-, and third-to-last bits of pipeline ensures that we
+            # have a device ID like "C:"; second-to-last bit of pipeline strips off
+            # the ':', leaving just the capital drive letter; last bit of pipeline
+            # ensure that the drive letter is actually a letter; addresses legacy
+            # Netware edge cases
             $VerbosePreference = $VerbosePreferenceAtStartOfFunction
 
             if ($boolExcludeMappedDriveLetters -eq $true) {
@@ -293,11 +293,12 @@ function Get-AvailableDriveLetter {
                     ForEach-Object { $_.LocalName } | Where-Object { $_.Length -eq 2 } |
                     Where-Object { $_[1] -eq ':' } | ForEach-Object { $_.ToUpper() } |
                     ForEach-Object { $_[0] } |
-                    Where-Object { $private.arrAllPossibleLetters -contains $_ }
-                # fifth-, fourth-, and third-to-last bits of pipeline ensures that we have a LocalName like "C:"
-                # second-to-last bit of pipeline strips off the ':', leaving just the capital drive letter
-                # last bit of pipeline ensure that the drive letter is actually a letter; addresses legacy
-                # Netware edge cases
+                    Where-Object { $arrAllPossibleLetters -contains $_ }
+                # fifth-, fourth-, and third-to-last bits of pipeline ensures that
+                # we have a LocalName like "C:"; second-to-last bit of pipeline
+                # strips off the ':', leaving just the capital drive letter; last
+                # bit of pipeline ensure that the drive letter is actually a
+                # letter; addresses legacy Netware edge cases
                 $VerbosePreference = $VerbosePreferenceAtStartOfFunction
             } else {
                 $arrUsedMappedDriveLetters = $null
@@ -308,10 +309,11 @@ function Get-AvailableDriveLetter {
                 ForEach-Object { $_.DeviceID } | Where-Object { $_.Length -eq 2 } |
                 Where-Object { $_[1] -eq ':' } | ForEach-Object { $_.ToUpper() } |
                 ForEach-Object { $_[0] } | Where-Object { $arrAllPossibleLetters -contains $_ }
-            # fifth-, fourth-, and third-to-last bits of pipeline ensures that we have a device ID like
-            # "C:" second-to-last bit of pipeline strips off the ':', leaving just the capital drive
-            # letter last bit of pipeline ensure that the drive letter is actually a letter; addresses
-            # legacy Netware edge cases
+            # fifth-, fourth-, and third-to-last bits of pipeline ensures that we
+            # have a device ID like "C:"; second-to-last bit of pipeline strips off
+            # the ':', leaving just the capital drive letter; last bit of pipeline
+            # ensure that the drive letter is actually a letter; addresses legacy
+            # Netware edge cases
             $VerbosePreference = $VerbosePreferenceAtStartOfFunction
 
             if ($boolExcludeMappedDriveLetters -eq $true) {
@@ -320,11 +322,12 @@ function Get-AvailableDriveLetter {
                     ForEach-Object { $_.LocalName } | Where-Object { $_.Length -eq 2 } |
                     Where-Object { $_[1] -eq ':' } | ForEach-Object { $_.ToUpper() } |
                     ForEach-Object { $_[0] } |
-                    Where-Object { $private.arrAllPossibleLetters -contains $_ }
-                # fifth-, fourth-, and third-to-last bits of pipeline ensures that we have a LocalName like "C:"
-                # second-to-last bit of pipeline strips off the ':', leaving just the capital drive letter
-                # last bit of pipeline ensure that the drive letter is actually a letter; addresses legacy
-                # Netware edge cases
+                    Where-Object { $arrAllPossibleLetters -contains $_ }
+                # fifth-, fourth-, and third-to-last bits of pipeline ensures that
+                # we have a LocalName like "C:"; second-to-last bit of pipeline
+                # strips off the ':', leaving just the capital drive letter; last
+                # bit of pipeline ensure that the drive letter is actually a
+                # letter; addresses legacy Netware edge cases
                 $VerbosePreference = $VerbosePreferenceAtStartOfFunction
             } else {
                 $arrUsedMappedDriveLetters = $null
@@ -332,12 +335,13 @@ function Get-AvailableDriveLetter {
         }
 
         if ($boolExcludePSDriveLetters -eq $true) {
-            $arrUsedPSDriveLetters = Get-PSDrive | ForEach-Object { $_.Name } | `
-                    Where-Object { $_.Length -eq 1 } | ForEach-Object { $_.ToUpper() } | `
-                    Where-Object { $private.arrAllPossibleLetters -contains $_ }
-            # Checking for a length of 1 strips out most PSDrives that are not drive letters
-            # Making sure that each item in the resultant set matches something in
-            # $arrAllPossibleLetters filters out edge cases, like a PSDrive named '1'
+            $arrUsedPSDriveLetters = Get-PSDrive | ForEach-Object { $_.Name } |
+                Where-Object { $_.Length -eq 1 } | ForEach-Object { $_.ToUpper() } |
+                Where-Object { $arrAllPossibleLetters -contains $_ }
+            # Checking for a length of 1 strips out most PSDrives that are not
+            # drive letters; making sure that each item in the resultant set
+            # matches something in $arrAllPossibleLetters filters out edge cases,
+            # like a PSDrive named '1'
         } else {
             $arrUsedPSDriveLetters = $null
         }
