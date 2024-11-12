@@ -19,10 +19,10 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 1.2.20241110.0
+# Function template version: 1.2.20241112.0
 
 function Invoke-SimpleFunction {
-    #region FunctionHeader #########################################################
+    #region FunctionHeader #####################################################
     ################### PUT A DESCRIPTION OF THIS FUNCTION ON THE FOLLLOWING LINE; ADD LINES AS NECESSARY ###################
     # Description of Function
     #
@@ -30,8 +30,8 @@ function Invoke-SimpleFunction {
     # X positional arguments are required:
     #
     ################### DESCRIBE WHAT EACH ARGUMENT IS ###################
-    # The first argument is a reference to a <object type> that will be used to store
-    # output.
+    # The first argument is a reference to a <object type> that will be used to
+    # store output.
     #
     # The second argument is a string representing ...
     #
@@ -62,63 +62,65 @@ function Invoke-SimpleFunction {
     #
     ################### DESCRIBE THE FUNCTION'S VERSION ###################
     # Version: 1.0.YYYYMMDD.0
-    #endregion FunctionHeader #########################################################
+    #endregion FunctionHeader #####################################################
 
-    #region License ################################################################
+    #region License ############################################################
     # Copyright (c) 20xx First Last
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in the
-    # Software without restriction, including without limitation the rights to use,
-    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-    # Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
     #
     # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    #endregion License ################################################################
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
 
-    #region Acknowledgements #######################################################
+    #region Acknowledgements ###################################################
     ################### GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE ###################
     # This function is derived from Get-FooInfo at the website:
     # https://github.com/foo/foo
     # retrieved on YYYY-MM-DD
-    #endregion Acknowledgements #######################################################
+    #endregion Acknowledgements ###################################################
 
-    #region Original Licenses ######################################################
+    #region Original Licenses ##################################################
     ################### INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE ###################
     # Although substantial modifications have been made, the original portions of
-    # Get-FooInfo that are incorporated into Invoke-SimpleFunction are subject to the
-    # following license:
+    # Get-FooInfo that are incorporated into Invoke-SimpleFunction are subject to
+    # the following license:
     #
     # Copyright 20xx First Last
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in the
-    # Software without restriction, including without limitation the rights to use,
-    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-    # Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
     #
     # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    #endregion Original Licenses ######################################################
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion Original Licenses ##################################################
 
-    #region FunctionsToSupportErrorHandling ########################################
+    #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         #region FunctionHeader #################################################
         # Function returns $null if no errors on on the $error stack;
@@ -233,7 +235,7 @@ function Invoke-SimpleFunction {
 
         return $boolErrorOccurred
     }
-    #endregion FunctionsToSupportErrorHandling ########################################
+    #endregion FunctionsToSupportErrorHandling ####################################
 
     trap {
         # Intentionally left empty to prevent terminating errors from halting
@@ -269,14 +271,15 @@ function Invoke-SimpleFunction {
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
 
-    # Store current error preference; we will restore it after we do the work of this
-    # function
+    # Store current error preference; we will restore it after we do the work of
+    # this function
     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
 
-    # Set ErrorActionPreference to SilentlyContinue; this will suppress error output.
-    # Terminating errors will not output anything, kick to the empty trap statement and
-    # then continue on. Likewise, non-terminating errors will also not output anything,
-    # but they do not kick to the trap statement; they simply continue on.
+    # Set ErrorActionPreference to SilentlyContinue; this will suppress error
+    # output. Terminating errors will not output anything, kick to the empty trap
+    # statement and then continue on. Likewise, non-terminating errors will also
+    # not output anything, but they do not kick to the trap statement; they simply
+    # continue on.
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Do the work of this function...
