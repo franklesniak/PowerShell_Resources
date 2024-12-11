@@ -1,10 +1,59 @@
-function Get-ChildItemSafely {
-    # Usage:
+function Get-ChildItemUsingObjectSafely {
+    #region FunctionHeader #####################################################
+    # Gets the child items of an object in a way that suppresses errors. This
+    # function replaces: $obj | Get-ChildItem (see example)
+    #
+    # Two positional arguments are required:
+    #
+    # The first argument is a reference to an array of child objects. If the
+    # operation was successful, the referenced array will be populated with the
+    # child objects returned from Get-ChildItem. If the operation was unsuccessful,
+    # the referenced array may be modified, but its contents would be undefined.
+    #
+    # The second argument is a reference to the parent object. The parent object
+    # will be passed to Get-ChildItem.
+    #
+    # The function returns a boolean value indicating whether the operation was
+    # successful. If the operation was successful, the child items will be
+    # populated in the array object referenced in the first argument. If the
+    # operation was unsuccessful, the referenced array object may still be
+    # modified, but its contents should be considered undefined.
+    #
+    # Example usage:
     # $objThisFolderItem = Get-Item 'D:\Shares\Share\Data'
     # $arrChildObjects = @()
-    # $boolSuccess = Get-ChildItemSafely ([ref]$arrChildObjects) ([ref]$objThisFolderItem)
+    # $boolSuccess = Get-ChildItemUsingObjectSafely ([ref]$arrChildObjects) ([ref]$objThisFolderItem)
+    #
+    # Version 1.1.20241211.0
+    #endregion FunctionHeader #####################################################
 
-    # TODO: Write a proper function header
+    #region License ############################################################
+    # Copyright (c) 2024 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining a copy
+    # of this software and associated documentation files (the "Software"), to deal
+    # in the Software without restriction, including without limitation the rights
+    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    # copies of the Software, and to permit persons to whom the Software is
+    # furnished to do so, subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be included in
+    # all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ############################################################
+
+    #region DownloadLocationNotice #############################################
+    # The most up-to-date version of this script can be found on the author's
+    # GitHub repository at:
+    # https://github.com/franklesniak/PowerShell_Resources
+    #endregion DownloadLocationNotice #############################################
 
     function Get-ReferenceToLastError {
         #region FunctionHeader #################################################
@@ -122,13 +171,12 @@ function Get-ChildItemSafely {
     }
 
     trap {
-        # Intentionally left empty to prevent terminating errors from halting processing
+        # Intentionally left empty to prevent terminating errors from halting
+        # processing
     }
 
     $refOutputArrChildObjects = $args[0]
     $refObjThisFolderItem = $args[1]
-
-    $arrChildObjects = @()
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
@@ -142,7 +190,7 @@ function Get-ChildItemSafely {
     # do not kick to the trap statement; they simply continue on.
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
-    $arrChildObjects = @(($refObjThisFolderItem.Value) | Get-ChildItem -Force)
+    $refOutputArrChildObjects.Value = @(($refObjThisFolderItem.Value) | Get-ChildItem -Force)
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -151,9 +199,8 @@ function Get-ChildItemSafely {
     $refNewestCurrentError = Get-ReferenceToLastError
 
     if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
-        $false
+        return $false
     } else {
-        $true
-        $refOutputArrChildObjects.Value = @($arrChildObjects)
+        return $true
     }
 }
