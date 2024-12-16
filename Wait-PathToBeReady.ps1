@@ -58,7 +58,7 @@ function Wait-PathToBeReady {
     # .OUTPUTS
     # A boolean value indiciating whether the path is available
 
-    # Version: 1.0.20241216.0
+    # Version: 1.0.20241216.1
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -322,7 +322,7 @@ function Wait-PathToBeReady {
     #region Process Input ######################################################
     if ([string]::IsNullOrEmpty($Path) -eq $true) {
         Write-Error 'When calling Wait-PathToBeReady, the Path parameter cannot be null or empty'
-        return
+        return $false
     }
 
     if ($DoNotAttemptGetPSDriveWorkaround.IsPresent -eq $true) {
