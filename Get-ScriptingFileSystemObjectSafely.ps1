@@ -41,7 +41,7 @@ function Get-ScriptingFileSystemObjectSafely {
     # FileSystemObject COM object. If the object is not created successfully, then
     # the referenced variable becomes undefined.
     #
-    # Version: 1.1.20241216.0
+    # Version: 1.1.20241216.1
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -209,6 +209,8 @@ function Get-ScriptingFileSystemObjectSafely {
         $refOutput = $args[0]
     }
     #endregion Assign Parameters and Arguments to Internally-Used Variables #######
+
+    # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
