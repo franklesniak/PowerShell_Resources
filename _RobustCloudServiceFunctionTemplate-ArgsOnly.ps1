@@ -19,7 +19,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 1.2.20241216.0
+# Function template version: 1.2.20241217.0
 
 function Get-DataFromCloudServiceCmdletRobust {
     #region FunctionHeader #####################################################
