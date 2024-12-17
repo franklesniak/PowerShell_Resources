@@ -19,25 +19,87 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 1.2.20241112.0
+# Function template version: 2.0.20241217.0
 
 function Get-DataFromCloudServiceCmdletRobust {
-    #region FunctionHeader #####################################################
-    ################### PUT A DESCRIPTION OF THIS FUNCTION ON THE FOLLLOWING LINE; ADD LINES AS NECESSARY ###################
-    # Description of Function
+    # .SYNOPSIS
+    # Very brief description of the function here. Limit the character width to
+    # 88 characters if the function will not be nested within another function,
+    # 84 characters if it will be nested once, 80 characters if it will be
+    # nested twice, etc.
     #
-    ################### DESCRIBE THE NUMBER OF POSITIONAL ARGUMENTS REQUIRED ###################
+    # .DESCRIPTION
+    # Longer-form description of the function here.
+    #
+    # .PARAMETER Parameter1
+    # This parameter is required; it is a reference to a <object type> that
+    # will be used to store output.
+    #
+    # .PARAMETER CurrentAttemptNumber
+    # This parameter is required; it is an integer indicating the current attempt
+    # number. When calling this function for the first time, it should be 1.
+    #
+    # .PARAMETER MaxAttempts
+    # This parameter is required; it is an integer representing the maximum number
+    # of attempts that the function will observe before giving up.
+    #
+    # .PARAMETER Parameter4
+    # This parameter is required; it is a string representing ...
+    #
+    # .PARAMETER Parameter5
+    # This parameter is optional; if supplied, it is an array of characters
+    # that represent ...
+    #
+    # .PARAMETER Parameter6
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter7
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter8
+    # This parameter is optional; if supplied, it is a string representation
+    # of ...
+    #
+    # .PARAMETER Parameter9
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter10
+    # This parameter is optional; if supplied, it is a string representation of
+    # ...
+    #
+    # .EXAMPLE
+    # $hashtableConfigIni = $null
+    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust -Parameter1 ([ref]$hashtableConfigIni) -CurrentAttemptNumber 1 -MaxAttempts 4 -Parameter4 '.\config.ini' -Parameter5 @(';') -Parameter6 $true -Parameter7 $true -Parameter8 'NoSection' -Parameter9 $true
+    #
+    # .EXAMPLE
+    # $hashtableConfigIni = $null
+    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust ([ref]$hashtableConfigIni) 1 4 '.\config.ini' @(';') $true $true 'NoSection' $true
+    #
+    # .INPUTS
+    # None. You can't pipe objects to Get-DataFromCloudServiceCmdletRobust.
+    #
+    # .OUTPUTS
+    # System.Boolean. Get-DataFromCloudServiceCmdletRobust returns a boolean value
+    # indiciating whether the process completed successfully. $true means the
+    # process completed successfully; $false means there was an error.
+    #
+    # .NOTES
+    ################### DELETE THIS BIT ABOUT ARGUMENTS IF IT DOESN'T APPLY ###################
+    # This function also supports the use of arguments, which can be used
+    # instead of parameters. If arguments are used instead of parameters, then
     # X positional arguments are required:
     #
-    ################### DESCRIBE WHAT EACH ARGUMENT IS ###################
     # The first argument is a reference to a <object type> that will be used to
     # store output.
     #
     # The second argument is an integer indicating the current attempt number. When
-    # calling this function for the first time, it should be 1
+    # calling this function for the first time, it should be 1.
     #
-    # The third argument is an integer representing the maximum number of attempts that
-    # the function will observe before giving up
+    # The third argument is an integer representing the maximum number of attempts
+    # that the function will observe before giving up.
     #
     # The fourth argument is a string representing ...
     #
@@ -53,22 +115,8 @@ function Get-DataFromCloudServiceCmdletRobust {
     #
     # If supplied, the tenth argument is a string representation of ...
     #
-    ################### OR DESCRIBE THE FUNCTION PARAMETERS ###################
-    # This function uses the following arguments:
-    #
-    ################### MODIFY THE FOLLOWING LINE TO DESCRIBE THE EXPECTED OUTPUT, WHICH SHOULD BE USED TO INDICATE SUCCESS OR FAILURE; ###################
-    ################### $true/$false works well for a binary situation; otherwise an integer may be more appropriate with 0 indicating success ###################
-    # The function returns $true if the process completed successfully; $false
-    # otherwise
-    #
-    ################### PROVIDE EXAMPLE USAGE ###################
-    # Example usage:
-    # $arrReturnData = @()
-    # $boolSuccess = Get-DataFromCloudServiceCmdletRobust ([ref]$arrReturnData) 1 8
-    #
     ################### DESCRIBE THE FUNCTION'S VERSION ###################
     # Version: 1.0.YYYYMMDD.0
-    #endregion FunctionHeader #####################################################
 
     #region License ############################################################
     # Copyright (c) 20xx First Last
@@ -102,8 +150,8 @@ function Get-DataFromCloudServiceCmdletRobust {
     #region Original Licenses ##################################################
     ################### INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE ###################
     # Although substantial modifications have been made, the original portions of
-    # Get-FooInfo that are incorporated into Invoke-SimpleFunction are subject to
-    # the following license:
+    # Get-FooInfo that are incorporated into Get-DataFromCloudServiceCmdletRobust
+    # are subject to the following license:
     #
     # Copyright 20xx First Last
     #
@@ -126,44 +174,59 @@ function Get-DataFromCloudServiceCmdletRobust {
     # SOFTWARE.
     #endregion Original Licenses ##################################################
 
+    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
+    param (
+        [ref]$Parameter1 = ([ref]$null),
+        [int]$CurrentAttemptNumber = 1,
+        [int]$MaxAttempts = 1,
+        [string]$Parameter4 = '',
+        [char[]]$Parameter5 = @(),
+        [boolean]$Parameter6 = $false,
+        [boolean]$Parameter7 = $false,
+        [string]$Parameter8 = '',
+        [boolean]$Parameter9 = $false,
+        [string]$Parameter10 = ''
+    )
+
     #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
-        #region FunctionHeader #################################################
+        #region FunctionHeader #############################################
         # Function returns $null if no errors on on the $error stack;
         # Otherwise, function returns a reference (memory pointer) to the last
         # error that occurred.
         #
-        # Version: 1.0.20241105.0
-        #endregion FunctionHeader #################################################
+        # Version: 1.0.20241211.0
+        #endregion FunctionHeader #############################################
 
-        #region License ########################################################
+        #region License ####################################################
         # Copyright (c) 2024 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining a
-        # copy of this software and associated documentation files (the
+        # Permission is hereby granted, free of charge, to any person obtaining
+        # a copy of this software and associated documentation files (the
         # "Software"), to deal in the Software without restriction, including
         # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to permit
-        # persons to whom the Software is furnished to do so, subject to the
-        # following conditions:
+        # distribute, sublicense, and/or sell copies of the Software, and to
+        # permit persons to whom the Software is furnished to do so, subject to
+        # the following conditions:
         #
-        # The above copyright notice and this permission notice shall be included
-        # in all copies or substantial portions of the Software.
+        # The above copyright notice and this permission notice shall be
+        # included in all copies or substantial portions of the Software.
         #
-        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-        # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-        # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-        # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-        # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-        # USE OR OTHER DEALINGS IN THE SOFTWARE.
-        #endregion License ########################################################
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #endregion License ####################################################
 
-        #region DownloadLocationNotice #########################################
-        # The most up-to-date version of this script can be found on the author's
-        # GitHub repository at:
+        #region DownloadLocationNotice #####################################
+        # The most up-to-date version of this script can be found on the
+        # author's GitHub repository at:
         # https://github.com/franklesniak/PowerShell_Resources
-        #endregion DownloadLocationNotice #########################################
+        #endregion DownloadLocationNotice #####################################
 
         if ($Error.Count -gt 0) {
             return ([ref]($Error[0]))
@@ -173,50 +236,51 @@ function Get-DataFromCloudServiceCmdletRobust {
     }
 
     function Test-ErrorOccurred {
-        #region FunctionHeader #################################################
+        #region FunctionHeader #############################################
         # Function accepts two positional arguments:
         #
-        # The first argument is a reference (memory pointer) to the last error that
-        # had occurred prior to calling the command in question - that is, the
-        # command that we want to test to see if an error occurred.
+        # The first argument is a reference (memory pointer) to the last error
+        # that had occurred prior to calling the command in question - that is,
+        # the command that we want to test to see if an error occurred.
         #
-        # The second argument is a reference to the last error that had occurred
-        # as-of the completion of the command in question.
+        # The second argument is a reference to the last error that had
+        # occurred as-of the completion of the command in question.
         #
         # Function returns $true if it appears that an error occurred; $false
         # otherwise
         #
-        # Version: 1.0.20241105.0
-        #endregion FunctionHeader #################################################
+        # Version: 1.0.20241211.0
+        #endregion FunctionHeader #############################################
 
-        #region License ########################################################
+        #region License ####################################################
         # Copyright (c) 2024 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining a
-        # copy of this software and associated documentation files (the
+        # Permission is hereby granted, free of charge, to any person obtaining
+        # a copy of this software and associated documentation files (the
         # "Software"), to deal in the Software without restriction, including
         # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to permit
-        # persons to whom the Software is furnished to do so, subject to the
-        # following conditions:
+        # distribute, sublicense, and/or sell copies of the Software, and to
+        # permit persons to whom the Software is furnished to do so, subject to
+        # the following conditions:
         #
-        # The above copyright notice and this permission notice shall be included
-        # in all copies or substantial portions of the Software.
+        # The above copyright notice and this permission notice shall be
+        # included in all copies or substantial portions of the Software.
         #
-        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-        # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-        # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-        # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-        # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-        # USE OR OTHER DEALINGS IN THE SOFTWARE.
-        #endregion License ########################################################
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #endregion License ####################################################
 
-        #region DownloadLocationNotice #########################################
-        # The most up-to-date version of this script can be found on the author's
-        # GitHub repository at:
+        #region DownloadLocationNotice #####################################
+        # The most up-to-date version of this script can be found on the
+        # author's GitHub repository at:
         # https://github.com/franklesniak/PowerShell_Resources
-        #endregion DownloadLocationNotice #########################################
+        #endregion DownloadLocationNotice #####################################
 
         # TO-DO: Validate input
 
@@ -229,7 +293,8 @@ function Get-DataFromCloudServiceCmdletRobust {
         } else {
             # One is $null, or both are $null
             # NOTE: ($args[0]) could be non-null, while ($args[1])
-            # could be null if $error was cleared; this does not indicate an error.
+            # could be null if $error was cleared; this does not indicate an
+            # error.
             # So:
             # If both are null, no error
             # If ($args[0]) is null and ($args[1]) is non-null, error
@@ -248,11 +313,46 @@ function Get-DataFromCloudServiceCmdletRobust {
         # processing
     }
 
-    ################### ASSIGN EACH POSITIONAL ARGUMENT TO A VARIABLE TO AVOID SCOPING ISSUES ###################
-    $refOutput = $args[0]
-    $intCurrentAttemptNumber = $args[1]
-    $intMaximumAttempts = $args[2]
-    $objPlaceHolderInputObject = $args[3]
+    ################### YOU CAN POTENTIALLY OMIT THIS SECTION AND USE THE PARAMETER VARIABLES IF YOU ARE NOT SUPPORTING ARGUMENTS ###################
+    #region Assign Parameters and Arguments to Internally-Used Variables #######
+    $boolUseArguments = $false
+    if (($args.Count -ge 9) -and ($args.Count -le 10)) {
+        # Arguments may have been supplied instead of parameters
+        ################### IT IS RECOMMENDED TO DO MORE VALIDATION HERE THAT PARAMETERS WERE NOT SUPPLIED ###################
+        $boolUseArguments = $true
+    }
+
+    if (-not $boolUseArguments) {
+        # Use parameters
+        $refOutput = $Parameter1
+        $intCurrentAttemptNumber = $CurrentAttemptNumber
+        $intMaximumAttempts = $MaxAttempts
+        $strFilePath = $Parameter4
+        $arrCharDriveLetters = $Parameter5
+        $boolUsePSDrive = $Parameter6
+        $boolRefreshPSDrive = $Parameter7
+        $strSecondaryPath = $Parameter8
+        $boolQuitOnError = $Parameter9
+        $strServerName = $Parameter10
+    } else {
+        # Use positional arguments
+        $refOutput = $args[0]
+        $intCurrentAttemptNumber = $args[1]
+        $intMaximumAttempts = $args[2]
+        $strFilePath = $args[3]
+        $arrCharDriveLetters = $args[4]
+        $boolUsePSDrive = $args[5]
+        $boolRefreshPSDrive = $args[6]
+        $strSecondaryPath = $args[7]
+        $boolQuitOnError = $args[8]
+
+        if ($args.Count -eq 10) {
+            $strServerName = $args[9]
+        } else {
+            $strServerName = ''
+        }
+    }
+    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
 
     ################### IF WARRANTED, VALIDATE INPUT HERE ###################
 
@@ -326,9 +426,9 @@ function Get-DataFromCloudServiceCmdletRobust {
             }
             Start-Sleep -Seconds ([math]::Pow(2, $intCurrentAttemptNumber))
 
-            ################### REPLACE THIS CALL WITH A RECURSIVE CALL TO THIS SAME FUNCTION; PAY ATTENTION TO THE NUMBER OF ARGUMENTS ###################
-            $objResultIndicator = Get-DataFromCloudServiceCmdletRobust $refOutput ($intCurrentAttemptNumber + 1) $intMaximumAttempts $objPlaceHolderInputObject
-            $objResultIndicator
+            ################### REPLACE THIS CALL WITH A RECURSIVE CALL TO THIS SAME FUNCTION; PAY ATTENTION TO THE PARAMETERS ###################
+            $objResultIndicator = Get-DataFromCloudServiceCmdletRobust -Parameter1 $refOutput -CurrentAttemptNumber ($intCurrentAttemptNumber + 1) -MaxAttempts $intMaximumAttempts -Parameter4 $strFilePath -Parameter5 $arrCharDriveLetters -Parameter6 $boolUsePSDrive -Parameter7 $boolRefreshPSDrive -Parameter8 $strSecondaryPath -Parameter9 $boolQuitOnError -Parameter10 $strServerName
+            return $objResultIndicator
         } else {
             # Number of attempts exceeded maximum
             if ($boolOutputErrorOnFunctionMaximumAttemptsExceeded) {
