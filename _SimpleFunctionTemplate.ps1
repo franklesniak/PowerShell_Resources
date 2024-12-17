@@ -19,7 +19,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 2.0.20241217.0
+# Function template version: 2.0.20241217.1
 
 function Invoke-SimpleFunction {
     # .SYNOPSIS
@@ -64,12 +64,11 @@ function Invoke-SimpleFunction {
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
-    # $intReturnCode = Invoke-SimpleFunction -Parameter1 ([ref]$hashtableConfigIni) -Parameter2 '.\config.ini' -Parameter3 @(";") -Parameter4 $true -Parameter5 $true -Parameter6 "NoSection" -Parameter7 $true
+    # $intReturnCode = Invoke-SimpleFunction -Parameter1 ([ref]$hashtableConfigIni) -Parameter2 '.\config.ini' -Parameter3 @(';') -Parameter4 $true -Parameter5 $true -Parameter6 'NoSection' -Parameter7 $true
     #
     # .EXAMPLE
-    # $strJoinedPath = ''
-    # $boolUseGetPSDriveWorkaround = $false
-    # $boolPathAvailable = Wait-PathToBeReady -Path 'D:\Shares\Share\Data' -ChildItemPath 'Subfolder' -ReferenceToJoinedPath ([ref]$strJoinedPath) -ReferenceToUseGetPSDriveWorkaround ([ref]$boolUseGetPSDriveWorkaround)
+    # $hashtableConfigIni = $null
+    # $intReturnCode = Invoke-SimpleFunction ([ref]$hashtableConfigIni) '.\config.ini' @(';') $true $true 'NoSection' $true
     #
     # .INPUTS
     # None. You can't pipe objects to Invoke-SimpleFunction.
