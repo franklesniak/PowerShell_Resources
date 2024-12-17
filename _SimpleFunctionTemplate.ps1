@@ -19,17 +19,72 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 1.2.20241112.0
+# Function template version: 2.0.20241216.0
 
 function Invoke-SimpleFunction {
-    #region FunctionHeader #####################################################
-    ################### PUT A DESCRIPTION OF THIS FUNCTION ON THE FOLLLOWING LINE; ADD LINES AS NECESSARY ###################
-    # Description of Function
+    # .SYNOPSIS
+    # Very brief description of the function here. Limit the character width to
+    # 88 characters if the function will not be nested within another function,
+    # 84 characters if it will be nested once, 80 characters if it will be
+    # nested twice, etc.
     #
-    ################### DESCRIBE THE NUMBER OF POSITIONAL ARGUMENTS REQUIRED ###################
+    # .DESCRIPTION
+    # Longer-form description of the function here.
+    #
+    # .PARAMETER Parameter1
+    # This parameter is required; it is a reference to a <object type> that
+    # will be used to store output.
+    #
+    # .PARAMETER Parameter2
+    # This parameter is required; it is a string representing ...
+    #
+    # .PARAMETER Parameter3
+    # This parameter is optional; if supplied, it is an array of characters
+    # that represent ...
+    #
+    # .PARAMETER Parameter4
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter5
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter6
+    # This parameter is optional; if supplied, it is a string representation
+    # of ...
+    #
+    # .PARAMETER Parameter7
+    # This parameter is optional; if supplied, it is a boolean value that
+    # indicates whether ...
+    #
+    # .PARAMETER Parameter8
+    # This parameter is optional; if supplied, it is a string representation of
+    # ...
+    #
+    # .EXAMPLE
+    # $hashtableConfigIni = $null
+    # $intReturnCode = Invoke-SimpleFunction -Parameter1 ([ref]$hashtableConfigIni) -Parameter2 '.\config.ini' -Parameter3 @(";") -Parameter4 $true -Parameter5 $true -Parameter6 "NoSection" -Parameter7 $true
+    #
+    # .EXAMPLE
+    # $strJoinedPath = ''
+    # $boolUseGetPSDriveWorkaround = $false
+    # $boolPathAvailable = Wait-PathToBeReady -Path 'D:\Shares\Share\Data' -ChildItemPath 'Subfolder' -ReferenceToJoinedPath ([ref]$strJoinedPath) -ReferenceToUseGetPSDriveWorkaround ([ref]$boolUseGetPSDriveWorkaround)
+    #
+    # .INPUTS
+    # None. You can't pipe objects to Invoke-SimpleFunction.
+    #
+    # .OUTPUTS
+    # System.Boolean. Invoke-SimpleFunction returns a boolean value indiciating
+    # whether the process completed successfully. $true means the process
+    # completed successfully; $false means there was an error.
+    #
+    # .NOTES
+    ################### DELETE THIS BIT ABOUT ARGUMENTS IF IT DOESN'T APPLY ###################
+    # This function also supports the use of arguments, which can be used
+    # instead of parameters. If arguments are used instead of parameters, then
     # X positional arguments are required:
     #
-    ################### DESCRIBE WHAT EACH ARGUMENT IS ###################
     # The first argument is a reference to a <object type> that will be used to
     # store output.
     #
@@ -47,22 +102,8 @@ function Invoke-SimpleFunction {
     #
     # If supplied, the eighth argument is a string representation of ...
     #
-    ################### OR DESCRIBE THE FUNCTION PARAMETERS ###################
-    # This function uses the following arguments:
-    #
-    ################### MODIFY THE FOLLOWING LINE TO DESCRIBE THE EXPECTED OUTPUT, WHICH SHOULD BE USED TO INDICATE SUCCESS OR FAILURE; ###################
-    ################### $true/$false works well for a binary situation; otherwise an integer may be more appropriate with 0 indicating success ###################
-    # The function returns $true if the process completed successfully; $false
-    # otherwise
-    #
-    ################### PROVIDE EXAMPLE USAGE ###################
-    # Example usage:
-    # $hashtableConfigIni = $null
-    # $intReturnCode = Invoke-SimpleFunction ([ref]$hashtableConfigIni) ".\config.ini" @(";") $true $true "NoSection" $true
-    #
     ################### DESCRIBE THE FUNCTION'S VERSION ###################
     # Version: 1.0.YYYYMMDD.0
-    #endregion FunctionHeader #####################################################
 
     #region License ############################################################
     # Copyright (c) 20xx First Last
@@ -119,6 +160,18 @@ function Invoke-SimpleFunction {
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
     #endregion Original Licenses ##################################################
+
+    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
+    param (
+        [ref]$Parameter1 = ([ref]$null),
+        [string]$Parameter2 = '',
+        [char[]]$Parameter3 = @(),
+        [boolean]$Parameter4 = $false,
+        [boolean]$Parameter5 = $false,
+        [string]$Parameter6 = '',
+        [boolean]$Parameter7 = $false,
+        [string]$Parameter8 = ''
+    )
 
     #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
@@ -242,9 +295,42 @@ function Invoke-SimpleFunction {
         # processing
     }
 
-    ################### ASSIGN EACH POSITIONAL ARGUMENT TO A VARIABLE TO AVOID SCOPING ISSUES ###################
-    $refOutput = $args[0]
-    $strFilePath = $args[1]
+    ################### YOU CAN POTENTIALLY OMIT THIS SECTION AND USE THE PARAMETER VARIABLES IF YOU ARE NOT SUPPORTING ARGUMENTS ###################
+    #region Assign Parameters and Arguments to Internally-Used Variables #######
+    $boolUseArguments = $false
+    if (($args.Count -ge 7) -and ($args.Count -le 8)) {
+        # Arguments may have been supplied instead of parameters
+        ################### IT IS RECOMMENDED TO DO MORE VALIDATION HERE THAT PARAMETERS WERE NOT SUPPLIED ###################
+        $boolUseArguments = $true
+    }
+
+    if (-not $boolUseArguments) {
+        # Use parameters
+        $refOutput = $Parameter1
+        $strFilePath = $Parameter2
+        $arrCharDriveLetters = $Parameter3
+        $boolUsePSDrive = $Parameter4
+        $boolRefreshPSDrive = $Parameter5
+        $strSecondaryPath = $Parameter6
+        $boolQuitOnError = $Parameter7
+        $strServerName = $Parameter8
+    } else {
+        # Use positional arguments
+        $refOutput = $args[0]
+        $strFilePath = $args[1]
+        $arrCharDriveLetters = $args[2]
+        $boolUsePSDrive = $args[3]
+        $boolRefreshPSDrive = $args[4]
+        $strSecondaryPath = $args[5]
+        $boolQuitOnError = $args[6]
+
+        if ($args.Count -eq 8) {
+            $strServerName = $args[7]
+        } else {
+            $strServerName = ''
+        }
+    }
+    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
 
     ################### IF WARRANTED, VALIDATE INPUT HERE ###################
 
