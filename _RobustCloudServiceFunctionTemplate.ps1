@@ -19,7 +19,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 2.0.20241217.0
+# Function template version: 2.0.20241219.0
 
 function Get-DataFromCloudServiceCmdletRobust {
     # .SYNOPSIS
@@ -87,10 +87,38 @@ function Get-DataFromCloudServiceCmdletRobust {
     # process completed successfully; $false means there was an error.
     #
     # .NOTES
-    ################### DELETE THIS BIT ABOUT ARGUMENTS IF IT DOESN'T APPLY ###################
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # X positional arguments are required:
+    ################### IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT ###################
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then X positional parameters are required:
+    #
+    # The first positional parameter is a reference to a <object type> that will be
+    # used to store output.
+    #
+    # The second positional parameter is an integer indicating the current attempt
+    # number. When calling this function for the first time, it should be 1.
+    #
+    # The third positional parameter is an integer representing the maximum number
+    # of attempts that the function will observe before giving up.
+    #
+    # The fourth positional parameter is a string representing ...
+    #
+    # The fifth positional parameter is an array of characters that represent ...
+    #
+    # The sixth positional parameter is a boolean value that indicates whether ...
+    #
+    # The seventh positional parameter is a boolean value that indicates whether
+    # ...
+    #
+    # The eighth positional parameter is a string representation of ...
+    #
+    # The nineth positional parameter is a boolean value that indicates whether ...
+    #
+    # If supplied, the tenth positional parameter is a string representation of ...
+    #
+    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # This function uses arguments instead of parameters. X positional arguments
+    # are required:
     #
     # The first argument is a reference to a <object type> that will be used to
     # store output.
@@ -313,46 +341,30 @@ function Get-DataFromCloudServiceCmdletRobust {
         # processing
     }
 
-    ################### YOU CAN POTENTIALLY OMIT THIS SECTION AND USE THE PARAMETER VARIABLES IF YOU ARE NOT SUPPORTING ARGUMENTS ###################
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if (($args.Count -ge 9) -and ($args.Count -le 10)) {
-        # Arguments may have been supplied instead of parameters
-        ################### IT IS RECOMMENDED TO DO MORE VALIDATION HERE THAT PARAMETERS WERE NOT SUPPLIED ###################
-        $boolUseArguments = $true
+    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    #region Assign Arguments to Internally-Used Variables ######################
+    if (($args.Count -lt 9) -or ($args.Count -gt 10)) {
+        # Error condition; return failure indicator:
+        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
+        return $false
     }
+    # Correct number of arguments supplied
+    $refOutput = $args[0]
+    $intCurrentAttemptNumber = $args[1]
+    $intMaximumAttempts = $args[2]
+    $strFilePath = $args[3]
+    $arrCharDriveLetters = $args[4]
+    $boolUsePSDrive = $args[5]
+    $boolRefreshPSDrive = $args[6]
+    $strSecondaryPath = $args[7]
+    $boolQuitOnError = $args[8]
 
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refOutput = $Parameter1
-        $intCurrentAttemptNumber = $CurrentAttemptNumber
-        $intMaximumAttempts = $MaxAttempts
-        $strFilePath = $Parameter4
-        $arrCharDriveLetters = $Parameter5
-        $boolUsePSDrive = $Parameter6
-        $boolRefreshPSDrive = $Parameter7
-        $strSecondaryPath = $Parameter8
-        $boolQuitOnError = $Parameter9
-        $strServerName = $Parameter10
+    if ($args.Count -eq 10) {
+        $strServerName = $args[9]
     } else {
-        # Use positional arguments
-        $refOutput = $args[0]
-        $intCurrentAttemptNumber = $args[1]
-        $intMaximumAttempts = $args[2]
-        $strFilePath = $args[3]
-        $arrCharDriveLetters = $args[4]
-        $boolUsePSDrive = $args[5]
-        $boolRefreshPSDrive = $args[6]
-        $strSecondaryPath = $args[7]
-        $boolQuitOnError = $args[8]
-
-        if ($args.Count -eq 10) {
-            $strServerName = $args[9]
-        } else {
-            $strServerName = ''
-        }
+        $strServerName = ''
     }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
+    #endregion Assign Arguments to Internally-Used Variables ######################
 
     ################### IF WARRANTED, VALIDATE INPUT HERE ###################
 

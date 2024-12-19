@@ -19,7 +19,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 2.0.20241217.1
+# Function template version: 2.0.20241219.0
 
 function Invoke-SimpleFunction {
     # .SYNOPSIS
@@ -79,10 +79,33 @@ function Invoke-SimpleFunction {
     # completed successfully; $false means there was an error.
     #
     # .NOTES
-    ################### DELETE THIS BIT ABOUT ARGUMENTS IF IT DOESN'T APPLY ###################
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # X positional arguments are required:
+    ################### IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT ###################
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then X positional parameters are required:
+    #
+    # The first positional parameter is a reference to a <object type> that will be
+    # used to store output.
+    #
+    # The second positional parameter is a string representing ...
+    #
+    # The third positional parameter is an array of characters that represent ...
+    #
+    # The fourth positional parameter is a boolean value that indicates whether ...
+    #
+    # The fifth positional parameter is a boolean value that indicates whether ...
+    #
+    # The sixth positional parameter is a string representation of ...
+    #
+    # The seventh positional parameter is a boolean value that indicates whether
+    # ...
+    #
+    # If supplied, the eighth positional parameter is a string representation of
+    # ...
+    #
+    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # This function uses arguments instead of parameters. X positional arguments
+    # are required:
     #
     # The first argument is a reference to a <object type> that will be used to
     # store output.
@@ -297,42 +320,28 @@ function Invoke-SimpleFunction {
         # processing
     }
 
-    ################### YOU CAN POTENTIALLY OMIT THIS SECTION AND USE THE PARAMETER VARIABLES IF YOU ARE NOT SUPPORTING ARGUMENTS ###################
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if (($args.Count -ge 7) -and ($args.Count -le 8)) {
-        # Arguments may have been supplied instead of parameters
-        ################### IT IS RECOMMENDED TO DO MORE VALIDATION HERE THAT PARAMETERS WERE NOT SUPPLIED ###################
-        $boolUseArguments = $true
+    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    #region Assign Arguments to Internally-Used Variables ######################
+    if (($args.Count -lt 7) -or ($args.Count -gt 8)) {
+        # Error condition; return failure indicator:
+        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
+        return $false
     }
+    # Correct number of arguments supplied
+    $refOutput = $args[0]
+    $strFilePath = $args[3]
+    $arrCharDriveLetters = $args[2]
+    $boolUsePSDrive = $args[3]
+    $boolRefreshPSDrive = $args[4]
+    $strSecondaryPath = $args[5]
+    $boolQuitOnError = $args[6]
 
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refOutput = $Parameter1
-        $strFilePath = $Parameter2
-        $arrCharDriveLetters = $Parameter3
-        $boolUsePSDrive = $Parameter4
-        $boolRefreshPSDrive = $Parameter5
-        $strSecondaryPath = $Parameter6
-        $boolQuitOnError = $Parameter7
-        $strServerName = $Parameter8
+    if ($args.Count -eq 8) {
+        $strServerName = $args[9]
     } else {
-        # Use positional arguments
-        $refOutput = $args[0]
-        $strFilePath = $args[1]
-        $arrCharDriveLetters = $args[2]
-        $boolUsePSDrive = $args[3]
-        $boolRefreshPSDrive = $args[4]
-        $strSecondaryPath = $args[5]
-        $boolQuitOnError = $args[6]
-
-        if ($args.Count -eq 8) {
-            $strServerName = $args[7]
-        } else {
-            $strServerName = ''
-        }
+        $strServerName = ''
     }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
+    #endregion Assign Arguments to Internally-Used Variables ######################
 
     ################### IF WARRANTED, VALIDATE INPUT HERE ###################
 
