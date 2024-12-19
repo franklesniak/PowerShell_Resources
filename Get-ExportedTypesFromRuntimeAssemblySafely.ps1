@@ -43,19 +43,19 @@ function Get-ExportedTypesFromRuntimeAssemblySafely {
     # error.
     #
     # .NOTES
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # two positional arguments are required:
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then two positional parameters are required:
     #
-    # The first argument is a reference to a System.Object[] (array) that will
-    # be used to store output. The function guarantees that the output will
-    # always be an array, even when a single item is returned.
+    # The first positional parameter is a reference to a System.Object[] (array)
+    # that will be used to store output. The function guarantees that the output
+    # will always be an array, even when a single item is returned.
     #
-    # The second argument is a reference (pointer) to a
+    # The second positional parameter is a reference (pointer) to a
     # System.Reflection.RuntimeAssembly object from which the function will get
     # its exported types.
     #
-    # Version: 2.0.20241218.0
+    # Version: 2.0.20241219.0
 
     #region License ########################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -210,27 +210,6 @@ function Get-ExportedTypesFromRuntimeAssemblySafely {
         # processing
     }
 
-    #region Assign Parameters and Arguments to Internally-Used Variables ###
-    $boolUseArguments = $false
-    if ($args.Count -eq 2) {
-        # Arguments may have been supplied instead of parameters
-        if (($null -eq $ReferenceToArrayOfExportedTypes.Value) -and ($null -eq $ReferenceToSystemReflectionRuntimeAssembly.Value)) {
-            # Parameters were all uninitialized; use arguments
-            $boolUseArguments = $true
-        }
-    }
-
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refArrayOfExportedTypes = $ReferenceToArrayOfExportedTypes
-        $refSystemReflectionRuntimeAssembly = $ReferenceToSystemReflectionRuntimeAssembly
-    } else {
-        # Use positional arguments
-        $refArrayOfExportedTypes = $args[0]
-        $refSystemReflectionRuntimeAssembly = $args[1]
-    }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables ###
-
     # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
@@ -248,7 +227,7 @@ function Get-ExportedTypesFromRuntimeAssemblySafely {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Export the types from the System.Reflection.RuntimeAssembly object
-    $refArrayOfExportedTypes.Value = @(($refSystemReflectionRuntimeAssembly.Value).GetExportedTypes())
+    $ReferenceToArrayOfExportedTypes.Value = @(($ReferenceToSystemReflectionRuntimeAssembly.Value).GetExportedTypes())
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference

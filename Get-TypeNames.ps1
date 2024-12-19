@@ -7,6 +7,11 @@ function Get-TypeNames {
     # is useful for obtaining a list of all available types to determine if
     # a type is missing and needs to be loaded.
     #
+    # By default, this function de-duplicates the list of type names. This
+    # operation is relatively slow, so if you are not concerned about having
+    # duplicate type names in the array, you can use the -DoNotRemoveDuplicates
+    # switch to enhance performance slightly.
+    #
     # .PARAMETER ReferenceToArrayOfTypeNames
     # This parameter is required; it is a reference to an array. If the
     # function is successful, the referenced object will be populated with an
@@ -30,10 +35,6 @@ function Get-TypeNames {
     # $arrTypeNames = @()
     # $intReturnCode = Get-TypeNames ([ref]$arrTypeNames)
     #
-    # .EXAMPLE
-    # $arrTypeNames = @()
-    # $intReturnCode = Get-TypeNames ([ref]$arrTypeNames) $true
-    #
     # .INPUTS
     # None. You can't pipe objects to Get-TypeNames.
     #
@@ -44,19 +45,14 @@ function Get-TypeNames {
     # failure; and, a positive number indicates that a warning occurred.
     #
     # .NOTES
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # one or two positional arguments are required:
+    # This function also supports the use of a positional parameter instead of a
+    # named parameter. If positional parameters are used intead of named
+    # parameters, then one positional parameter is required: it is a reference to
+    # an array. If the function is successful, the referenced object will be
+    # populated with an array of all type names. If the function fails, then the
+    # referenced object is undefined.
     #
-    # The first argument is required; it is a reference to an array. If the
-    # function is successful, the referenced object will be populated with an array
-    # of all type names. If the function fails, then the referenced object is
-    # undefined.
-    #
-    # The second argument is optional; if it is present and anything other than
-    # $null, then the function will not remove duplicate type names from the array.
-    #
-    # Version: 2.0.20241218.0
+    # Version: 2.0.20241219.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -130,19 +126,19 @@ function Get-TypeNames {
         # error.
         #
         # .NOTES
-        # This function also supports the use of arguments, which can be used
-        # instead of parameters. If arguments are used instead of parameters, then
-        # two positional arguments are required:
+        # This function also supports the use of positional parameters instead of named
+        # parameters. If positional parameters are used intead of named parameters,
+        # then two positional parameters are required:
         #
-        # The first argument is a reference to a System.Object[] (array) that will
-        # be used to store output. The function guarantees that the output will
-        # always be an array, even when a single item is returned.
+        # The first positional parameter is a reference to a System.Object[] (array)
+        # that will be used to store output. The function guarantees that the output
+        # will always be an array, even when a single item is returned.
         #
-        # The second argument is a reference (pointer) to a
+        # The second positional parameter is a reference (pointer) to a
         # System.Reflection.RuntimeAssembly object from which the function will get
         # its exported types.
         #
-        # Version: 2.0.20241218.0
+        # Version: 2.0.20241219.0
 
         #region License ########################################################
         # Copyright (c) 2024 Frank Lesniak
@@ -297,27 +293,6 @@ function Get-TypeNames {
             # processing
         }
 
-        #region Assign Parameters and Arguments to Internally-Used Variables ###
-        $boolUseArguments = $false
-        if ($args.Count -eq 2) {
-            # Arguments may have been supplied instead of parameters
-            if (($null -eq $ReferenceToArrayOfExportedTypes.Value) -and ($null -eq $ReferenceToSystemReflectionRuntimeAssembly.Value)) {
-                # Parameters were all uninitialized; use arguments
-                $boolUseArguments = $true
-            }
-        }
-
-        if (-not $boolUseArguments) {
-            # Use parameters
-            $refArrayOfExportedTypes = $ReferenceToArrayOfExportedTypes
-            $refSystemReflectionRuntimeAssembly = $ReferenceToSystemReflectionRuntimeAssembly
-        } else {
-            # Use positional arguments
-            $refArrayOfExportedTypes = $args[0]
-            $refSystemReflectionRuntimeAssembly = $args[1]
-        }
-        #endregion Assign Parameters and Arguments to Internally-Used Variables ###
-
         # TODO: Validate input
 
         # Retrieve the newest error on the stack prior to doing work
@@ -335,7 +310,7 @@ function Get-TypeNames {
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
         # Export the types from the System.Reflection.RuntimeAssembly object
-        $refArrayOfExportedTypes.Value = @(($refSystemReflectionRuntimeAssembly.Value).GetExportedTypes())
+        $ReferenceToArrayOfExportedTypes.Value = @(($ReferenceToSystemReflectionRuntimeAssembly.Value).GetExportedTypes())
 
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -352,47 +327,12 @@ function Get-TypeNames {
         }
     }
 
-    Write-Host $args.Count
-
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if (($args.Count -ge 1) -and ($args.Count -le 2)) {
-        # Arguments may have been supplied instead of parameters
-        if (($null -eq $ReferenceToArrayOfTypeNames.Value)) {
-            # The first parameter was uninitialized
-            if ($null -eq $DoNotRemoveDuplicates) {
-                # The second parameter was uninitialized
-                $boolUseArguments = $true
-            } elseif ($DoNotRemoveDuplicates.IsPresent -eq $false) {
-                # The second parameter was not provided
-                $boolUseArguments = $true
-            }
-        }
-    }
-
-    Write-Host $boolUseArguments
-
     $boolRemoveDuplicates = $true
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refArrTypeNames = $ReferenceToArrayOfTypeNames
-        if ($null -ne $DoNotRemoveDuplicates) {
-            if ($DoNotRemoveDuplicates.IsPresent) {
-                $boolRemoveDuplicates = $false
-            }
-        }
-    } else {
-        # Use positional arguments
-        $refArrTypeNames = $args[0]
-        if ($args.Count -eq 2) {
-            if ($null -ne $args[1]) {
-                $boolRemoveDuplicates = $false
-            }
+    if ($null -ne $DoNotRemoveDuplicates) {
+        if ($DoNotRemoveDuplicates.IsPresent) {
+            $boolRemoveDuplicates = $false
         }
     }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
-    Write-Host $boolRemoveDuplicates
 
     # TODO: Validate input
 
@@ -427,7 +367,9 @@ function Get-TypeNames {
             if (-not $boolSuccess) {
                 # An error occurred running .GetExportedTypes() on this assembly
                 # Make the return code positive, indicating a warning
-                $intFunctionReturnCode++
+                if ($intFunctionReturnCode -ge 0) {
+                    $intFunctionReturnCode++
+                }
             } else {
                 # No error
                 $intTypeCount = $arrReturnData.Count
@@ -443,9 +385,9 @@ function Get-TypeNames {
     }
 
     if ($boolRemoveDuplicates) {
-        $refArrTypeNames.Value = $listTypes.ToArray() | Select-Object -Unique
+        $ReferenceToArrayOfTypeNames.Value = $listTypes.ToArray() | Select-Object -Unique
     } else {
-        $refArrTypeNames.Value = $listTypes.ToArray()
+        $ReferenceToArrayOfTypeNames.Value = $listTypes.ToArray()
     }
 
     return $intFunctionReturnCode
