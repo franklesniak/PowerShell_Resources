@@ -47,25 +47,25 @@ function Remove-SpecificAccessRuleRobust {
     # process completed successfully; $false means there was an error.
     #
     # .NOTES
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # four positional arguments are required:
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then four positional parameters are required:
     #
-    # The first argument is an integer indicating the current attempt number. When
-    # calling this function for the first time, it should be 1.
+    # The first positional parameter is an integer indicating the current attempt
+    # number. When calling this function for the first time, it should be 1.
     #
-    # The second argument is an integer representing the maximum number of attempts
-    # that the function will observe before giving up.
+    # The second positional parameter is an integer representing the maximum number
+    # of attempts that the function will observe before giving up.
     #
-    # The third argument is a reference to a
+    # The third positional parameter is a reference to a
     # System.Security.AccessControl.DirectorySecurity or similar object from which
     # the access control entry will be removed.
     #
-    # The fourth argument is a reference to a
+    # The fourth positional parameter is a reference to a
     # System.Security.AccessControl.FileSystemAccessRule or similar object that
     # will be removed from the access control list.
     #
-    # Version: 1.1.20241217.0
+    # Version: 1.1.20241219.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -221,32 +221,6 @@ function Remove-SpecificAccessRuleRobust {
         # processing
     }
 
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if ($args.Count -eq 4) {
-        # Arguments may have been supplied instead of parameters
-        if (($CurrentAttemptNumber -eq 1) -and ($MaxAttempts -eq 1) -and ($null -eq $ReferenceToAccessControlListObject.Value) -and ($null -eq $ReferenceToAccessRuleObject.Value)) {
-            # Parameters all match default values, so it's safe to say that
-            # arguments were used instead of parameters
-            $boolUseArguments = $true
-        }
-    }
-
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $intCurrentAttemptNumber = $CurrentAttemptNumber
-        $intMaximumAttempts = $MaxAttempts
-        $refAccessControlSecurity = $ReferenceToAccessControlListObject
-        $refAccessControlAccessRule = $ReferenceToAccessRuleObject
-    } else {
-        # Use positional arguments
-        $intCurrentAttemptNumber = $args[0]
-        $intMaximumAttempts = $args[1]
-        $refAccessControlSecurity = $args[2]
-        $refAccessControlAccessRule = $args[3]
-    }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
     # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
@@ -264,7 +238,7 @@ function Remove-SpecificAccessRuleRobust {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Remove the access rule/access control entry from the list
-    ($refAccessControlSecurity.Value).RemoveAccessRuleSpecific($refAccessControlAccessRule.Value)
+    ($ReferenceToAccessControlListObject.Value).RemoveAccessRuleSpecific($ReferenceToAccessRuleObject.Value)
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -274,10 +248,10 @@ function Remove-SpecificAccessRuleRobust {
 
     if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
         # Error occurred
-        if ($intCurrentAttemptNumber -lt $intMaximumAttempts) {
-            Start-Sleep -Seconds ([math]::Pow(2, $intCurrentAttemptNumber))
+        if ($CurrentAttemptNumber -lt $MaxAttempts) {
+            Start-Sleep -Seconds ([math]::Pow(2, $CurrentAttemptNumber))
 
-            $objResultIndicator = Remove-SpecificAccessRuleRobust -CurrentAttemptNumber ($intCurrentAttemptNumber + 1) -MaxAttempts $intMaximumAttempts -ReferenceToAccessControlListObject $refAccessControlSecurity -ReferenceToAccessRuleObject $refAccessControlAccessRule
+            $objResultIndicator = Remove-SpecificAccessRuleRobust -CurrentAttemptNumber ($CurrentAttemptNumber + 1) -MaxAttempts $MaxAttempts -ReferenceToAccessControlListObject $ReferenceToAccessControlListObject -ReferenceToAccessRuleObject $ReferenceToAccessRuleObject
             return $objResultIndicator
         } else {
             # Number of attempts exceeded maximum; return failure indicator:

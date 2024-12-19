@@ -50,24 +50,24 @@ function Get-DOS83Path {
     # completed successfully; $false means there was an error.
     #
     # .NOTES
-    # This function also supports the use of arguments, which can be used
-    # instead of parameters. If arguments are used instead of parameters, then
-    # two or three positional arguments are required:
+    # This function also supports the use of positional parameters instead of
+    # named parameters. If positional parameters are used intead of named
+    # parameters, then two or three positional parameters are required:
     #
-    # The first argument is a reference to a string. If the process was
-    # successful, the referenced string will be updated to contain the short
-    # DOS 8.3 path. If the process is not successful, then the contents of the
-    # string are undefined.
+    # The first positional parameter is a reference to a string. If the process
+    # was successful, the referenced string will be updated to contain the
+    # short DOS 8.3 path. If the process is not successful, then the contents
+    # of the string are undefined.
     #
-    # The second argument is a string containing the path of the folder or file
-    # for which we want to retrieve its DOS 8.3 file path.
+    # The second positional parameter is a string containing the path of the
+    # folder or file for which we want to retrieve its DOS 8.3 file path.
     #
-    # The third argument is optional. If supplied, it is a reference to a
-    # Scripting.FileSystemObject object. Supplying this parameter can speed up
-    # performance by avoiding to have to create the Scripting.FileSystemObject
-    # every time this function is called.
+    # The third positional parameter is optional. If supplied, it is a
+    # reference to a Scripting.FileSystemObject object. Supplying this
+    # parameter can speed up performance by avoiding to have to create the
+    # Scripting.FileSystemObject every time this function is called.
     #
-    # Version: 1.1.20241217.0
+    # Version: 1.1.20241219.0
 
     #region License ########################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -252,16 +252,17 @@ function Get-DOS83Path {
         # there was an error.
         #
         # .NOTES
-        # This function also supports the use of an argument, which can be used
-        # instead of the parameter.
+        # This function also supports the use of a positional parameter instead of a
+        # named parameter. If a positional parameter is used intead of a named
+        # parameter, then exactly one positional parameter is required:
         #
-        # The first argument and only argument is a reference to an object that will
+        # The first and only positional parameter is a reference to an object that will
         # become the FileSystemObject COM object. If the object is created
         # successfully, then the referenced object will be updated, storing the
         # FileSystemObject COM object. If the object is not created successfully, then
         # the referenced variable becomes undefined.
         #
-        # Version: 1.1.20241217.0
+        # Version: 1.1.20241219.0
 
         #region License ############################################################
         # Copyright (c) 2024 Frank Lesniak
@@ -414,25 +415,6 @@ function Get-DOS83Path {
             # processing
         }
 
-        #region Assign Parameters and Arguments to Internally-Used Variables #######
-        $boolUseArguments = $false
-        if ($args.Count -eq 1) {
-            # Arguments may have been supplied instead of parameters
-            if ($null -eq $ReferenceToStoreObject.Value) {
-                # We have one argument and nothing supplied in the parameter
-                $boolUseArguments = $true
-            }
-        }
-
-        if (-not $boolUseArguments) {
-            # Use parameters
-            $refOutput = $ReferenceToStoreObject
-        } else {
-            # Use positional arguments
-            $refOutput = $args[0]
-        }
-        #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
         # TODO: Validate input
 
         # Retrieve the newest error on the stack prior to doing work
@@ -450,7 +432,7 @@ function Get-DOS83Path {
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
         # Do the work of this function...
-        $refOutput.Value = New-Object -ComObject Scripting.FileSystemObject
+        $ReferenceToStoreObject.Value = New-Object -ComObject Scripting.FileSystemObject
 
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -517,23 +499,24 @@ function Get-DOS83Path {
         # means there was an error.
         #
         # .NOTES
-        # This function also supports the use of arguments, which can be used
-        # instead of parameters. If arguments are used instead of parameters, then
-        # three positional arguments are required:
+        # This function also supports the use of positional parameters instead of
+        # named parameters. If positional parameters are used intead of named
+        # parameters, then three positional parameters are required:
         #
-        # The first argument is a reference to an object that will become the
-        # Folder COM object created using Scripting.FileSystemObject. If the object
-        # is created successfully, then the referenced object will be updated,
-        # storing the Folder COM object. If the object is not created successfully,
-        # then the referenced variable becomes undefined.
+        # The first positional parameter is a reference to an object that will
+        # become the Folder COM object created using Scripting.FileSystemObject. If
+        # the object is created successfully, then the referenced object will be
+        # updated, storing the Folder COM object. If the object is not created
+        # successfully, then the referenced variable becomes undefined.
         #
-        # The second argument is a reference to a Scripting.FileSystemObject COM
-        # object, which has already been initialized.
+        # The second positional parameter is a reference to a
+        # Scripting.FileSystemObject COM object, which has already been
+        # initialized.
         #
-        # The third argument is a string containing the path to the folder for
-        # which this function will obtain the Folder COM object.
+        # The third positional parameter is a string containing the path to the
+        # folder for which this function will obtain the Folder COM object.
         #
-        # Version: 1.1.20241217.0
+        # Version: 1.1.20241219.0
 
         #region License ########################################################
         # Copyright (c) 2024 Frank Lesniak
@@ -689,29 +672,6 @@ function Get-DOS83Path {
             # processing
         }
 
-        #region Assign Parameters and Arguments to Internally-Used Variables ###
-        $boolUseArguments = $false
-        if ($args.Count -eq 3) {
-            # Arguments may have been supplied instead of parameters
-            if (($null -eq $ReferenceToFolderObject.Value) -and ($null -eq $ReferenceToScriptingFileSystemObject.Value) -and [string]::IsNullOrEmpty($Path)) {
-                # Parameters were not supplied; use arguments
-                $boolUseArguments = $true
-            }
-        }
-
-        if (-not $boolUseArguments) {
-            # Use parameters
-            $refFSOFolderObject = $ReferenceToFolderObject
-            $refScriptingFileSystemObject = $ReferenceToScriptingFileSystemObject
-            $strPath = $Path
-        } else {
-            # Use positional arguments
-            $refFSOFolderObject = $args[0]
-            $refScriptingFileSystemObject = $args[1]
-            $strPath = $args[2]
-        }
-        #endregion Assign Parameters and Arguments to Internally-Used Variables ###
-
         # TODO: Validate input
 
         # Retrieve the newest error on the stack prior to doing work
@@ -729,7 +689,7 @@ function Get-DOS83Path {
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
         # Get the folder object
-        $refFSOFolderObject.Value = ($refScriptingFileSystemObject.Value).GetFolder($strPath)
+        $ReferenceToFolderObject.Value = ($ReferenceToScriptingFileSystemObject.Value).GetFolder($Path)
 
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -796,23 +756,24 @@ function Get-DOS83Path {
         # means there was an error.
         #
         # .NOTES
-        # This function also supports the use of arguments, which can be used
-        # instead of parameters. If arguments are used instead of parameters, then
-        # three positional arguments are required:
+        # This function also supports the use of positional parameters instead of
+        # named parameters. If positional parameters are used intead of named
+        # parameters, then three positional parameters are required:
         #
-        # The first argument is a reference to an object that will become the File
-        # COM object created using Scripting.FileSystemObject. If the object is
-        # created successfully, then the referenced object will be updated, storing
-        # the File COM object. If the object is not created successfully, then the
-        # referenced variable becomes undefined.
+        # The first positional parameter is a reference to an object that will
+        # become the File COM object created using Scripting.FileSystemObject. If
+        # the object is created successfully, then the referenced object will be
+        # updated, storing the File COM object. If the object is not created
+        # successfully, then the referenced variable becomes undefined.
         #
-        # The second argument is a reference to a Scripting.FileSystemObject COM
-        # object, which has already been initialized.
+        # The second positional parameter is a reference to a
+        # Scripting.FileSystemObject COM object, which has already been
+        # initialized.
         #
-        # The third argument is a string containing the path to the file for which
-        # this function will obtain the File COM object.
+        # The third positional parameter is a string containing the path to the
+        # file for which this function will obtain the File COM object.
         #
-        # Version: 1.1.20241217.0
+        # Version: 1.1.20241219.0
 
         #region License ########################################################
         # Copyright (c) 2024 Frank Lesniak
@@ -968,29 +929,6 @@ function Get-DOS83Path {
             # processing
         }
 
-        #region Assign Parameters and Arguments to Internally-Used Variables ###
-        $boolUseArguments = $false
-        if ($args.Count -eq 3) {
-            # Arguments may have been supplied instead of parameters
-            if (($null -eq $ReferenceToFileObject.Value) -and ($null -eq $ReferenceToScriptingFileSystemObject.Value) -and [string]::IsNullOrEmpty($Path)) {
-                # Parameters were not supplied; use arguments
-                $boolUseArguments = $true
-            }
-        }
-
-        if (-not $boolUseArguments) {
-            # Use parameters
-            $refFSOFileObject = $ReferenceToFileObject
-            $refScriptingFileSystemObject = $ReferenceToScriptingFileSystemObject
-            $strPath = $Path
-        } else {
-            # Use positional arguments
-            $refFSOFileObject = $args[0]
-            $refScriptingFileSystemObject = $args[1]
-            $strPath = $args[2]
-        }
-        #endregion Assign Parameters and Arguments to Internally-Used Variables ###
-
         # TODO: Validate input
 
         # Retrieve the newest error on the stack prior to doing work
@@ -1008,7 +946,7 @@ function Get-DOS83Path {
         $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
         # Get the file object
-        $refFSOFileObject.Value = ($refScriptingFileSystemObject.Value).GetFile($strPath)
+        $ReferenceToFileObject.Value = ($ReferenceToScriptingFileSystemObject.Value).GetFile($Path)
 
         # Restore the former error preference
         $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -1030,33 +968,8 @@ function Get-DOS83Path {
         # processing
     }
 
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if (($args.Count -ge 2) -or ($args.Count -le 3)) {
-        # Arguments may have been supplied instead of parameters
-        if (($null -eq $ReferenceToDOS8Dot3Path.Value) -and ([string]::IsNullOrEmpty($Path)) -and ($null -eq $ReferenceToScriptingFileSystemObject.Value)) {
-            # All parameters are uninitialized; arguments were definitely used
-            $boolUseArguments = $true
-        }
-    }
-
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refDOS83Path = $ReferenceToDOS8Dot3Path
-        $strPath = $Path
-        $refScriptingFileSystemObject = $ReferenceToScriptingFileSystemObject
-    } else {
-        # Use positional arguments
-        $refDOS83Path = $args[0]
-        $strPath = $args[1]
-        if ($args.Count -gt 2) {
-            $refScriptingFileSystemObject = $args[2]
-        }
-    }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
     # Get the Scripting.FileSystemObject if necessary
-    if ($null -eq $refScriptingFileSystemObject.Value) {
+    if ($null -eq $ReferenceToScriptingFileSystemObject.Value) {
         $boolUseReferencedFSO = $false
         $objScriptingFileSystemObject = $null
         $boolSuccess = Get-ScriptingFileSystemObjectSafely -ReferenceToStoreObject ([ref]$objScriptingFileSystemObject)
@@ -1073,16 +986,16 @@ function Get-DOS83Path {
     $objFSOFolderOrFileObject = $null
     # Try to retrieve a folder object first
     if ($boolUseReferencedFSO) {
-        $boolSuccess = Get-FolderObjectSafelyUsingScriptingFileSystemObject -ReferenceToFolderObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject $refScriptingFileSystemObject -Path $strPath
+        $boolSuccess = Get-FolderObjectSafelyUsingScriptingFileSystemObject -ReferenceToFolderObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject $ReferenceToScriptingFileSystemObject -Path $Path
     } else {
-        $boolSuccess = Get-FolderObjectSafelyUsingScriptingFileSystemObject -ReferenceToFolderObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject ([ref]$objScriptingFileSystemObject) -Path $strPath
+        $boolSuccess = Get-FolderObjectSafelyUsingScriptingFileSystemObject -ReferenceToFolderObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject ([ref]$objScriptingFileSystemObject) -Path $Path
     }
     if ($boolSuccess -eq $false) {
         # Failed to retrieve folder object; perhaps it's a file?
         if ($boolUseReferencedFSO) {
-            $boolSuccess = Get-FileObjectSafelyUsingScriptingFileSystemObject -ReferenceToFileObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject $refScriptingFileSystemObject -Path $strPath
+            $boolSuccess = Get-FileObjectSafelyUsingScriptingFileSystemObject -ReferenceToFileObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject $ReferenceToScriptingFileSystemObject -Path $Path
         } else {
-            $boolSuccess = Get-FileObjectSafelyUsingScriptingFileSystemObject -ReferenceToFileObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject ([ref]$objScriptingFileSystemObject) -Path $strPath
+            $boolSuccess = Get-FileObjectSafelyUsingScriptingFileSystemObject -ReferenceToFileObject ([ref]$objFSOFolderOrFileObject) -ReferenceToScriptingFileSystemObject ([ref]$objScriptingFileSystemObject) -Path $Path
         }
         if ($boolSuccess -eq $false) {
             # Error occurred
@@ -1106,7 +1019,7 @@ function Get-DOS83Path {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Access the short path
-    $refDOS83Path.Value = $objFSOFolderOrFileObject.ShortPath
+    $ReferenceToDOS8Dot3Path.Value = $objFSOFolderOrFileObject.ShortPath
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference

@@ -27,12 +27,12 @@ function Test-ValidSID {
     # $false means the supplied object was not a SID.
     #
     # .NOTES
-    # This function also supports the use of an argument instead of a
-    # parameter. If an argument is supplied instead of the parameter, then one
-    # positional argument is required: it is a reference to an object that will
-    # be tested to determine if it is a SID.
+    # This function also supports the use of a positional parameter instead of a
+    # named parameter. If a positional parameter is used intead of a named
+    # parameter, then one positional parameters is required: it is a reference to
+    # an object that will be tested to determine if it is a SID.
     #
-    # Version: 3.0.20241217.0
+    # Version: 3.0.20241219.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -192,26 +192,6 @@ function Test-ValidSID {
         # processing
     }
 
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if ($args.Count -eq 1) {
-        # Arguments may have been supplied instead of parameters
-        if ($null -eq $ReferenceToObject.Value) {
-            # No valid data was supplied via a parameter, so assume arguments
-            # were used
-            $boolUseArguments = $true
-        }
-    }
-
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refObjectToTest = $ReferenceToObject
-    } else {
-        # Use positional arguments
-        $refObjectToTest = $args[0]
-    }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
     # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
@@ -231,7 +211,7 @@ function Test-ValidSID {
     # This shouldn't error, even if the referenced object is not a SID, but we play
     # it safe and store the result in $objSID. $objSID should be $null if the
     # referenced object is not a SID
-    $objSID = ($refObjectToTest.Value) -as [System.Security.Principal.SecurityIdentifier]
+    $objSID = ($ReferenceToObject.Value) -as [System.Security.Principal.SecurityIdentifier]
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference

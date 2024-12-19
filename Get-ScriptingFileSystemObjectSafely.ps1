@@ -32,16 +32,17 @@ function Get-ScriptingFileSystemObjectSafely {
     # there was an error.
     #
     # .NOTES
-    # This function also supports the use of an argument, which can be used
-    # instead of the parameter.
+    # This function also supports the use of a positional parameter instead of a
+    # named parameter. If a positional parameter is used intead of a named
+    # parameter, then exactly one positional parameter is required:
     #
-    # The first argument and only argument is a reference to an object that will
+    # The first and only positional parameter is a reference to an object that will
     # become the FileSystemObject COM object. If the object is created
     # successfully, then the referenced object will be updated, storing the
     # FileSystemObject COM object. If the object is not created successfully, then
     # the referenced variable becomes undefined.
     #
-    # Version: 1.1.20241217.0
+    # Version: 1.1.20241219.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -194,25 +195,6 @@ function Get-ScriptingFileSystemObjectSafely {
         # processing
     }
 
-    #region Assign Parameters and Arguments to Internally-Used Variables #######
-    $boolUseArguments = $false
-    if ($args.Count -eq 1) {
-        # Arguments may have been supplied instead of parameters
-        if ($null -eq $ReferenceToStoreObject.Value) {
-            # We have one argument and nothing supplied in the parameter
-            $boolUseArguments = $true
-        }
-    }
-
-    if (-not $boolUseArguments) {
-        # Use parameters
-        $refOutput = $ReferenceToStoreObject
-    } else {
-        # Use positional arguments
-        $refOutput = $args[0]
-    }
-    #endregion Assign Parameters and Arguments to Internally-Used Variables #######
-
     # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
@@ -230,7 +212,7 @@ function Get-ScriptingFileSystemObjectSafely {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Do the work of this function...
-    $refOutput.Value = New-Object -ComObject Scripting.FileSystemObject
+    $ReferenceToStoreObject.Value = New-Object -ComObject Scripting.FileSystemObject
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
