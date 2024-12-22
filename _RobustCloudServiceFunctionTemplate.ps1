@@ -72,11 +72,11 @@ function Get-DataFromCloudServiceCmdletRobust {
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
-    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust -Parameter1 ([ref]$hashtableConfigIni) -CurrentAttemptNumber 1 -MaxAttempts 4 -Parameter4 '.\config.ini' -Parameter5 @(';') -Parameter6 $true -Parameter7 $true -Parameter8 'NoSection' -Parameter9 $true
+    # $boolSuccess = Get-DataFromCloudServiceCmdletRobust -Parameter1 ([ref]$hashtableConfigIni) -CurrentAttemptNumber 1 -MaxAttempts 4 -Parameter4 '.\config.ini' -Parameter5 @(';') -Parameter6 $true -Parameter7 $true -Parameter8 'NoSection' -Parameter9 $true
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
-    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust ([ref]$hashtableConfigIni) 1 4 '.\config.ini' @(';') $true $true 'NoSection' $true
+    # $boolSuccess = Get-DataFromCloudServiceCmdletRobust ([ref]$hashtableConfigIni) 1 4 '.\config.ini' @(';') $true $true 'NoSection' $true
     #
     # .INPUTS
     # None. You can't pipe objects to Get-DataFromCloudServiceCmdletRobust.
@@ -426,7 +426,7 @@ function Get-DataFromCloudServiceCmdletRobust {
 
     if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
         # Error occurred
-        if ($intCurrentAttemptNumber -lt $intMaximumAttempts) {
+        if ($CurrentAttemptNumber -lt $MaxAttempts) {
             if ($boolOutputErrorOnFunctionRetry) {
                 Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
             } elseif ($boolOutputWarningOnFunctionRetry) {
@@ -436,33 +436,33 @@ function Get-DataFromCloudServiceCmdletRobust {
             } elseif ($boolOutputDebugOnFunctionRetry) {
                 Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
             }
-            Start-Sleep -Seconds ([math]::Pow(2, $intCurrentAttemptNumber))
+            Start-Sleep -Seconds ([math]::Pow(2, $CurrentAttemptNumber))
 
             ################### REPLACE THIS CALL WITH A RECURSIVE CALL TO THIS SAME FUNCTION; PAY ATTENTION TO THE PARAMETERS ###################
-            $objResultIndicator = Get-DataFromCloudServiceCmdletRobust -Parameter1 $refOutput -CurrentAttemptNumber ($intCurrentAttemptNumber + 1) -MaxAttempts $intMaximumAttempts -Parameter4 $strFilePath -Parameter5 $arrCharDriveLetters -Parameter6 $boolUsePSDrive -Parameter7 $boolRefreshPSDrive -Parameter8 $strSecondaryPath -Parameter9 $boolQuitOnError -Parameter10 $strServerName
+            $objResultIndicator = Get-DataFromCloudServiceCmdletRobust -Parameter1 $refOutput -CurrentAttemptNumber ($CurrentAttemptNumber + 1) -MaxAttempts $MaxAttempts -Parameter4 $strFilePath -Parameter5 $arrCharDriveLetters -Parameter6 $boolUsePSDrive -Parameter7 $boolRefreshPSDrive -Parameter8 $strSecondaryPath -Parameter9 $boolQuitOnError -Parameter10 $strServerName
             return $objResultIndicator
         } else {
             # Number of attempts exceeded maximum
             if ($boolOutputErrorOnFunctionMaximumAttemptsExceeded) {
-                if ($intMaximumAttempts -ge 2) {
+                if ($MaxAttempts -ge 2) {
                     Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
                 } else {
                     Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
                 }
             } elseif ($boolOutputWarningOnFunctionMaximumAttemptsExceeded) {
-                if ($intMaximumAttempts -ge 2) {
+                if ($MaxAttempts -ge 2) {
                     Write-Warning ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
                 } else {
                     Write-Warning ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
                 }
             } elseif ($boolOutputVerboseOnFunctionMaximumAttemptsExceeded) {
-                if ($intMaximumAttempts -ge 2) {
+                if ($MaxAttempts -ge 2) {
                     Write-Verbose ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
                 } else {
                     Write-Verbose ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
                 }
             } elseif ($boolOutputDebugOnFunctionMaximumAttemptsExceeded) {
-                if ($intMaximumAttempts -ge 2) {
+                if ($MaxAttempts -ge 2) {
                     Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
                 } else {
                     Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
