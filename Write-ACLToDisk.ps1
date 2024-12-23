@@ -39,7 +39,7 @@ function Write-ACLToObject {
     # $objDirectoryInfo = Get-Item -Path $strPath
     # $objDirectorySecurity = Get-Acl -Path $strPath
     # # Do something to change the ACL here...
-    # $boolSucccess = Write-ACLToObject -CurrentAttemptNumber 1 -MaxAttempts 4 -ReferenceToTargetObject ([ref]$objDirectoryInfo) -ReferenceToACL ([ref]$objDirectorySecurity)
+    # $boolSuccess = Write-ACLToObject -CurrentAttemptNumber 1 -MaxAttempts 4 -ReferenceToTargetObject ([ref]$objDirectoryInfo) -ReferenceToACL ([ref]$objDirectorySecurity)
     #
     # .EXAMPLE
     # $boolCheckForType = $true
@@ -81,7 +81,7 @@ function Write-ACLToObject {
     #     }
     # }
     # # <Do something to change the ACL here...>
-    # $boolSucccess = Write-ACLToObject -CurrentAttemptNumber 1 -MaxAttempts 4 -ReferenceToTargetObject ([ref]$objDirectoryInfo) -ReferenceToACL ([ref]$objDirectorySecurity)
+    # $boolSuccess = Write-ACLToObject -CurrentAttemptNumber 1 -MaxAttempts 4 -ReferenceToTargetObject ([ref]$objDirectoryInfo) -ReferenceToACL ([ref]$objDirectorySecurity)
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
@@ -115,7 +115,7 @@ function Write-ACLToObject {
     # System.Security.AccessControl.FileSecurity, or similar object that will be
     # written to the target object.
     #
-    # Version: 2.0.20241223.0
+    # Version: 2.0.20241223.1
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
