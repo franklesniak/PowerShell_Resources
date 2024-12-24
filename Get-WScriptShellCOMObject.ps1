@@ -40,45 +40,102 @@ function Get-WScriptShellCOMObject {
     #endregion License ################################################################
 
     function Get-ReferenceToLastError {
-        #region FunctionHeader #####################################################
-        # Function returns $null if no errors on on the $error stack;
-        # Otherwise, function returns a reference (memory pointer) to the last error
-        # that occurred.
+        # .SYNOPSIS
+        # Gets a reference (memory pointer) to the last error that occurred.
         #
-        # Version: 1.0.20240127.0
-        #endregion FunctionHeader #####################################################
+        # .DESCRIPTION
+        # Returns $null if no errors on on the $error stack; otherwise, returns
+        # a reference (memory pointer) to the last error that occurred.
+        #
+        # .EXAMPLE
+        # # Intentionally empty trap statement to prevent terminating errors
+        # # from halting processing
+        # trap { }
+        #
+        # # Retrieve the newest error on the stack prior to doing work:
+        # $refLastKnownError = Get-ReferenceToLastError
+        #
+        # # Store current error preference; we will restore it after we do some
+        # # work:
+        # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+        #
+        # # Set ErrorActionPreference to SilentlyContinue; this will suppress
+        # # error output. Terminating errors will not output anything, kick to
+        # # the empty trap statement and then continue on. Likewise, non-
+        # # terminating errors will also not output anything, but they do not
+        # # kick to the trap statement; they simply continue on.
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        #
+        # # Do something that might trigger an error
+        # Get-Item -Path 'C:\MayNotExist.txt'
+        #
+        # # Restore the former error preference
+        # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+        #
+        # # Retrieve the newest error on the error stack
+        # $refNewestCurrentError = Get-ReferenceToLastError
+        #
+        # $boolErrorOccurred = $false
+        # if (($null -ne $refLastKnownError) -and ($null -ne $refNewestCurrentError)) {
+        #     # Both not $null
+        #     if (($refLastKnownError.Value) -ne ($refNewestCurrentError.Value)) {
+        #         $boolErrorOccurred = $true
+        #     }
+        # } else {
+        #     # One is $null, or both are $null
+        #     # NOTE: $refLastKnownError could be non-null, while
+        #     # $refNewestCurrentError could be null if $error was cleared;
+        #     # this does not indicate an error.
+        #     # So:
+        #     # If both are null, no error
+        #     # If $refLastKnownError is null and $refNewestCurrentError is
+        #     # non-null, error
+        #     # If $refLastKnownError is non-null and $refNewestCurrentError is
+        #     # null, no error
+        #     if (($null -eq $refLastKnownError) -and ($null -ne $refNewestCurrentError)) {
+        #         $boolErrorOccurred = $true
+        #     }
+        # }
+        #
+        # .INPUTS
+        # None. You can't pipe objects to Get-ReferenceToLastError.
+        #
+        # .OUTPUTS
+        # System.Management.Automation.PSReference ([ref]).
+        # Get-ReferenceToLastError returns a reference (memory pointer) to the
+        # last error that occurred.
+        #
+        # .NOTES
+        # Version: 1.0.20241223.0
 
-        #region License ############################################################
+        #region License ####################################################
         # Copyright (c) 2024 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining a copy
-        # of this software and associated documentation files (the "Software"), to deal
-        # in the Software without restriction, including without limitation the rights
-        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        # copies of the Software, and to permit persons to whom the Software is
-        # furnished to do so, subject to the following conditions:
+        # Permission is hereby granted, free of charge, to any person obtaining
+        # a copy of this software and associated documentation files (the
+        # "Software"), to deal in the Software without restriction, including
+        # without limitation the rights to use, copy, modify, merge, publish,
+        # distribute, sublicense, and/or sell copies of the Software, and to
+        # permit persons to whom the Software is furnished to do so, subject to
+        # the following conditions:
         #
-        # The above copyright notice and this permission notice shall be included in
-        # all copies or substantial portions of the Software.
+        # The above copyright notice and this permission notice shall be
+        # included in all copies or substantial portions of the Software.
         #
-        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         # SOFTWARE.
-        #endregion License ############################################################
+        #endregion License ####################################################
 
-        #region DownloadLocationNotice #############################################
-        # The most up-to-date version of this script can be found on the author's
-        # GitHub repository at https://github.com/franklesniak/PowerShell_Resources
-        #endregion DownloadLocationNotice #############################################
-
-        if ($error.Count -gt 0) {
-            [ref]($error[0])
+        if ($Error.Count -gt 0) {
+            return ([ref]($Error[0]))
         } else {
-            $null
+            return $null
         }
     }
 
