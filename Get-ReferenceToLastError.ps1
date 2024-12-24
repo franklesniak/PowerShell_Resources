@@ -3,8 +3,9 @@ function Get-ReferenceToLastError {
     # Gets a reference (memory pointer) to the last error that occurred.
     #
     # .DESCRIPTION
-    # Returns $null if no errors on on the $error stack; otherwise, returns
-    # a reference (memory pointer) to the last error that occurred.
+    # Returns a reference (memory pointer) to $null ([ref]$null) if no
+    # errors on on the $error stack; otherwise, returns a reference to the
+    # last error that occurred.
     #
     # .EXAMPLE
     # # Intentionally empty trap statement to prevent terminating errors
@@ -35,7 +36,7 @@ function Get-ReferenceToLastError {
     # $refNewestCurrentError = Get-ReferenceToLastError
     #
     # $boolErrorOccurred = $false
-    # if (($null -ne $refLastKnownError) -and ($null -ne $refNewestCurrentError)) {
+    # if (($null -ne $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
     #     # Both not $null
     #     if (($refLastKnownError.Value) -ne ($refNewestCurrentError.Value)) {
     #         $boolErrorOccurred = $true
@@ -51,7 +52,7 @@ function Get-ReferenceToLastError {
     #     # non-null, error
     #     # If $refLastKnownError is non-null and $refNewestCurrentError is
     #     # null, no error
-    #     if (($null -eq $refLastKnownError) -and ($null -ne $refNewestCurrentError)) {
+    #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
     #         $boolErrorOccurred = $true
     #     }
     # }
@@ -62,10 +63,11 @@ function Get-ReferenceToLastError {
     # .OUTPUTS
     # System.Management.Automation.PSReference ([ref]).
     # Get-ReferenceToLastError returns a reference (memory pointer) to the
-    # last error that occurred.
+    # last error that occurred. It returns a reference to $null
+    # ([ref]$null) if there are no errors on on the $error stack.
     #
     # .NOTES
-    # Version: 1.0.20241223.0
+    # Version: 2.0.20241223.0
 
     #region License ####################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -94,6 +96,6 @@ function Get-ReferenceToLastError {
     if ($Error.Count -gt 0) {
         return ([ref]($Error[0]))
     } else {
-        return $null
+        return ([ref]$null)
     }
 }
