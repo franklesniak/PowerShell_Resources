@@ -21,7 +21,7 @@ function Test-ErrorOccurred {
     # command for which you wish to determine whether an error occurred.
     #
     # If no error was on the stack at this time, ReferenceToEarlierError
-    # must be $null.
+    # must be a reference to $null ([ref]$null).
     #
     # .PARAMETER ReferenceToLaterError
     # This parameter is required; it is a reference (memory pointer) to a
@@ -30,7 +30,7 @@ function Test-ErrorOccurred {
     # for which you wish to determine whether an error occurred.
     #
     # If no error was on the stack at this time, ReferenceToLaterError
-    # must be $null.
+    # must be a reference to $null ([ref]$null).
     #
     # .EXAMPLE
     # # Intentionally empty trap statement to prevent terminating errors
@@ -41,7 +41,7 @@ function Test-ErrorOccurred {
     # if ($Error.Count -gt 0) {
     #     $refLastKnownError = ([ref]($Error[0]))
     # } else {
-    #     $refLastKnownError = $null
+    #     $refLastKnownError = ([ref]$null)
     # }
     #
     # # Store current error preference; we will restore it after we do some
@@ -65,7 +65,7 @@ function Test-ErrorOccurred {
     # if ($Error.Count -gt 0) {
     #     $refNewestCurrentError = ([ref]($Error[0]))
     # } else {
-    #     $refNewestCurrentError = $null
+    #     $refNewestCurrentError = ([ref]$null)
     # }
     #
     # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
@@ -92,16 +92,16 @@ function Test-ErrorOccurred {
     # error on the stack earlier in time, i.e., prior to running the
     # command for which you wish to determine whether an error occurred. If
     # no error was on the stack at this time, the first positional
-    # parameter must be $null.
+    # parameter must be a reference to $null ([ref]$null).
     #
     # The second positional parameter is a reference (memory pointer) to a
     # System.Management.Automation.ErrorRecord that represents the newest
     # error on the stack later in time, i.e., after to running the command
     # for which you wish to determine whether an error occurred. If no
     # error was on the stack at this time, ReferenceToLaterError must be
-    # $null.
+    # a reference to $null ([ref]$null).
     #
-    # Version: 1.1.20241223.0
+    # Version: 2.0.20241223.0
 
     #region License ####################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -134,7 +134,7 @@ function Test-ErrorOccurred {
     # TODO: Validate input
 
     $boolErrorOccurred = $false
-    if (($null -ne $ReferenceToEarlierError) -and ($null -ne $ReferenceToLaterError)) {
+    if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
         # Both not $null
         if (($ReferenceToEarlierError.Value) -ne ($ReferenceToLaterError.Value)) {
             $boolErrorOccurred = $true
@@ -150,7 +150,7 @@ function Test-ErrorOccurred {
         #   is non-null, error
         # - If $ReferenceToEarlierError is non-null and
         #   $ReferenceToLaterError is null, no error
-        if (($null -eq $ReferenceToEarlierError) -and ($null -ne $ReferenceToLaterError)) {
+        if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
             $boolErrorOccurred = $true
         }
     }
