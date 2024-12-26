@@ -10,8 +10,20 @@ function Test-Windows {
     # Windows PowerShell 1.0 through 5.1, which do not have the $IsWindows global
     # variable.
     #
+    # .PARAMETER PSVersion
+    # This parameter is optional; if supplied, it must be the version number of the
+    # running version of PowerShell. If the version of PowerShell is already known,
+    # it can be passed in to this function to avoid the overhead of unnecessarily
+    # determining the version of PowerShell. If this parameter is not supplied, the
+    # function will determine the version of PowerShell that is running as part of
+    # its processing.
+    #
     # .EXAMPLE
     # $boolIsWindows = Test-Windows
+    #
+    # .EXAMPLE
+    # # The version of PowerShell is known to be 2.0 or above:
+    # $boolIsWindows = Test-Windows -PSVersion $PSVersionTable.PSVersion
     #
     # .INPUTS
     # None. You can't pipe objects to Test-Windows.
@@ -22,7 +34,16 @@ function Test-Windows {
     # Windows; $false means that PowerShell is not running on Windows.
     #
     # .NOTES
-    # Version: 1.0.20241225.1
+    # This function also supports the use of a positional parameter instead of a
+    # named parameter. If a positional parameter is used intead of a named
+    # parameter, then one positional parameters is required: it must be the version
+    # number of the running version of PowerShell. If the version of PowerShell is
+    # already known, it can be passed in to this function to avoid the overhead of
+    # unnecessarily determining the version of PowerShell. If this parameter is not
+    # supplied, the function will determine the version of PowerShell that is
+    # running as part of its processing.
+    #
+    # Version: 1.1.20241225.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -45,6 +66,10 @@ function Test-Windows {
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
     #endregion License ############################################################
+
+    param (
+        [version]$PSVersion = ([version]'0.0')
+    )
 
     function Get-PSVersion {
         # .SYNOPSIS
@@ -106,10 +131,18 @@ function Test-Windows {
         }
     }
 
-    $versionPS = Get-PSVersion
-    if ($versionPS.Major -ge 6) {
-        return $IsWindows
+    if ($PSVersion -ne ([version]'0.0')) {
+        if ($PSVersion.Major -ge 6) {
+            return $IsWindows
+        } else {
+            return $true
+        }
     } else {
-        return $true
+        $versionPS = Get-PSVersion
+        if ($versionPS.Major -ge 6) {
+            return $IsWindows
+        } else {
+            return $true
+        }
     }
 }
