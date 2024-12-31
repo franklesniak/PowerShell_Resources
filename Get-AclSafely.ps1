@@ -1,47 +1,105 @@
 function Get-AclSafely {
-    #region FunctionHeader #####################################################
+    # .SYNOPSIS
+    # Gets the access control list (ACL) in a way that suppresses errors, should an
+    # error occur.
+    #
+    # .DESCRIPTION
     # Gets and returns the access control list (ACL) from a path or object. This
     # function is intended to be used in situations where the Get-Acl cmdlet may
     # fail due to a variety of reasons. This function is designed to suppress
     # errors and return a boolean value indicating whether the operation was
     # successful.
     #
-    # Three positional arguments are required:
+    # .PARAMETER ReferenceToACL
+    # This parameter is required; it is a reference to an object (the specific
+    # object type will vary depending on the type of object/path supplied in the
+    # PathToObject parameter; for example, a directory/folder will be a
+    # System.Security.AccessControl.DirectorySecurity object, a registry key will
+    # be a System.Security.AccessControl.RegistrySecurity, etc.). If the operation
+    # was successful, the referenced object will be populated with the object
+    # resulting from Get-Acl. If the operation was unsuccessful, the referenced
+    # object is undefined.
     #
-    # The first argument is a reference to an object (the specific object type will
-    # vary depending on the type of object/path supplied in the third argument). If
-    # the operation was successful, the referenced object will be populated with
-    # the object resulting from Get-Acl. If the operation was unsuccessful, the
-    # referenced object will be left unchanged.
+    # .PARAMETER ReferenceToInfoObject
+    # This parameter is required; it is a reference to an object (the specific
+    # object type will vary depending on the type of object/path supplied in the
+    # PathToObject parameter; for example, a directory/folder will be a
+    # System.IO.DirectoryInfo object, a registry key will be a
+    # Microsoft.Win32.RegistryKey object, etc.). In cases where this function needs
+    # to retrieve the object (using Get-Item) to retrieve the access control entry
+    # (ACL), the referenced object will be populated with the object resulting from
+    # Get-Item. If the function did not need to use Get-Item, the referenced object
+    # is undefined.
     #
-    # The second argument is a reference to an object (the specific object type
-    # will vary depending on the type of object/path supplied in the third
-    # argument). In cases where this function needs to retrieve the object (using
-    # Get-Item) to retrieve the access control entry (ACL), the referenced object
-    # will be populated with the object resulting from Get-Item. If the function
-    # did not need to use Get-Item, the referenced object will be left unchanged.
+    # .PARAMETER PathToObject
+    # This parameter is required; it is a string representing the path to the
+    # object for which the ACL is to be retrieved. This path can be a file or
+    # folder path, or it can be a registry path (for example).
     #
-    # The third argument is a string representing the path to the object for which
-    # the ACL is to be retrieved. This path can be a file or folder path, or it can
-    # be a registry path (for example).
+    # .PARAMETER PSVersion
+    # This parameter is optional; if supplied, it must be the version number of the
+    # running version of PowerShell. If the version of PowerShell is already known,
+    # it can be passed in to this function to avoid the overhead of unnecessarily
+    # determining the version of PowerShell. If this parameter is not supplied, the
+    # function will determine the version of PowerShell that is running as part of
+    # its processing.
     #
-    # The function returns a boolean value indicating whether the operation was
-    # successful. If the operation was successful, the object referenced in the
-    # first argument will be populated with the ACL (otherwise the object
-    # referenced in the first argument is not changed). If the function needed to
-    # retrieve the object (using Get-Item) to get its access control list (ACL),
-    # the object referenced in the second argument will be populated with the
-    # object (from Get-Item), otherwise the object referenced in the second
-    # argument is not changed.
+    # .EXAMPLE
+    # $objThisFolderPermission = $null
+    # $objThis = $null
+    # $strThisObjectPath = 'D:\Shares\Share\Accounting'
+    # $boolSuccess = Get-AclSafely -ReferenceToACL ([ref]$objThisFolderPermission) -ReferenceToInfoObject ([ref]$objThis) -PathToObject $strThisObjectPath
     #
-    # Example usage:
+    # .EXAMPLE
     # $objThisFolderPermission = $null
     # $objThis = $null
     # $strThisObjectPath = 'D:\Shares\Share\Accounting'
     # $boolSuccess = Get-AclSafely ([ref]$objThisFolderPermission) ([ref]$objThis) $strThisObjectPath
     #
-    # Version 1.0.20241225.0
-    #endregion FunctionHeader #####################################################
+    # .INPUTS
+    # None. You can't pipe objects to Get-AclSafely.
+    #
+    # .OUTPUTS
+    # System.Boolean. Get-AclSafely returns a boolean value indiciating whether the
+    # process completed successfully. $true means the process completed
+    # successfully; $false means there was an error.
+    #
+    # .NOTES
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then three or four positional parameters are required:
+    #
+    # The first positional parameter is a reference to an object (the specific
+    # object type will vary depending on the type of object/path supplied in the
+    # PathToObject parameter; for example, a directory/folder will be a
+    # System.Security.AccessControl.DirectorySecurity object, a registry key will
+    # be a System.Security.AccessControl.RegistrySecurity, etc.). If the operation
+    # was successful, the referenced object will be populated with the object
+    # resulting from Get-Acl. If the operation was unsuccessful, the referenced
+    # object is undefined.
+    #
+    # The second positional parameter is a reference to an object (the specific
+    # object type will vary depending on the type of object/path supplied in the
+    # PathToObject parameter; for example, a directory/folder will be a
+    # System.IO.DirectoryInfo object, a registry key will be a
+    # Microsoft.Win32.RegistryKey object, etc.). In cases where this function needs
+    # to retrieve the object (using Get-Item) to retrieve the access control entry
+    # (ACL), the referenced object will be populated with the object resulting from
+    # Get-Item. If the function did not need to use Get-Item, the referenced object
+    # is undefined.
+    #
+    # The third positional parameter is a string representing the path to the
+    # object for which the ACL is to be retrieved. This path can be a file or
+    # folder path, or it can be a registry path (for example).
+    #
+    # The fourth positional parameter is optional; if supplied, it must be the
+    # version number of the running version of PowerShell. If the version of
+    # PowerShell is already known, it can be passed in to this function to avoid
+    # the overhead of unnecessarily determining the version of PowerShell. If this
+    # parameter is not supplied, the function will determine the version of
+    # PowerShell that is running as part of its processing.
+    #
+    # Version: 2.0.20241231.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -65,12 +123,14 @@ function Get-AclSafely {
     # SOFTWARE.
     #endregion License ############################################################
 
-    #region DownloadLocationNotice #########################################
-    # The most up-to-date version of this script can be found on the author's
-    # GitHub repository at:
-    # https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice #########################################
+    param (
+        [ref]$ReferenceToACL = ([ref]$null),
+        [ref]$ReferenceToInfoObject = ([ref]$null),
+        [string]$PathToObject = '',
+        [version]$PSVersion = ([version]'0.0')
+    )
 
+    #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
         # Gets a reference (memory pointer) to the last error that occurred.
@@ -332,6 +392,7 @@ function Get-AclSafely {
 
         return $boolErrorOccurred
     }
+    #endregion FunctionsToSupportErrorHandling ####################################
 
     function Get-PSVersion {
         # .SYNOPSIS
@@ -398,17 +459,28 @@ function Get-AclSafely {
         # processing
     }
 
-    $refOutputObjThisFolderPermission = $args[0]
-    $refOutputObjThis = $args[1]
-    $strThisObjectPath = $args[2]
+    #region Process Input ######################################################
+    if ([string]::IsNullOrWhiteSpace($PathToObject)) {
+        Write-Warning 'For the Get-AclSafely function, the PathToObject parameter is required and cannot be null or empty.'
+        return $false
+    }
 
-    $objThisFolderPermission = $null
-    $objThis = $null
+    if ($null -ne $PSVersion) {
+        if ($PSVersion -eq ([version]'0.0')) {
+            $versionPS = Get-PSVersion
+        } else {
+            $versionPS = $PSVersion
+        }
+    } else {
+        $versionPS = Get-PSVersion
+    }
+    #endregion Process Input ######################################################
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
 
-    # Store current error preference; we will restore it after we do our work
+    # Store current error preference; we will restore it after we do the work of
+    # this function
     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
 
     # Set ErrorActionPreference to SilentlyContinue; this will suppress error
@@ -419,7 +491,7 @@ function Get-AclSafely {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # This needs to be a one-liner for error handling to work!:
-    if ($strThisObjectPath.Contains('[') -or $strThisObjectPath.Contains(']') -or $strThisObjectPath.Contains('`')) { $versionPS = Get-PSVersion; if ($versionPS.Major -ge 3) { $objThis = Get-Item -LiteralPath $strThisObjectPath -Force; if ($versionPS -ge ([version]'7.3')) { if (@(Get-Module Microsoft.PowerShell.Security).Count -eq 0) { Import-Module Microsoft.PowerShell.Security } $objThisFolderPermission = [System.IO.FileSystemAclExtensions]::GetAccessControl($objThis) } else { $objThisFolderPermission = $objThis.GetAccessControl() } } elseif ($versionPS.Major -eq 2) { $objThis = Get-Item -Path ((($strThisObjectPath.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force; $objThisFolderPermission = $objThis.GetAccessControl() } else { $objThisFolderPermission = Get-Acl -Path ($strThisObjectPath.Replace('`', '``')) } } else { $objThisFolderPermission = Get-Acl -Path $strThisObjectPath }
+    if ($PathToObject.Contains('[') -or $PathToObject.Contains(']') -or $PathToObject.Contains('`')) { if ($versionPS.Major -ge 3) { ($ReferenceToInfoObject.Value) = Get-Item -LiteralPath $PathToObject -Force; if ($versionPS -ge ([version]'7.3')) { if (@(Get-Module Microsoft.PowerShell.Security).Count -eq 0) { Import-Module Microsoft.PowerShell.Security }; ($ReferenceToACL.Value) = [System.IO.FileSystemAclExtensions]::GetAccessControl($ReferenceToInfoObject.Value) } else { ($ReferenceToACL.Value) = ($ReferenceToInfoObject.Value).GetAccessControl() } } elseif ($versionPS.Major -eq 2) { ($ReferenceToInfoObject.Value) = Get-Item -Path ((($PathToObject.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force; ($ReferenceToACL.Value) = ($ReferenceToInfoObject.Value).GetAccessControl() } else { ($ReferenceToACL.Value) = Get-Acl -Path ($PathToObject.Replace('`', '``')) } } else { ($ReferenceToACL.Value) = Get-Acl -Path $PathToObject }
     # The above one-liner is a messy variant of the following, which had to be
     # converted to one line to prevent PowerShell v3 from throwing errors on the
     # stack when copy-pasted into the shell (despite there not being any apparent
@@ -432,13 +504,13 @@ function Get-AclSafely {
     # at least not on PowerShell Core v6.2.4 on Ubuntu 18.04.4 or PowerShell v7.0.0
     # on Ubuntu 18.04.4). Confirm this and then re-work the below to get around the
     # issue.
-    # if ($strThisObjectPath.Contains('[') -or $strThisObjectPath.Contains(']') -or $strThisObjectPath.Contains('`')) {
+    # if ($PathToObject.Contains('[') -or $PathToObject.Contains(']') -or $PathToObject.Contains('`')) {
     #     # Can't use Get-Acl because Get-Acl doesn't support paths with brackets
-    #     # or grave accent marks (backticks)
-    #     $versionPS = Get-PSVersion
+    #     # or grave accent marks (backticks). So, we need to use Get-Item and then
+    #     # GetAccessControl() or [System.IO.FileSystemAclExtensions]::GetAccessControl()
     #     if ($versionPS.Major -ge 3) {
     #         # PowerShell v3 and newer supports -LiteralPath
-    #         $objThis = Get-Item -LiteralPath $strThisObjectPath -Force # -Force parameter is required to get hidden items
+    #         ($ReferenceToInfoObject.Value) = Get-Item -LiteralPath $PathToObject -Force # -Force parameter is required to get hidden items
     #         if ($versionPS -ge ([version]'7.3')) {
     #             # PowerShell v7.3 and newer do not have
     #             # Microsoft.PowerShell.Security automatically loaded; likewise,
@@ -449,18 +521,18 @@ function Get-AclSafely {
     #             if (@(Get-Module Microsoft.PowerShell.Security).Count -eq 0) {
     #                 Import-Module Microsoft.PowerShell.Security
     #             }
-    #             $objThisFolderPermission = [System.IO.FileSystemAclExtensions]::GetAccessControl($objThis)
+    #             ($ReferenceToACL.Value) = [System.IO.FileSystemAclExtensions]::GetAccessControl($ReferenceToInfoObject.Value)
     #         } else {
     #             # PowerShell v3 through v7.2
-    #             $objThisFolderPermission = $objThis.GetAccessControl()
+    #             ($ReferenceToACL.Value) = ($ReferenceToInfoObject.Value).GetAccessControl()
     #         }
     #     } elseif ($versionPS.Major -eq 2) {
     #         # We don't need to escape the right square bracket based on testing,
     #         # but we do need to escape the left square bracket. Nevertheless,
     #         # escaping both brackets does work and seems like the safest option.
     #         # Additionally, escape the grave accent mark (backtick).
-    #         $objThis = Get-Item -Path ((($strThisObjectPath.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force # -Force parameter is required to get hidden items
-    #         $objThisFolderPermission = $objThis.GetAccessControl()
+    #         ($ReferenceToInfoObject.Value) = Get-Item -Path ((($PathToObject.Replace('[', '`[')).Replace(']', '`]')).Replace('`', '``')) -Force # -Force parameter is required to get hidden items
+    #         ($ReferenceToACL.Value) = ($ReferenceToInfoObject.Value).GetAccessControl()
     #     } else {
     #         # PowerShell v1
     #         # Get-Item -> GetAccessControl() does not work and returns $null on
@@ -468,11 +540,11 @@ function Get-AclSafely {
     #         # And, unfortunately, there is no apparent way to escape left square
     #         # brackets with Get-Acl. However, we can escape the grave accent mark
     #         # (backtick).
-    #         $objThisFolderPermission = Get-Acl -Path ($strThisObjectPath.Replace('`', '``'))
+    #         ($ReferenceToACL.Value) = Get-Acl -Path ($PathToObject.Replace('`', '``'))
     #     }
     # } else {
     #     # No square brackets or grave accent marks (backticks); use Get-Acl
-    #     $objThisFolderPermission = Get-Acl -Path $strThisObjectPath
+    #     ($ReferenceToACL.Value) = Get-Acl -Path $PathToObject
     # }
     ###############################################################################
 
@@ -483,15 +555,10 @@ function Get-AclSafely {
     $refNewestCurrentError = Get-ReferenceToLastError
 
     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
-        if ($null -ne $objThis) {
-            $refOutputObjThis.Value = $objThis
-        }
+        # Error occurred; return failure indicator:
         return $false
     } else {
-        $refOutputObjThisFolderPermission.Value = $objThisFolderPermission
-        if ($null -ne $objThis) {
-            $refOutputObjThis.Value = $objThis
-        }
+        # No error occurred; return success indicator:
         return $true
     }
 }
