@@ -1,31 +1,55 @@
 function Get-ChildItemUsingObjectSafely {
-    #region FunctionHeader #####################################################
-    # Gets the child items of an object in a way that suppresses errors. This
-    # function replaces: $obj | Get-ChildItem (see example)
+    # .SYNOPSIS
+    # Gets the child item(s) of an object, suppressing any errors.
     #
-    # Two positional arguments are required:
+    # .DESCRIPTION
+    # Gets the child item(s) of an object in a way that suppresses errors. This
+    # function replaces: $obj | Get-ChildItem (see examples)
     #
-    # The first argument is a reference to an array of child objects. If the
-    # operation was successful, the referenced array will be populated with the
-    # child objects returned from Get-ChildItem. If the operation was unsuccessful,
-    # the referenced array may be modified, but its contents would be undefined.
+    # .PARAMETER ReferenceToChildItems
+    # This parameter is required; it is a reference to an array of child objects.
+    # If the operation was successful, the referenced array will be populated with
+    # the child objects returned from Get-ChildItem. If the operation was
+    # unsuccessful, the referenced array may be modified, but its contents would be
+    # undefined.
     #
-    # The second argument is a reference to the parent object. The parent object
-    # will be passed to Get-ChildItem.
+    # .PARAMETER ReferenceToParentObject
+    # This parameter is required; it is a reference to the parent object. The
+    # parent object will be passed to Get-ChildItem.
     #
-    # The function returns a boolean value indicating whether the operation was
-    # successful. If the operation was successful, the child items will be
-    # populated in the array object referenced in the first argument. If the
-    # operation was unsuccessful, the referenced array object may still be
-    # modified, but its contents should be considered undefined.
+    # .EXAMPLE
+    # $objThisFolderItem = Get-Item 'D:\Shares\Share\Data'
+    # $arrChildObjects = @()
+    # $boolSuccess = Get-ChildItemUsingObjectSafely -ReferenceToChildItems ([ref]$arrChildObjects) -ReferenceToParentObject ([ref]$objThisFolderItem)
     #
-    # Example usage:
+    # .EXAMPLE
     # $objThisFolderItem = Get-Item 'D:\Shares\Share\Data'
     # $arrChildObjects = @()
     # $boolSuccess = Get-ChildItemUsingObjectSafely ([ref]$arrChildObjects) ([ref]$objThisFolderItem)
     #
-    # Version 1.1.20241223.0
-    #endregion FunctionHeader #####################################################
+    # .INPUTS
+    # None. You can't pipe objects to Get-ChildItemUsingObjectSafely.
+    #
+    # .OUTPUTS
+    # System.Boolean. Get-ChildItemUsingObjectSafely returns a boolean value
+    # indiciating whether the process completed successfully. $true means the
+    # process completed successfully; $false means there was an error.
+    #
+    # .NOTES
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used intead of named parameters,
+    # then two positional parameters are required:
+    #
+    # The first positional parameter is a reference to an array of child objects.
+    # If the operation was successful, the referenced array will be populated with
+    # the child objects returned from Get-ChildItem. If the operation was
+    # unsuccessful, the referenced array may be modified, but its contents would be
+    # undefined.
+    #
+    # The second positional parameter is a reference to the parent object. The
+    # parent object will be passed to Get-ChildItem.
+    #
+    # Version: 1.2.20241231.0
 
     #region License ############################################################
     # Copyright (c) 2024 Frank Lesniak
@@ -49,12 +73,12 @@ function Get-ChildItemUsingObjectSafely {
     # SOFTWARE.
     #endregion License ############################################################
 
-    #region DownloadLocationNotice #############################################
-    # The most up-to-date version of this script can be found on the author's
-    # GitHub repository at:
-    # https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice #############################################
+    param (
+        [ref]$ReferenceToChildItems = ([ref]$null),
+        [ref]$ReferenceToParentObject = ([ref]$null)
+    )
 
+    #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
         # Gets a reference (memory pointer) to the last error that occurred.
@@ -316,19 +340,20 @@ function Get-ChildItemUsingObjectSafely {
 
         return $boolErrorOccurred
     }
+    #endregion FunctionsToSupportErrorHandling ####################################
 
     trap {
         # Intentionally left empty to prevent terminating errors from halting
         # processing
     }
 
-    $refOutputArrChildObjects = $args[0]
-    $refObjThisFolderItem = $args[1]
+    # TODO: Validate input
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
 
-    # Store current error preference; we will restore it after we do our work
+    # Store current error preference; we will restore it after we do the work of
+    # this function
     $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
 
     # Set ErrorActionPreference to SilentlyContinue; this will suppress error
@@ -338,7 +363,8 @@ function Get-ChildItemUsingObjectSafely {
     # continue on.
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
-    $refOutputArrChildObjects.Value = @(($refObjThisFolderItem.Value) | Get-ChildItem -Force)
+    # Get the child item(s) of the parent object:
+    $ReferenceToChildItems.Value = @(($ReferenceToParentObject.Value) | Get-ChildItem -Force)
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
@@ -347,8 +373,10 @@ function Get-ChildItemUsingObjectSafely {
     $refNewestCurrentError = Get-ReferenceToLastError
 
     if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+        # Error occurred; return failure indicator:
         return $false
     } else {
+        # No error occurred; return success indicator:
         return $true
     }
 }
