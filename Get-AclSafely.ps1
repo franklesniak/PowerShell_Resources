@@ -99,7 +99,7 @@ function Get-AclSafely {
     # parameter is not supplied, the function will determine the version of
     # PowerShell that is running as part of its processing.
     #
-    # Version: 2.0.20250106.0
+    # Version: 2.1.20250208.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -461,11 +461,6 @@ function Get-AclSafely {
     }
 
     #region Process Input ######################################################
-    if ([string]::IsNullOrWhiteSpace($PathToObject)) {
-        Write-Warning 'For the Get-AclSafely function, the PathToObject parameter is required and cannot be null or empty.'
-        return $false
-    }
-
     if ($null -ne $PSVersion) {
         if ($PSVersion -eq ([version]'0.0')) {
             $versionPS = Get-PSVersion
@@ -474,6 +469,29 @@ function Get-AclSafely {
         }
     } else {
         $versionPS = Get-PSVersion
+    }
+
+    if ($versionPS.Major -ge 3) {
+        # PowerShell 3.0 runs on .NET Framework 4.0, which supports the
+        # IsNullOrWhitespace method
+        if ([string]::IsNullOrWhiteSpace($PathToObject)) {
+            Write-Warning 'For the Get-AclSafely function, the PathToObject parameter is required and cannot be null, empty, or solely containing whitespace.'
+            return $false
+        }
+    } else {
+        # PowerShell 1.0 and 2.0 run on .NET Framework 2.0, which does not support
+        # the IsNullOrWhitespace method; fall back to IsNullOrEmpty and check for a
+        # string that contains only whitespace
+        if ([string]::IsNullOrEmpty($PathToObject)) {
+            Write-Warning 'For the Get-AclSafely function, the PathToObject parameter is required and cannot be null or empty.'
+            return $false
+        } else {
+            # Not null or empty; check for whitespace
+            if ($PathToObject -match '^\s*$') {
+                Write-Warning 'For the Get-AclSafely function, the PathToObject parameter is required and cannot solely contain whitespace.'
+                return $false
+            }
+        }
     }
     #endregion Process Input ######################################################
 
