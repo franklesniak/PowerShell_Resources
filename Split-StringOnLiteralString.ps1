@@ -1,97 +1,109 @@
 function Split-StringOnLiteralString {
-    # Split-StringOnLiteralString is designed to split a string the way the way that I
-    # expected it to be done - using a literal string (as opposed to regex). It's also
-    # designed to be backward-compatible with all versions of PowerShell and has been
-    # tested successfully on PowerShell v1. My motivation for creating this function
-    # was 1) I wanted a split function that behaved more like VBScript's Split
-    # function, 2) I did not want to be messing around with RegEx, and 3) I needed code
-    # that was backward-compatible with all versions of PowerShell.
+    # .SYNOPSIS
+    # Splits a string into an array using a literal string as the splitter.
     #
-    # This function takes two positional arguments
-    # The first argument is a string, and the string to be split
-    # The second argument is a string or char, and it is that which is to split the string in the first parameter
+    # .DESCRIPTION
+    # Splits a string using a literal string (as opposed to regex). The
+    # function is designed to be backward-compatible with all versions of
+    # PowerShell and has been tested successfully on PowerShell v1. This
+    # function behaves more like VBScript's Split() function than other
+    # string splitting-approaches in PowerShell while avoiding the use of
+    # RegEx.
     #
-    # Note: This function always returns an array, even when there is zero or one element in it.
+    # .PARAMETER StringToSplit
+    # This parameter is required; it is the string to be split into an
+    # array.
     #
-    # Example:
-    # $result = Split-StringOnLiteralString 'foo' ' '
+    # .PARAMETER Splitter
+    # This parameter is required; it is the string that will be used to
+    # split the string specified in the StringToSplit parameter.
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'What do you think of this function?' -Splitter ' '
+    # # $result.Count is 7
+    # # $result[2] is 'you'
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString 'What do you think of this function?' ' '
+    # # $result.Count is 7
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'foo' -Splitter ' '
     # # $result.GetType().FullName is System.Object[]
     # # $result.Count is 1
     #
-    # Example 2:
-    # $result = Split-StringOnLiteralString 'What do you think of this function?' ' '
-    # # $result.Count is 7
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'foo' -Splitter ''
+    # # $result.GetType().FullName is System.Object[]
+    # # $result.Count is 5 because of how .NET handles a split using an
+    # # empty string:
+    # # $result[0] is ''
+    # # $result[1] is 'f'
+    # # $result[2] is 'o'
+    # # $result[3] is 'o'
+    # # $result[4] is ''
+    #
+    # .INPUTS
+    # None. You can't pipe objects to Split-StringOnLiteralString.
+    #
+    # .OUTPUTS
+    # System.String[]. Split-StringOnLiteralString returns an array of
+    # strings, with each string being an element of the resulting array
+    # from the split operation. This function always returns an array, even
+    # when there is zero elements or one element in it.
+    #
+    # .NOTES
+    # This function also supports the use of positional parameters instead
+    # of named parameters. If positional parameters are used intead of
+    # named parameters, then two positional parameters are required:
+    #
+    # The first positional parameter is the string to be split into an
+    # array.
+    #
+    # The second positional parameter is the string that will be used to
+    # split the string specified in the first positional parameter.
+    #
+    # Also, please note that if -StringToSplit (or the first positional
+    # parameter) is $null, then the function will return an array with one
+    # element, which is an empty string. This is because the function
+    # converts $null to an empty string before splitting the string.
+    #
+    # Version: 3.0.20250211.0
 
-    #region License ################################################################
-    # Copyright 2023 Frank Lesniak
+    #region License ####################################################
+    # Copyright (c) 2025 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining
+    # a copy of this software and associated documentation files (the
+    # "Software"), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to
+    # permit persons to whom the Software is furnished to do so, subject to
+    # the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be
+    # included in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+    # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+    # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+    # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ####################################################
 
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in the
-    # Software without restriction, including without limitation the rights to use,
-    # copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
-    # Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
+    param (
+        [string]$StringToSplit = '',
+        [string]$Splitter = ''
+    )
 
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
+    $strSplitterInRegEx = [regex]::Escape($Splitter)
+    $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
 
-    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
-    # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-    # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    #endregion License ################################################################
-
-    #region DownloadLocationNotice #################################################
-    # The most up-to-date version of this script can be found on the author's GitHub
-    # repository at https://github.com/franklesniak/PowerShell_Resources
-    #endregion DownloadLocationNotice #################################################
-
-    $strThisFunctionVersionNumber = [version]'2.0.20230708.0'
-
-    trap {
-        Write-Error 'An error occurred using the Split-StringOnLiteralString function. This was most likely caused by the arguments supplied not being strings'
-    }
-
-    if ($args.Length -ne 2) {
-        Write-Error 'Split-StringOnLiteralString was called without supplying two arguments. The first argument should be the string to be split, and the second should be the string or character on which to split the string.'
-        $result = @()
-    } else {
-        $objToSplit = $args[0]
-        $objSplitter = $args[1]
-        if ($null -eq $objToSplit) {
-            $result = @()
-        } elseif ($null -eq $objSplitter) {
-            # Splitter was $null; return string to be split within an array (of one element).
-            $result = @($objToSplit)
-        } else {
-            if ($objToSplit.GetType().Name -ne 'String') {
-                Write-Warning 'The first argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString.'
-                $strToSplit = [string]$objToSplit
-            } else {
-                $strToSplit = $objToSplit
-            }
-
-            if (($objSplitter.GetType().Name -ne 'String') -and ($objSplitter.GetType().Name -ne 'Char')) {
-                Write-Warning 'The second argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString.'
-                $strSplitter = [string]$objSplitter
-            } elseif ($objSplitter.GetType().Name -eq 'Char') {
-                $strSplitter = [string]$objSplitter
-            } else {
-                $strSplitter = $objSplitter
-            }
-
-            $strSplitterInRegEx = [regex]::Escape($strSplitter)
-
-            # With the leading comma, force encapsulation into an array so that an array is
-            # returned even when there is one element:
-            $result = @([regex]::Split($strToSplit, $strSplitterInRegEx))
-        }
-    }
-
-    # The following code forces the function to return an array, always, even when there are
-    # zero or one elements in the array
+    # The following code forces the function to return an array, always,
+    # even when there are zero or one elements in the array
     $intElementCount = 1
     if ($null -ne $result) {
         if ($result.GetType().FullName.Contains('[]')) {
@@ -103,12 +115,12 @@ function Split-StringOnLiteralString {
     $strLowercaseFunctionName = $MyInvocation.InvocationName.ToLower()
     $boolArrayEncapsulation = $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ')') -or $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ' ')
     if ($boolArrayEncapsulation) {
-        $result
+        return ($result)
     } elseif ($intElementCount -eq 0) {
-        , @()
+        return (, @())
     } elseif ($intElementCount -eq 1) {
-        , (, ($args[0]))
+        return (, (, $StringToSplit))
     } else {
-        $result
+        return ($result)
     }
 }
