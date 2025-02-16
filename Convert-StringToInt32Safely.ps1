@@ -52,8 +52,8 @@ function Convert-StringToInt32Safely {
     # object that will be used to store the converted int32 object if the
     # conversion is successful.
     #
-    # The second positional parameter is a string that is to be converted to
-    # a System.Int32 object.
+    # The second positional parameter is a string that is to be converted
+    # to a System.Int32 object.
     #
     # Version: 1.0.20250215.0
 
