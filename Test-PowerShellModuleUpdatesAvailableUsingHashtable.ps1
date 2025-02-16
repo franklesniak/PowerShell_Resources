@@ -164,7 +164,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     # .NOTES
     # Requires PowerShell v5.0 or later.
     #
-    # Version: 2.1.20250216.0
+    # Version: 2.1.20250216.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -3282,6 +3282,11 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
 
     #region Process input ######################################################
     # Validate that the required parameter was supplied:
+    if ($null -eq $ReferenceToHashtableOfInstalledModules) {
+        $strMessage = 'The parameter $ReferenceToHashtableOfInstalledModules must be a reference to a hashtable. The hashtable must have keys that are the names of PowerShell modules with each key''s value populated with arrays of ModuleInfoGrouping objects (the result of Get-Module).'
+        Write-Error -Message $strMessage
+        return $false
+    }
     if ($null -eq $ReferenceToHashtableOfInstalledModules.Value) {
         $strMessage = 'The parameter $ReferenceToHashtableOfInstalledModules must be a reference to a hashtable. The hashtable must have keys that are the names of PowerShell modules with each key''s value populated with arrays of ModuleInfoGrouping objects (the result of Get-Module).'
         Write-Error -Message $strMessage
@@ -3352,13 +3357,15 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
 
     $hashtableMessagesToThrowForMissingModule = @{}
     $hashtableModuleNameToCustomMessageToThrowForMissingModule = @{}
-    if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages.Value) {
-        if ($ReferenceToHashtableOfCustomNotInstalledMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
-            foreach ($strMessage in @(($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Keys)) {
-                $hashtableMessagesToThrowForMissingModule.Add($strMessage, $false)
+    if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages) {
+        if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages.Value) {
+            if ($ReferenceToHashtableOfCustomNotInstalledMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
+                foreach ($strMessage in @(($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Keys)) {
+                    $hashtableMessagesToThrowForMissingModule.Add($strMessage, $false)
 
-                ($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Item($strMessage) | ForEach-Object {
-                    $hashtableModuleNameToCustomMessageToThrowForMissingModule.Add($_, $strMessage)
+                    ($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Item($strMessage) | ForEach-Object {
+                        $hashtableModuleNameToCustomMessageToThrowForMissingModule.Add($_, $strMessage)
+                    }
                 }
             }
         }
@@ -3366,13 +3373,15 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
 
     $hashtableMessagesToThrowForOutdatedModule = @{}
     $hashtableModuleNameToCustomMessageToThrowForOutdatedModule = @{}
-    if ($null -ne $ReferenceToHashtableOfCustomNotUpToDateMessages.Value) {
-        if ($ReferenceToHashtableOfCustomNotUpToDateMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
-            foreach ($strMessage in @(($ReferenceToHashtableOfCustomNotUpToDateMessages.Value).Keys)) {
-                $hashtableMessagesToThrowForOutdatedModule.Add($strMessage, $false)
+    if ($null -ne $ReferenceToHashtableOfCustomNotUpToDateMessages) {
+        if ($null -ne $ReferenceToHashtableOfCustomNotUpToDateMessages.Value) {
+            if ($ReferenceToHashtableOfCustomNotUpToDateMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
+                foreach ($strMessage in @(($ReferenceToHashtableOfCustomNotUpToDateMessages.Value).Keys)) {
+                    $hashtableMessagesToThrowForOutdatedModule.Add($strMessage, $false)
 
-                ($ReferenceToHashtableOfCustomNotUpToDateMessages.Value).Item($strMessage) | ForEach-Object {
-                    $hashtableModuleNameToCustomMessageToThrowForOutdatedModule.Add($_, $strMessage)
+                    ($ReferenceToHashtableOfCustomNotUpToDateMessages.Value).Item($strMessage) | ForEach-Object {
+                        $hashtableModuleNameToCustomMessageToThrowForOutdatedModule.Add($_, $strMessage)
+                    }
                 }
             }
         }
@@ -3391,8 +3400,8 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
                 $hashtableMessagesToThrowForMissingModule.Add($strMessage, $true)
             }
 
-            if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
-                if ($ReferenceToArrayOfMissingModules.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
+            if ($null -ne $ReferenceToArrayOfMissingModules) {
+                if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
                     ($ReferenceToArrayOfMissingModules.Value) += $strModuleName
                 }
             }
@@ -3433,8 +3442,8 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
                             $hashtableMessagesToThrowForOutdatedModule.Add($strMessage, $true)
                         }
 
-                        if ($null -ne $ReferenceToArrayOfOutOfDateModules.Value) {
-                            if ($ReferenceToArrayOfOutOfDateModules.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
+                        if ($null -ne $ReferenceToArrayOfOutOfDateModules) {
+                            if ($null -ne $ReferenceToArrayOfOutOfDateModules.Value) {
                                 ($ReferenceToArrayOfOutOfDateModules.Value) += $strModuleName
                             }
                         }
