@@ -99,7 +99,7 @@ function Convert-StringToFlexibleVersion {
     # identifying the portions of the version object that are not allowed,
     # which can be evaluated further if needed.
     #
-    # .PARAMETER PowerShellVersion
+    # .PARAMETER PSVersion
     # This parameter is optional; it is a version object that represents the
     # version of PowerShell that is running the script. If this parameter is
     # supplied, it will improve the performance of the function by allowing it
@@ -116,8 +116,8 @@ function Convert-StringToFlexibleVersion {
     # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
     # # $intReturnCode will be 0 because the string is in a valid format for a
     # # version object.
-    # # $version will be a System.Version object with Major=1, Minor=2, Build=3,
-    # # Revision=4.
+    # # $version will be a System.Version object with Major=1, Minor=2,
+    # # Build=3, Revision=4.
     # # All leftover strings will be empty.
     #
     # .EXAMPLE
@@ -132,8 +132,8 @@ function Convert-StringToFlexibleVersion {
     # # $intReturnCode will be 4 because the string is not in a valid format
     # # for a version object. The 4 indicates that the revision version portion
     # # of the string could not be converted to a version object.
-    # # $version will be a System.Version object with Major=1, Minor=2, Build=3,
-    # # Revision=4.
+    # # $version will be a System.Version object with Major=1, Minor=2,
+    # # Build=3, Revision=4.
     # # $strRevisionVersionLeftover will be 'beta3'. All other leftover strings
     # # will be empty.
     #
@@ -188,8 +188,8 @@ function Convert-StringToFlexibleVersion {
     # # $intReturnCode will be 5 because the string is in a valid format for a
     # # version object. The 5 indicates that there were excess portions of the
     # # string that could not be converted to a version object.
-    # # $version will be a System.Version object with Major=1, Minor=2, Build=3,
-    # # Revision=4.
+    # # $version will be a System.Version object with Major=1, Minor=2,
+    # # Build=3, Revision=4.
     # # $strAdditionalLeftover will be '5'. All other leftover strings will be
     # # empty.
     #
@@ -229,7 +229,7 @@ function Convert-StringToFlexibleVersion {
     #
     # .NOTES
     # This function also supports the use of positional parameters instead of
-    # named parameters. If positional parameters are used intead of named
+    # named parameters. If positional parameters are used instead of named
     # parameters, then seven or eight positional parameters are required:
     #
     # The first positional parameter is a reference to a System.Version object
@@ -314,27 +314,28 @@ function Convert-StringToFlexibleVersion {
     #
     # Version: 1.0.20250215.0
 
-    #region License ############################################################
+    #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the "Software"), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # "Software"), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
-    #endregion License ############################################################
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
+    #endregion License ########################################################
 
     param (
         [ref]$ReferenceToVersionObject = ([ref]$null),
@@ -344,34 +345,35 @@ function Convert-StringToFlexibleVersion {
         [ref]$ReferenceToRevisionVersionLeftoverString = ([ref]$null),
         [ref]$ReferenceToAdditionalLeftoverString = ([ref]$null),
         [string]$StringToConvert = '',
-        [version]$PowerShellVersion = [version]'0.0'
+        [version]$PSVersion = ([version]'0.0')
     )
 
-    #region FunctionsToSupportErrorHandling ####################################
+    #region FunctionsToSupportErrorHandling ################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
-        # Gets a reference (memory pointer) to the last error that occurred.
+        # Gets a reference (memory pointer) to the last error that
+        # occurred.
         #
         # .DESCRIPTION
         # Returns a reference (memory pointer) to $null ([ref]$null) if no
-        # errors on on the $error stack; otherwise, returns a reference to the
-        # last error that occurred.
+        # errors on on the $error stack; otherwise, returns a reference to
+        # the last error that occurred.
         #
         # .EXAMPLE
-        # # Intentionally empty trap statement to prevent terminating errors
-        # # from halting processing
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
         # trap { }
         #
         # # Retrieve the newest error on the stack prior to doing work:
         # $refLastKnownError = Get-ReferenceToLastError
         #
-        # # Store current error preference; we will restore it after we do some
-        # # work:
+        # # Store current error preference; we will restore it after we do
+        # # some work:
         # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
         #
         # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-        # # error output. Terminating errors will not output anything, kick to
-        # # the empty trap statement and then continue on. Likewise, non-
+        # # error output. Terminating errors will not output anything, kick
+        # # to the empty trap statement and then continue on. Likewise, non-
         # # terminating errors will also not output anything, but they do not
         # # kick to the trap statement; they simply continue on.
         # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
@@ -396,12 +398,14 @@ function Convert-StringToFlexibleVersion {
         #     # NOTE: $refLastKnownError could be non-null, while
         #     # $refNewestCurrentError could be null if $error was cleared;
         #     # this does not indicate an error.
+        #     #
         #     # So:
-        #     # If both are null, no error
+        #     # If both are null, no error.
         #     # If $refLastKnownError is null and $refNewestCurrentError is
-        #     # non-null, error
-        #     # If $refLastKnownError is non-null and $refNewestCurrentError is
-        #     # null, no error
+        #     # non-null, error.
+        #     # If $refLastKnownError is non-null and $refNewestCurrentError
+        #     # is null, no error.
+        #     #
         #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
         #         $boolErrorOccurred = $true
         #     }
@@ -412,36 +416,37 @@ function Convert-StringToFlexibleVersion {
         #
         # .OUTPUTS
         # System.Management.Automation.PSReference ([ref]).
-        # Get-ReferenceToLastError returns a reference (memory pointer) to the
-        # last error that occurred. It returns a reference to $null
+        # Get-ReferenceToLastError returns a reference (memory pointer) to
+        # the last error that occurred. It returns a reference to $null
         # ([ref]$null) if there are no errors on on the $error stack.
         #
         # .NOTES
-        # Version: 2.0.20241223.0
+        # Version: 2.0.20250215.0
 
-        #region License ####################################################
-        # Copyright (c) 2024 Frank Lesniak
+        #region License ################################################
+        # Copyright (c) 2025 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining
-        # a copy of this software and associated documentation files (the
-        # "Software"), to deal in the Software without restriction, including
-        # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to
-        # permit persons to whom the Software is furnished to do so, subject to
-        # the following conditions:
+        # Permission is hereby granted, free of charge, to any person
+        # obtaining a copy of this software and associated documentation
+        # files (the "Software"), to deal in the Software without
+        # restriction, including without limitation the rights to use,
+        # copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the
+        # Software is furnished to do so, subject to the following
+        # conditions:
         #
         # The above copyright notice and this permission notice shall be
         # included in all copies or substantial portions of the Software.
         #
         # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        # SOFTWARE.
-        #endregion License ####################################################
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+        # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+        # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+        # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+        # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+        # OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ################################################
 
         if ($Error.Count -gt 0) {
             return ([ref]($Error[0]))
@@ -452,41 +457,44 @@ function Convert-StringToFlexibleVersion {
 
     function Test-ErrorOccurred {
         # .SYNOPSIS
-        # Checks to see if an error occurred during a time period, i.e., during
-        # the execution of a command.
+        # Checks to see if an error occurred during a time period, i.e.,
+        # during the execution of a command.
         #
         # .DESCRIPTION
         # Using two references (memory pointers) to errors, this function
-        # checks to see if an error occurred based on differences between the
-        # two errors.
+        # checks to see if an error occurred based on differences between
+        # the two errors.
         #
-        # To use this function, you must first retrieve a reference to the last
-        # error that occurred prior to the command you are about to run. Then,
-        # run the command. After the command completes, retrieve a reference to
-        # the last error that occurred. Pass these two references to this
-        # function to determine if an error occurred.
+        # To use this function, you must first retrieve a reference to the
+        # last error that occurred prior to the command you are about to
+        # run. Then, run the command. After the command completes, retrieve
+        # a reference to the last error that occurred. Pass these two
+        # references to this function to determine if an error occurred.
         #
         # .PARAMETER ReferenceToEarlierError
-        # This parameter is required; it is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack earlier in time, i.e., prior to running the
-        # command for which you wish to determine whether an error occurred.
+        # This parameter is required; it is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack earlier in time, i.e., prior to running
+        # the command for which you wish to determine whether an error
+        # occurred.
         #
-        # If no error was on the stack at this time, ReferenceToEarlierError
-        # must be a reference to $null ([ref]$null).
+        # If no error was on the stack at this time,
+        # ReferenceToEarlierError must be a reference to $null
+        # ([ref]$null).
         #
         # .PARAMETER ReferenceToLaterError
-        # This parameter is required; it is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack later in time, i.e., after to running the command
-        # for which you wish to determine whether an error occurred.
+        # This parameter is required; it is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack later in time, i.e., after to running
+        # the command for which you wish to determine whether an error
+        # occurred.
         #
         # If no error was on the stack at this time, ReferenceToLaterError
         # must be a reference to $null ([ref]$null).
         #
         # .EXAMPLE
-        # # Intentionally empty trap statement to prevent terminating errors
-        # # from halting processing
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
         # trap { }
         #
         # # Retrieve the newest error on the stack prior to doing work
@@ -496,15 +504,16 @@ function Convert-StringToFlexibleVersion {
         #     $refLastKnownError = ([ref]$null)
         # }
         #
-        # # Store current error preference; we will restore it after we do some
-        # # work:
+        # # Store current error preference; we will restore it after we do
+        # # some work:
         # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
         #
-        # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-        # # error output. Terminating errors will not output anything, kick to
-        # # the empty trap statement and then continue on. Likewise, non-
-        # # terminating errors will also not output anything, but they do not
-        # # kick to the trap statement; they simply continue on.
+        # # Set ErrorActionPreference to SilentlyContinue; this will
+        # # suppress error output. Terminating errors will not output
+        # # anything, kick to the empty trap statement and then continue
+        # # on. Likewise, non- terminating errors will also not output
+        # # anything, but they do not kick to the trap statement; they
+        # # simply continue on.
         # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
         #
         # # Do something that might trigger an error
@@ -530,54 +539,57 @@ function Convert-StringToFlexibleVersion {
         # None. You can't pipe objects to Test-ErrorOccurred.
         #
         # .OUTPUTS
-        # System.Boolean. Test-ErrorOccurred returns a boolean value indicating
-        # whether an error occurred during the time period in question. $true
-        # indicates an error occurred; $false indicates no error occurred.
+        # System.Boolean. Test-ErrorOccurred returns a boolean value
+        # indicating whether an error occurred during the time period in
+        # question. $true indicates an error occurred; $false indicates no
+        # error occurred.
         #
         # .NOTES
-        # This function also supports the use of positional parameters instead
-        # of named parameters. If positional parameters are used intead of
-        # named parameters, then two positional parameters are required:
+        # This function also supports the use of positional parameters
+        # instead of named parameters. If positional parameters are used
+        # instead of named parameters, then two positional parameters are
+        # required:
         #
-        # The first positional parameter is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack earlier in time, i.e., prior to running the
-        # command for which you wish to determine whether an error occurred. If
-        # no error was on the stack at this time, the first positional
-        # parameter must be a reference to $null ([ref]$null).
+        # The first positional parameter is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack earlier in time, i.e., prior to running
+        # the command for which you wish to determine whether an error
+        # occurred. If no error was on the stack at this time, the first
+        # positional parameter must be a reference to $null ([ref]$null).
         #
-        # The second positional parameter is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack later in time, i.e., after to running the command
-        # for which you wish to determine whether an error occurred. If no
-        # error was on the stack at this time, ReferenceToLaterError must be
-        # a reference to $null ([ref]$null).
+        # The second positional parameter is a reference (memory pointer)
+        # to a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack later in time, i.e., after to running
+        # the command for which you wish to determine whether an error
+        # occurred. If no error was on the stack at this time,
+        # ReferenceToLaterError must be a reference to $null ([ref]$null).
         #
-        # Version: 2.0.20241223.0
+        # Version: 2.0.20250215.0
 
-        #region License ####################################################
-        # Copyright (c) 2024 Frank Lesniak
+        #region License ################################################
+        # Copyright (c) 2025 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining
-        # a copy of this software and associated documentation files (the
-        # "Software"), to deal in the Software without restriction, including
-        # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to
-        # permit persons to whom the Software is furnished to do so, subject to
-        # the following conditions:
+        # Permission is hereby granted, free of charge, to any person
+        # obtaining a copy of this software and associated documentation
+        # files (the "Software"), to deal in the Software without
+        # restriction, including without limitation the rights to use,
+        # copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the
+        # Software is furnished to do so, subject to the following
+        # conditions:
         #
         # The above copyright notice and this permission notice shall be
         # included in all copies or substantial portions of the Software.
         #
         # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        # SOFTWARE.
-        #endregion License ####################################################
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+        # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+        # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+        # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+        # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+        # OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ################################################
         param (
             [ref]$ReferenceToEarlierError = ([ref]$null),
             [ref]$ReferenceToLaterError = ([ref]$null)
@@ -594,14 +606,14 @@ function Convert-StringToFlexibleVersion {
         } else {
             # One is $null, or both are $null
             # NOTE: $ReferenceToEarlierError could be non-null, while
-            # $ReferenceToLaterError could be null if $error was cleared; this
-            # does not indicate an error.
+            # $ReferenceToLaterError could be null if $error was cleared;
+            # this does not indicate an error.
             # So:
-            # - If both are null, no error
-            # - If $ReferenceToEarlierError is null and $ReferenceToLaterError
-            #   is non-null, error
+            # - If both are null, no error.
+            # - If $ReferenceToEarlierError is null and
+            #   $ReferenceToLaterError is non-null, error.
             # - If $ReferenceToEarlierError is non-null and
-            #   $ReferenceToLaterError is null, no error
+            #   $ReferenceToLaterError is null, no error.
             if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 $boolErrorOccurred = $true
             }
@@ -609,35 +621,12 @@ function Convert-StringToFlexibleVersion {
 
         return $boolErrorOccurred
     }
-    #endregion FunctionsToSupportErrorHandling ####################################
+    #endregion FunctionsToSupportErrorHandling ################################
 
     trap {
         # Intentionally left empty to prevent terminating errors from halting
         # processing
     }
-
-    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
-    #region Assign Arguments to Internally-Used Variables ######################
-    if (($args.Count -lt 7) -or ($args.Count -gt 8)) {
-        # Error condition; return failure indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-        return $false
-    }
-    # Correct number of arguments supplied
-    $refOutput = $args[0]
-    $strFilePath = $args[3]
-    $arrCharDriveLetters = $args[2]
-    $boolUsePSDrive = $args[3]
-    $boolRefreshPSDrive = $args[4]
-    $strSecondaryPath = $args[5]
-    $boolQuitOnError = $args[6]
-
-    if ($args.Count -eq 8) {
-        $strServerName = $args[9]
-    } else {
-        $strServerName = ''
-    }
-    #endregion Assign Arguments to Internally-Used Variables ######################
 
     ################### IF WARRANTED, VALIDATE INPUT HERE ###################
 
