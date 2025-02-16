@@ -27,69 +27,69 @@ function Convert-StringToFlexibleVersion {
     # the portions that could not be converted will be stored in the
     # other reference parameters.
     #
-    # .PARAMETER ReferenceToMajorVersionLeftoverString
-    # This parameter is required; it is a reference to a string that will be
-    # modified if the major version portion of the string could not be
-    # converted to a version object. If the major version portion of the string
-    # could not be converted to a version object, the left-most numerical-only
-    # portion of the major version will be used to generate the version object.
-    # The remaining portion of the major version will be stored in the string
-    # reference.
-    #
-    # .PARAMETER ReferenceToMinorVersionLeftoverString
-    # This parameter is required; it is a reference to a string that will be
-    # modified if the minor version portion of the string could not be
-    # converted to a version object. If the minor version portion of the string
-    # could not be converted to a version object, the left-most numerical-only
-    # portion of the minor version will be used to generate the version object.
-    # The remaining portion of the minor version will be stored in the string
-    # reference.
-    #
-    # If the major version portion of the string could not be converted to a
-    # version object, the entire minor version portion of the string will be
-    # stored in the string reference, and no portion of the supplied minor
-    # version reference will be used to generate the version object.
-    #
-    # .PARAMETER ReferenceToBuildVersionLeftoverString
-    # This parameter is required; it is a reference to a string that will be
-    # modified if the build version portion of the string could not be
-    # converted to a version object. If the build version portion of the
-    # string could not be converted to a version object, the left-most
-    # numerical-only portion of the build version will be used to generate the
-    # version object. The remaining portion of the build version will be stored
-    # in the string reference.
-    #
-    # If the major or minor version portions of the string could not be
-    # converted to a version object, the entire build version portion of the
-    # string will be stored in the string reference, and no portion of the
-    # supplied build version reference will be used to generate the version
-    # object.
-    #
-    # .PARAMETER ReferenceToRevisionVersionLeftoverString
-    # This parameter is required; it is a reference to a string that will be
-    # modified if the revision version portion of the string could not be
-    # converted to a version object. If the revision version portion of the
-    # string could not be converted to a version object, the left-most
-    # numerical-only portion of the revision version will be used to generate
-    # the version object. The remaining portion of the revision version will be
-    # stored in the string reference.
-    #
-    # If the major, minor, or build version portions of the string could not be
-    # converted to a version object, the entire revision version portion of the
-    # string will be stored in the string reference, and no portion of the
-    # supplied revision version reference will be used to generate the version
-    # object.
-    #
-    # .PARAMETER ReferenceToAdditionalLeftoverString
-    # This parameter is required; it is a reference to a string that will be
+    # .PARAMETER ReferenceArrayOfLeftoverStrings
+    # This parameter is required; it is a reference to an array of five
+    # elements. Each element is a string; One or more of the elements may be
     # modified if the string could not be converted to a version object. If the
     # string could not be converted to a version object, any portions of the
     # string that exceed the major, minor, build, and revision version portions
-    # will be stored in the string reference.
+    # will be stored in the elements of the array.
     #
-    # For example, if the string is '1.2.3.4.5', the string referenced by this
-    # parameter will be '5'. If the string is '1.2.3.4.5.6', the string
-    # referenced by this parameter will be '5.6'.
+    # The first element of the array will be modified if the major version
+    # portion of the string could not be converted to a version object. If the
+    # major version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the major version will be
+    # used to generate the version object. The remaining portion of the major
+    # version will be stored in the first element of the array.
+    #
+    # The second element of the array will be modified if the minor version
+    # portion of the string could not be converted to a version object. If the
+    # minor version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the minor version will be
+    # used to generate the version object. The remaining portion of the minor
+    # version will be stored in second element of the array.
+    #
+    # If the major version portion of the string could not be converted to a
+    # version object, the entire minor version portion of the string will be
+    # stored in the second element, and no portion of the supplied minor
+    # version reference will be used to generate the version object.
+    #
+    # The third element of the array will be modified if the build version
+    # portion of the string could not be converted to a version object. If the
+    # build version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the build version will be
+    # used to generate the version object. The remaining portion of the build
+    # version will be stored in the third element of the array.
+    #
+    # If the major or minor version portions of the string could not be
+    # converted to a version object, the entire build version portion of the
+    # string will be stored in the third element, and no portion of the
+    # supplied build version reference will be used to generate the version
+    # object.
+    #
+    # The fourth element of the array will be modified if the revision version
+    # portion of the string could not be converted to a version object. If the
+    # revision version portion of the string could not be converted to a
+    # version object, the left-most numerical-only portion of the revision
+    # version will be used to generate the version object. The remaining
+    # portion of the revision version will be stored in the fourth element of
+    # the array.
+    #
+    # If the major, minor, or build version portions of the string could not be
+    # converted to a version object, the entire revision version portion of the
+    # string will be stored in the fourth element, and no portion of the
+    # supplied revision version reference will be used to generate the version
+    # object.
+    #
+    # The fifth element of the array will be modified if the string could not
+    # be converted to a version object. If the string could not be converted to
+    # a version object, any portions of the string that exceed the major,
+    # minor, build, and revision version portions will be stored in the string
+    # reference.
+    #
+    # For example, if the string is '1.2.3.4.5', the fifth element in the array
+    # will be '5'. If the string is '1.2.3.4.5.6', the fifth element of the
+    # array will be '5.6'.
     #
     # .PARAMETER StringToConvert
     # This parameter is required; it is string that will be converted to a
@@ -107,91 +107,71 @@ function Convert-StringToFlexibleVersion {
     #
     # .EXAMPLE
     # $version = $null
-    # $strMajorVersionLeftover = ''
-    # $strMinorVersionLeftover = ''
-    # $strBuildVersionLeftover = ''
-    # $strRevisionVersionLeftover = ''
-    # $strAdditionalLeftover = ''
+    # $arrLeftoverStrings = @('','','','','')
     # $strVersion = '1.2.3.4'
-    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
+    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -StringToConvert $strVersion
     # # $intReturnCode will be 0 because the string is in a valid format for a
     # # version object.
     # # $version will be a System.Version object with Major=1, Minor=2,
     # # Build=3, Revision=4.
-    # # All leftover strings will be empty.
+    # # All strings in $arrLeftoverStrings will be empty.
     #
     # .EXAMPLE
     # $version = $null
-    # $strMajorVersionLeftover = ''
-    # $strMinorVersionLeftover = ''
-    # $strBuildVersionLeftover = ''
-    # $strRevisionVersionLeftover = ''
-    # $strAdditionalLeftover = ''
+    # $arrLeftoverStrings = @('','','','','')
     # $strVersion = '1.2.3.4-beta3'
-    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
+    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -StringToConvert $strVersion
     # # $intReturnCode will be 4 because the string is not in a valid format
     # # for a version object. The 4 indicates that the revision version portion
     # # of the string could not be converted to a version object.
     # # $version will be a System.Version object with Major=1, Minor=2,
     # # Build=3, Revision=4.
-    # # $strRevisionVersionLeftover will be 'beta3'. All other leftover strings
-    # # will be empty.
+    # # $arrLeftoverStrings[3] will be 'beta3'. All other elements of
+    # # $arrLeftoverStrings will be empty.
     #
     # .EXAMPLE
     # $version = $null
-    # $strMajorVersionLeftover = ''
-    # $strMinorVersionLeftover = ''
-    # $strBuildVersionLeftover = ''
-    # $strRevisionVersionLeftover = ''
-    # $strAdditionalLeftover = ''
+    # $arrLeftoverStrings = @('','','','','')
     # $strVersion = '1.2.2147483700.4'
-    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
+    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -StringToConvert $strVersion
     # # $intReturnCode will be 3 because the string is not in a valid format
     # # for a version object. The 3 indicates that the build version portion of
     # # the string could not be converted to a version object (the value
     # # exceeds the maximum value for a version element - 2147483647).
     # # $version will be a System.Version object with Major=1, Minor=2,
     # # Build=2147483647, Revision=-1.
-    # # $strBuildVersionLeftover will be '53' (2147483700 - 2147483647) and
-    # # $strRevisionVersionLeftover will be '4'. All other leftover strings
-    # # will be empty.
+    # # $arrLeftoverStrings[2] will be '53' (2147483700 - 2147483647) and
+    # # $arrLeftoverStrings[3] will be '4'. All other elements of
+    # # $arrLeftoverStrings will be empty.
     #
     # .EXAMPLE
     # $version = $null
-    # $strMajorVersionLeftover = ''
-    # $strMinorVersionLeftover = ''
-    # $strBuildVersionLeftover = ''
-    # $strRevisionVersionLeftover = ''
-    # $strAdditionalLeftover = ''
+    # $arrLeftoverStrings = @('','','','','')
     # $strVersion = '1.2.2147483700-beta5.4'
-    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
+    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -StringToConvert $strVersion
     # # $intReturnCode will be 3 because the string is not in a valid format
     # # for a version object. The 3 indicates that the build version portion of
     # # the string could not be converted to a version object (the value
     # # exceeds the maximum value for a version element - 2147483647).
     # # $version will be a System.Version object with Major=1, Minor=2,
     # # Build=2147483647, Revision=-1.
-    # # $strBuildVersionLeftover will be '53-beta5' (2147483700 - 2147483647)
+    # # $arrLeftoverStrings[2] will be '53-beta5' (2147483700 - 2147483647)
     # # plus the non-numeric portion of the string ('-beta5') and
-    # # $strRevisionVersionLeftover will be '4'. All other leftover strings
-    # # will be empty.
+    # # $arrLeftoverStrings[3] will be '4'. All other elements of
+    # # $arrLeftoverStrings will be empty.
     #
     # .EXAMPLE
     # $version = $null
-    # $strMajorVersionLeftover = ''
-    # $strMinorVersionLeftover = ''
-    # $strBuildVersionLeftover = ''
-    # $strRevisionVersionLeftover = ''
-    # $strAdditionalLeftover = ''
+    # $arrLeftoverStrings = @('','','','','')
     # $strVersion = '1.2.3.4.5'
-    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceToVersionObject ([ref]$version) -ReferenceToMajorVersionLeftoverString ([ref]$strMajorVersionLeftover) -ReferenceToMinorVersionLeftoverString ([ref]$strMinorVersionLeftover) -ReferenceToBuildVersionLeftoverString ([ref]$strBuildVersionLeftover) -ReferenceToRevisionVersionLeftoverString ([ref]$strRevisionVersionLeftover) -ReferenceToAdditionalLeftoverString ([ref]$strAdditionalLeftover) -StringToConvert $strVersion
+    # $intReturnCode = Convert-StringToFlexibleVersion -ReferenceArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -StringToConvert $strVersion
     # # $intReturnCode will be 5 because the string is in a valid format for a
     # # version object. The 5 indicates that there were excess portions of the
     # # string that could not be converted to a version object.
     # # $version will be a System.Version object with Major=1, Minor=2,
     # # Build=3, Revision=4.
-    # # $strAdditionalLeftover will be '5'. All other leftover strings will be
-    # # empty.
+    # # $arrLeftoverStrings[4] will be '5'. All other elements of
+    # # $arrLeftoverStrings will be empty.
     #
     # .INPUTS
     # None. You can't pipe objects to Convert-StringToFlexibleVersion.
@@ -230,7 +210,7 @@ function Convert-StringToFlexibleVersion {
     # .NOTES
     # This function also supports the use of positional parameters instead of
     # named parameters. If positional parameters are used instead of named
-    # parameters, then seven or eight positional parameters are required:
+    # parameters, then three or four positional parameters are required:
     #
     # The first positional parameter is a reference to a System.Version object
     # that will be used to store the version object that is generated from the
@@ -241,73 +221,77 @@ function Convert-StringToFlexibleVersion {
     # the portions that could not be converted will be stored in the
     # other reference parameters.
     #
-    # The second positional parameter is a reference to a string that will be
-    # modified if the major version portion of the string could not be
-    # converted to a version object. If the major version portion of the string
-    # could not be converted to a version object, the left-most numerical-only
-    # portion of the major version will be used to generate the version object.
-    # The remaining portion of the major version will be stored in the string
-    # reference.
-    #
-    # The third positional parameter is is a reference to a string that will be
-    # modified if the minor version portion of the string could not be
-    # converted to a version object. If the minor version portion of the string
-    # could not be converted to a version object, the left-most numerical-only
-    # portion of the minor version will be used to generate the version object.
-    # The remaining portion of the minor version will be stored in the string
-    # reference.
-    #
-    # If the major version portion of the string could not be converted to a
-    # version object, the entire minor version portion of the string will be
-    # stored in the string reference, and no portion of the supplied minor
-    # version reference will be used to generate the version object.
-    #
-    # The fourth positional parameter is a reference to a string that will be
-    # modified if the build version portion of the string could not be
-    # converted to a version object. If the build version portion of the
-    # string could not be converted to a version object, the left-most
-    # numerical-only portion of the build version will be used to generate the
-    # version object. The remaining portion of the build version will be stored
-    # in the string reference.
-    #
-    # If the major or minor version portions of the string could not be
-    # converted to a version object, the entire build version portion of the
-    # string will be stored in the string reference, and no portion of the
-    # supplied build version reference will be used to generate the version
-    # object.
-    #
-    # The fifth positional parameter is a reference to a string that will be
-    # modified if the revision version portion of the string could not be
-    # converted to a version object. If the revision version portion of the
-    # string could not be converted to a version object, the left-most
-    # numerical-only portion of the revision version will be used to generate
-    # the version object. The remaining portion of the revision version will be
-    # stored in the string reference.
-    #
-    # If the major, minor, or build version portions of the string could not be
-    # converted to a version object, the entire revision version portion of the
-    # string will be stored in the string reference, and no portion of the
-    # supplied revision version reference will be used to generate the version
-    # object.
-    #
-    # The sixth positional parameter is a reference to a string that will be
+    # The second positional parameter is a reference to an array of five
+    # elements. Each element is a string; One or more of the elements may be
     # modified if the string could not be converted to a version object. If the
     # string could not be converted to a version object, any portions of the
     # string that exceed the major, minor, build, and revision version portions
-    # will be stored in the string reference.
+    # will be stored in the elements of the array.
     #
-    # For example, if the string is '1.2.3.4.5', the string referenced by this
-    # parameter will be '5'. If the string is '1.2.3.4.5.6', the string
-    # referenced by this parameter will be '5.6'.
+    # The first element of the array will be modified if the major version
+    # portion of the string could not be converted to a version object. If the
+    # major version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the major version will be
+    # used to generate the version object. The remaining portion of the major
+    # version will be stored in the first element of the array.
     #
-    # The seventh positional parameter is string that will be converted to a
+    # The second element of the array will be modified if the minor version
+    # portion of the string could not be converted to a version object. If the
+    # minor version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the minor version will be
+    # used to generate the version object. The remaining portion of the minor
+    # version will be stored in second element of the array.
+    #
+    # If the major version portion of the string could not be converted to a
+    # version object, the entire minor version portion of the string will be
+    # stored in the second element, and no portion of the supplied minor
+    # version reference will be used to generate the version object.
+    #
+    # The third element of the array will be modified if the build version
+    # portion of the string could not be converted to a version object. If the
+    # build version portion of the string could not be converted to a version
+    # object, the left-most numerical-only portion of the build version will be
+    # used to generate the version object. The remaining portion of the build
+    # version will be stored in the third element of the array.
+    #
+    # If the major or minor version portions of the string could not be
+    # converted to a version object, the entire build version portion of the
+    # string will be stored in the third element, and no portion of the
+    # supplied build version reference will be used to generate the version
+    # object.
+    #
+    # The fourth element of the array will be modified if the revision version
+    # portion of the string could not be converted to a version object. If the
+    # revision version portion of the string could not be converted to a
+    # version object, the left-most numerical-only portion of the revision
+    # version will be used to generate the version object. The remaining
+    # portion of the revision version will be stored in the fourth element of
+    # the array.
+    #
+    # If the major, minor, or build version portions of the string could not be
+    # converted to a version object, the entire revision version portion of the
+    # string will be stored in the fourth element, and no portion of the
+    # supplied revision version reference will be used to generate the version
+    # object.
+    #
+    # The fifth element of the array will be modified if the string could not
+    # be converted to a version object. If the string could not be converted to
+    # a version object, any portions of the string that exceed the major,
+    # minor, build, and revision version portions will be stored in the string
+    # reference.
+    #
+    # For example, if the string is '1.2.3.4.5', the fifth element in the array
+    # will be '5'. If the string is '1.2.3.4.5.6', the fifth element of the
+    # array will be '5.6'.
+    #
+    # The third positional parameter is string that will be converted to a
     # version object. If the string contains characters not allowed in a
     # version object, this function will attempt to convert the string to a
     # version object by removing the characters that are not allowed,
     # identifying the portions of the version object that are not allowed,
     # which can be evaluated further if needed.
     #
-    # If supplied, the eighth positional parameter is a version object that
+    # If supplied, the fourth positional parameter is a version object that
     # represents the version of PowerShell that is running the script. If this
     # parameter is supplied, it will improve the performance of the function by
     # allowing it to skip the determination of the PowerShell engine version.
@@ -339,11 +323,7 @@ function Convert-StringToFlexibleVersion {
 
     param (
         [ref]$ReferenceToVersionObject = ([ref]$null),
-        [ref]$ReferenceToMajorVersionLeftoverString = ([ref]$null),
-        [ref]$ReferenceToMinorVersionLeftoverString = ([ref]$null),
-        [ref]$ReferenceToBuildVersionLeftoverString = ([ref]$null),
-        [ref]$ReferenceToRevisionVersionLeftoverString = ([ref]$null),
-        [ref]$ReferenceToAdditionalLeftoverString = ([ref]$null),
+        [ref]$ReferenceArrayOfLeftoverStrings = ([ref]$null),
         [string]$StringToConvert = '',
         [version]$PSVersion = ([version]'0.0')
     )
