@@ -53,7 +53,7 @@ function Get-PowerShellModuleUsingHashtable {
     # PowerShell modules for each entry will is stored in the value of the
     # hashtable entry as a populated array.
     #
-    # Version: 1.1.20250123.4
+    # Version: 1.1.20250216.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -143,14 +143,22 @@ function Get-PowerShellModuleUsingHashtable {
         }
     }
 
+    #region Process input ######################################################
+    # Validate that the required parameter was supplied:
     if ($null -eq $ReferenceToHashtable) {
-        Write-Error ('The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.')
+        $strMessage = 'The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
+        Write-Error -Message $strMessage
         return
-    } else {
-        if ($null -eq $ReferenceToHashtable.Value) {
-            Write-Error ('The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.')
-            return
-        }
+    }
+    if ($null -eq $ReferenceToHashtable.Value) {
+        $strMessage = 'The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
+        Write-Error -Message $strMessage
+        return
+    }
+    if ($ReferenceToHashtable.Value.GetType().FullName -ne 'System.Collections.Hashtable') {
+        $strMessage = 'The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
+        Write-Error -Message $strMessage
+        return $false
     }
 
     $boolCheckForPowerShellVersion = $true
@@ -159,7 +167,9 @@ function Get-PowerShellModuleUsingHashtable {
             $boolCheckForPowerShellVersion = $false
         }
     }
+    #endregion Process input ######################################################
 
+    #region Verify environment #################################################
     if ($boolCheckForPowerShellVersion) {
         $versionPS = Get-PSVersion
         if ($versionPS.Major -lt 2) {
@@ -167,6 +177,7 @@ function Get-PowerShellModuleUsingHashtable {
             return
         }
     }
+    #endregion Verify environment #################################################
 
     $VerbosePreferenceAtStartOfFunction = $VerbosePreference
 
