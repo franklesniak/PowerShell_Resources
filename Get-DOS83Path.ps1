@@ -51,7 +51,7 @@ function Get-DOS83Path {
     #
     # .NOTES
     # This function also supports the use of positional parameters instead of
-    # named parameters. If positional parameters are used intead of named
+    # named parameters. If positional parameters are used instead of named
     # parameters, then two or three positional parameters are required:
     #
     # The first positional parameter is a reference to a string. If the process
@@ -67,10 +67,10 @@ function Get-DOS83Path {
     # parameter can speed up performance by avoiding to have to create the
     # Scripting.FileSystemObject every time this function is called.
     #
-    # Version: 1.1.20241223.0
+    # Version: 1.1.20250215.0
 
     #region License ########################################################
-    # Copyright (c) 2024 Frank Lesniak
+    # Copyright (c) 2025 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a
     # copy of this software and associated documentation files (the
@@ -101,28 +101,29 @@ function Get-DOS83Path {
     #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
-        # Gets a reference (memory pointer) to the last error that occurred.
+        # Gets a reference (memory pointer) to the last error that
+        # occurred.
         #
         # .DESCRIPTION
         # Returns a reference (memory pointer) to $null ([ref]$null) if no
-        # errors on on the $error stack; otherwise, returns a reference to the
-        # last error that occurred.
+        # errors on on the $error stack; otherwise, returns a reference to
+        # the last error that occurred.
         #
         # .EXAMPLE
-        # # Intentionally empty trap statement to prevent terminating errors
-        # # from halting processing
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
         # trap { }
         #
         # # Retrieve the newest error on the stack prior to doing work:
         # $refLastKnownError = Get-ReferenceToLastError
         #
-        # # Store current error preference; we will restore it after we do some
-        # # work:
+        # # Store current error preference; we will restore it after we do
+        # # some work:
         # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
         #
         # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-        # # error output. Terminating errors will not output anything, kick to
-        # # the empty trap statement and then continue on. Likewise, non-
+        # # error output. Terminating errors will not output anything, kick
+        # # to the empty trap statement and then continue on. Likewise, non-
         # # terminating errors will also not output anything, but they do not
         # # kick to the trap statement; they simply continue on.
         # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
@@ -147,12 +148,14 @@ function Get-DOS83Path {
         #     # NOTE: $refLastKnownError could be non-null, while
         #     # $refNewestCurrentError could be null if $error was cleared;
         #     # this does not indicate an error.
+        #     #
         #     # So:
-        #     # If both are null, no error
+        #     # If both are null, no error.
         #     # If $refLastKnownError is null and $refNewestCurrentError is
-        #     # non-null, error
-        #     # If $refLastKnownError is non-null and $refNewestCurrentError is
-        #     # null, no error
+        #     # non-null, error.
+        #     # If $refLastKnownError is non-null and $refNewestCurrentError
+        #     # is null, no error.
+        #     #
         #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
         #         $boolErrorOccurred = $true
         #     }
@@ -163,36 +166,37 @@ function Get-DOS83Path {
         #
         # .OUTPUTS
         # System.Management.Automation.PSReference ([ref]).
-        # Get-ReferenceToLastError returns a reference (memory pointer) to the
-        # last error that occurred. It returns a reference to $null
+        # Get-ReferenceToLastError returns a reference (memory pointer) to
+        # the last error that occurred. It returns a reference to $null
         # ([ref]$null) if there are no errors on on the $error stack.
         #
         # .NOTES
-        # Version: 2.0.20241223.0
+        # Version: 2.0.20250215.0
 
-        #region License ####################################################
-        # Copyright (c) 2024 Frank Lesniak
+        #region License ################################################
+        # Copyright (c) 2025 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining
-        # a copy of this software and associated documentation files (the
-        # "Software"), to deal in the Software without restriction, including
-        # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to
-        # permit persons to whom the Software is furnished to do so, subject to
-        # the following conditions:
+        # Permission is hereby granted, free of charge, to any person
+        # obtaining a copy of this software and associated documentation
+        # files (the "Software"), to deal in the Software without
+        # restriction, including without limitation the rights to use,
+        # copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the
+        # Software is furnished to do so, subject to the following
+        # conditions:
         #
         # The above copyright notice and this permission notice shall be
         # included in all copies or substantial portions of the Software.
         #
         # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        # SOFTWARE.
-        #endregion License ####################################################
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+        # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+        # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+        # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+        # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+        # OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ################################################
 
         if ($Error.Count -gt 0) {
             return ([ref]($Error[0]))
@@ -203,41 +207,44 @@ function Get-DOS83Path {
 
     function Test-ErrorOccurred {
         # .SYNOPSIS
-        # Checks to see if an error occurred during a time period, i.e., during
-        # the execution of a command.
+        # Checks to see if an error occurred during a time period, i.e.,
+        # during the execution of a command.
         #
         # .DESCRIPTION
         # Using two references (memory pointers) to errors, this function
-        # checks to see if an error occurred based on differences between the
-        # two errors.
+        # checks to see if an error occurred based on differences between
+        # the two errors.
         #
-        # To use this function, you must first retrieve a reference to the last
-        # error that occurred prior to the command you are about to run. Then,
-        # run the command. After the command completes, retrieve a reference to
-        # the last error that occurred. Pass these two references to this
-        # function to determine if an error occurred.
+        # To use this function, you must first retrieve a reference to the
+        # last error that occurred prior to the command you are about to
+        # run. Then, run the command. After the command completes, retrieve
+        # a reference to the last error that occurred. Pass these two
+        # references to this function to determine if an error occurred.
         #
         # .PARAMETER ReferenceToEarlierError
-        # This parameter is required; it is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack earlier in time, i.e., prior to running the
-        # command for which you wish to determine whether an error occurred.
+        # This parameter is required; it is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack earlier in time, i.e., prior to running
+        # the command for which you wish to determine whether an error
+        # occurred.
         #
-        # If no error was on the stack at this time, ReferenceToEarlierError
-        # must be a reference to $null ([ref]$null).
+        # If no error was on the stack at this time,
+        # ReferenceToEarlierError must be a reference to $null
+        # ([ref]$null).
         #
         # .PARAMETER ReferenceToLaterError
-        # This parameter is required; it is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack later in time, i.e., after to running the command
-        # for which you wish to determine whether an error occurred.
+        # This parameter is required; it is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack later in time, i.e., after to running
+        # the command for which you wish to determine whether an error
+        # occurred.
         #
         # If no error was on the stack at this time, ReferenceToLaterError
         # must be a reference to $null ([ref]$null).
         #
         # .EXAMPLE
-        # # Intentionally empty trap statement to prevent terminating errors
-        # # from halting processing
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
         # trap { }
         #
         # # Retrieve the newest error on the stack prior to doing work
@@ -247,15 +254,16 @@ function Get-DOS83Path {
         #     $refLastKnownError = ([ref]$null)
         # }
         #
-        # # Store current error preference; we will restore it after we do some
-        # # work:
+        # # Store current error preference; we will restore it after we do
+        # # some work:
         # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
         #
-        # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-        # # error output. Terminating errors will not output anything, kick to
-        # # the empty trap statement and then continue on. Likewise, non-
-        # # terminating errors will also not output anything, but they do not
-        # # kick to the trap statement; they simply continue on.
+        # # Set ErrorActionPreference to SilentlyContinue; this will
+        # # suppress error output. Terminating errors will not output
+        # # anything, kick to the empty trap statement and then continue
+        # # on. Likewise, non- terminating errors will also not output
+        # # anything, but they do not kick to the trap statement; they
+        # # simply continue on.
         # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
         #
         # # Do something that might trigger an error
@@ -281,54 +289,57 @@ function Get-DOS83Path {
         # None. You can't pipe objects to Test-ErrorOccurred.
         #
         # .OUTPUTS
-        # System.Boolean. Test-ErrorOccurred returns a boolean value indicating
-        # whether an error occurred during the time period in question. $true
-        # indicates an error occurred; $false indicates no error occurred.
+        # System.Boolean. Test-ErrorOccurred returns a boolean value
+        # indicating whether an error occurred during the time period in
+        # question. $true indicates an error occurred; $false indicates no
+        # error occurred.
         #
         # .NOTES
-        # This function also supports the use of positional parameters instead
-        # of named parameters. If positional parameters are used intead of
-        # named parameters, then two positional parameters are required:
+        # This function also supports the use of positional parameters
+        # instead of named parameters. If positional parameters are used
+        # instead of named parameters, then two positional parameters are
+        # required:
         #
-        # The first positional parameter is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack earlier in time, i.e., prior to running the
-        # command for which you wish to determine whether an error occurred. If
-        # no error was on the stack at this time, the first positional
-        # parameter must be a reference to $null ([ref]$null).
+        # The first positional parameter is a reference (memory pointer) to
+        # a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack earlier in time, i.e., prior to running
+        # the command for which you wish to determine whether an error
+        # occurred. If no error was on the stack at this time, the first
+        # positional parameter must be a reference to $null ([ref]$null).
         #
-        # The second positional parameter is a reference (memory pointer) to a
-        # System.Management.Automation.ErrorRecord that represents the newest
-        # error on the stack later in time, i.e., after to running the command
-        # for which you wish to determine whether an error occurred. If no
-        # error was on the stack at this time, ReferenceToLaterError must be
-        # a reference to $null ([ref]$null).
+        # The second positional parameter is a reference (memory pointer)
+        # to a System.Management.Automation.ErrorRecord that represents the
+        # newest error on the stack later in time, i.e., after to running
+        # the command for which you wish to determine whether an error
+        # occurred. If no error was on the stack at this time,
+        # ReferenceToLaterError must be a reference to $null ([ref]$null).
         #
-        # Version: 2.0.20241223.0
+        # Version: 2.0.20250215.0
 
-        #region License ####################################################
-        # Copyright (c) 2024 Frank Lesniak
+        #region License ################################################
+        # Copyright (c) 2025 Frank Lesniak
         #
-        # Permission is hereby granted, free of charge, to any person obtaining
-        # a copy of this software and associated documentation files (the
-        # "Software"), to deal in the Software without restriction, including
-        # without limitation the rights to use, copy, modify, merge, publish,
-        # distribute, sublicense, and/or sell copies of the Software, and to
-        # permit persons to whom the Software is furnished to do so, subject to
-        # the following conditions:
+        # Permission is hereby granted, free of charge, to any person
+        # obtaining a copy of this software and associated documentation
+        # files (the "Software"), to deal in the Software without
+        # restriction, including without limitation the rights to use,
+        # copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the
+        # Software is furnished to do so, subject to the following
+        # conditions:
         #
         # The above copyright notice and this permission notice shall be
         # included in all copies or substantial portions of the Software.
         #
         # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        # SOFTWARE.
-        #endregion License ####################################################
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+        # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+        # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+        # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+        # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+        # OTHER DEALINGS IN THE SOFTWARE.
+        #endregion License ################################################
         param (
             [ref]$ReferenceToEarlierError = ([ref]$null),
             [ref]$ReferenceToLaterError = ([ref]$null)
@@ -345,14 +356,14 @@ function Get-DOS83Path {
         } else {
             # One is $null, or both are $null
             # NOTE: $ReferenceToEarlierError could be non-null, while
-            # $ReferenceToLaterError could be null if $error was cleared; this
-            # does not indicate an error.
+            # $ReferenceToLaterError could be null if $error was cleared;
+            # this does not indicate an error.
             # So:
-            # - If both are null, no error
-            # - If $ReferenceToEarlierError is null and $ReferenceToLaterError
-            #   is non-null, error
+            # - If both are null, no error.
+            # - If $ReferenceToEarlierError is null and
+            #   $ReferenceToLaterError is non-null, error.
             # - If $ReferenceToEarlierError is non-null and
-            #   $ReferenceToLaterError is null, no error
+            #   $ReferenceToLaterError is null, no error.
             if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                 $boolErrorOccurred = $true
             }
@@ -397,7 +408,7 @@ function Get-DOS83Path {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of a
-        # named parameter. If a positional parameter is used intead of a named
+        # named parameter. If a positional parameter is used instead of a named
         # parameter, then exactly one positional parameter is required:
         #
         # The first and only positional parameter is a reference to an object that will
@@ -406,10 +417,10 @@ function Get-DOS83Path {
         # FileSystemObject COM object. If the object is not created successfully, then
         # the referenced variable becomes undefined.
         #
-        # Version: 1.1.20241223.0
+        # Version: 1.1.20250215.0
 
         #region License ############################################################
-        # Copyright (c) 2024 Frank Lesniak
+        # Copyright (c) 2025 Frank Lesniak
         #
         # Permission is hereby granted, free of charge, to any person obtaining a copy
         # of this software and associated documentation files (the "Software"), to deal
@@ -437,28 +448,29 @@ function Get-DOS83Path {
         #region FunctionsToSupportErrorHandling ####################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
-            # Gets a reference (memory pointer) to the last error that occurred.
+            # Gets a reference (memory pointer) to the last error that
+            # occurred.
             #
             # .DESCRIPTION
             # Returns a reference (memory pointer) to $null ([ref]$null) if no
-            # errors on on the $error stack; otherwise, returns a reference to the
-            # last error that occurred.
+            # errors on on the $error stack; otherwise, returns a reference to
+            # the last error that occurred.
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work:
             # $refLastKnownError = Get-ReferenceToLastError
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
             # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
+            # # error output. Terminating errors will not output anything, kick
+            # # to the empty trap statement and then continue on. Likewise, non-
             # # terminating errors will also not output anything, but they do not
             # # kick to the trap statement; they simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
@@ -483,12 +495,14 @@ function Get-DOS83Path {
             #     # NOTE: $refLastKnownError could be non-null, while
             #     # $refNewestCurrentError could be null if $error was cleared;
             #     # this does not indicate an error.
+            #     #
             #     # So:
-            #     # If both are null, no error
+            #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
-            #     # non-null, error
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError is
-            #     # null, no error
+            #     # non-null, error.
+            #     # If $refLastKnownError is non-null and $refNewestCurrentError
+            #     # is null, no error.
+            #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
             #     }
@@ -499,36 +513,37 @@ function Get-DOS83Path {
             #
             # .OUTPUTS
             # System.Management.Automation.PSReference ([ref]).
-            # Get-ReferenceToLastError returns a reference (memory pointer) to the
-            # last error that occurred. It returns a reference to $null
+            # Get-ReferenceToLastError returns a reference (memory pointer) to
+            # the last error that occurred. It returns a reference to $null
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
 
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
@@ -539,41 +554,44 @@ function Get-DOS83Path {
 
         function Test-ErrorOccurred {
             # .SYNOPSIS
-            # Checks to see if an error occurred during a time period, i.e., during
-            # the execution of a command.
+            # Checks to see if an error occurred during a time period, i.e.,
+            # during the execution of a command.
             #
             # .DESCRIPTION
             # Using two references (memory pointers) to errors, this function
-            # checks to see if an error occurred based on differences between the
-            # two errors.
+            # checks to see if an error occurred based on differences between
+            # the two errors.
             #
-            # To use this function, you must first retrieve a reference to the last
-            # error that occurred prior to the command you are about to run. Then,
-            # run the command. After the command completes, retrieve a reference to
-            # the last error that occurred. Pass these two references to this
-            # function to determine if an error occurred.
+            # To use this function, you must first retrieve a reference to the
+            # last error that occurred prior to the command you are about to
+            # run. Then, run the command. After the command completes, retrieve
+            # a reference to the last error that occurred. Pass these two
+            # references to this function to determine if an error occurred.
             #
             # .PARAMETER ReferenceToEarlierError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
-            # If no error was on the stack at this time, ReferenceToEarlierError
-            # must be a reference to $null ([ref]$null).
+            # If no error was on the stack at this time,
+            # ReferenceToEarlierError must be a reference to $null
+            # ([ref]$null).
             #
             # .PARAMETER ReferenceToLaterError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
             # If no error was on the stack at this time, ReferenceToLaterError
             # must be a reference to $null ([ref]$null).
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work
@@ -583,15 +601,16 @@ function Get-DOS83Path {
             #     $refLastKnownError = ([ref]$null)
             # }
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -617,54 +636,57 @@ function Get-DOS83Path {
             # None. You can't pipe objects to Test-ErrorOccurred.
             #
             # .OUTPUTS
-            # System.Boolean. Test-ErrorOccurred returns a boolean value indicating
-            # whether an error occurred during the time period in question. $true
-            # indicates an error occurred; $false indicates no error occurred.
+            # System.Boolean. Test-ErrorOccurred returns a boolean value
+            # indicating whether an error occurred during the time period in
+            # question. $true indicates an error occurred; $false indicates no
+            # error occurred.
             #
             # .NOTES
-            # This function also supports the use of positional parameters instead
-            # of named parameters. If positional parameters are used intead of
-            # named parameters, then two positional parameters are required:
+            # This function also supports the use of positional parameters
+            # instead of named parameters. If positional parameters are used
+            # instead of named parameters, then two positional parameters are
+            # required:
             #
-            # The first positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred. If
-            # no error was on the stack at this time, the first positional
-            # parameter must be a reference to $null ([ref]$null).
+            # The first positional parameter is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time, the first
+            # positional parameter must be a reference to $null ([ref]$null).
             #
-            # The second positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred. If no
-            # error was on the stack at this time, ReferenceToLaterError must be
-            # a reference to $null ([ref]$null).
+            # The second positional parameter is a reference (memory pointer)
+            # to a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time,
+            # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
             param (
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
@@ -681,14 +703,14 @@ function Get-DOS83Path {
             } else {
                 # One is $null, or both are $null
                 # NOTE: $ReferenceToEarlierError could be non-null, while
-                # $ReferenceToLaterError could be null if $error was cleared; this
-                # does not indicate an error.
+                # $ReferenceToLaterError could be null if $error was cleared;
+                # this does not indicate an error.
                 # So:
-                # - If both are null, no error
-                # - If $ReferenceToEarlierError is null and $ReferenceToLaterError
-                #   is non-null, error
+                # - If both are null, no error.
+                # - If $ReferenceToEarlierError is null and
+                #   $ReferenceToLaterError is non-null, error.
                 # - If $ReferenceToEarlierError is non-null and
-                #   $ReferenceToLaterError is null, no error
+                #   $ReferenceToLaterError is null, no error.
                 if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                     $boolErrorOccurred = $true
                 }
@@ -788,7 +810,7 @@ function Get-DOS83Path {
         #
         # .NOTES
         # This function also supports the use of positional parameters instead of
-        # named parameters. If positional parameters are used intead of named
+        # named parameters. If positional parameters are used instead of named
         # parameters, then three positional parameters are required:
         #
         # The first positional parameter is a reference to an object that will
@@ -804,10 +826,10 @@ function Get-DOS83Path {
         # The third positional parameter is a string containing the path to the
         # folder for which this function will obtain the Folder COM object.
         #
-        # Version: 1.1.20241223.0
+        # Version: 1.1.20250215.0
 
         #region License ########################################################
-        # Copyright (c) 2024 Frank Lesniak
+        # Copyright (c) 2025 Frank Lesniak
         #
         # Permission is hereby granted, free of charge, to any person obtaining a
         # copy of this software and associated documentation files (the
@@ -838,28 +860,29 @@ function Get-DOS83Path {
         #region FunctionsToSupportErrorHandling ################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
-            # Gets a reference (memory pointer) to the last error that occurred.
+            # Gets a reference (memory pointer) to the last error that
+            # occurred.
             #
             # .DESCRIPTION
             # Returns a reference (memory pointer) to $null ([ref]$null) if no
-            # errors on on the $error stack; otherwise, returns a reference to the
-            # last error that occurred.
+            # errors on on the $error stack; otherwise, returns a reference to
+            # the last error that occurred.
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work:
             # $refLastKnownError = Get-ReferenceToLastError
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
             # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
+            # # error output. Terminating errors will not output anything, kick
+            # # to the empty trap statement and then continue on. Likewise, non-
             # # terminating errors will also not output anything, but they do not
             # # kick to the trap statement; they simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
@@ -884,12 +907,14 @@ function Get-DOS83Path {
             #     # NOTE: $refLastKnownError could be non-null, while
             #     # $refNewestCurrentError could be null if $error was cleared;
             #     # this does not indicate an error.
+            #     #
             #     # So:
-            #     # If both are null, no error
+            #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
-            #     # non-null, error
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError is
-            #     # null, no error
+            #     # non-null, error.
+            #     # If $refLastKnownError is non-null and $refNewestCurrentError
+            #     # is null, no error.
+            #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
             #     }
@@ -900,36 +925,37 @@ function Get-DOS83Path {
             #
             # .OUTPUTS
             # System.Management.Automation.PSReference ([ref]).
-            # Get-ReferenceToLastError returns a reference (memory pointer) to the
-            # last error that occurred. It returns a reference to $null
+            # Get-ReferenceToLastError returns a reference (memory pointer) to
+            # the last error that occurred. It returns a reference to $null
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
 
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
@@ -940,41 +966,44 @@ function Get-DOS83Path {
 
         function Test-ErrorOccurred {
             # .SYNOPSIS
-            # Checks to see if an error occurred during a time period, i.e., during
-            # the execution of a command.
+            # Checks to see if an error occurred during a time period, i.e.,
+            # during the execution of a command.
             #
             # .DESCRIPTION
             # Using two references (memory pointers) to errors, this function
-            # checks to see if an error occurred based on differences between the
-            # two errors.
+            # checks to see if an error occurred based on differences between
+            # the two errors.
             #
-            # To use this function, you must first retrieve a reference to the last
-            # error that occurred prior to the command you are about to run. Then,
-            # run the command. After the command completes, retrieve a reference to
-            # the last error that occurred. Pass these two references to this
-            # function to determine if an error occurred.
+            # To use this function, you must first retrieve a reference to the
+            # last error that occurred prior to the command you are about to
+            # run. Then, run the command. After the command completes, retrieve
+            # a reference to the last error that occurred. Pass these two
+            # references to this function to determine if an error occurred.
             #
             # .PARAMETER ReferenceToEarlierError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
-            # If no error was on the stack at this time, ReferenceToEarlierError
-            # must be a reference to $null ([ref]$null).
+            # If no error was on the stack at this time,
+            # ReferenceToEarlierError must be a reference to $null
+            # ([ref]$null).
             #
             # .PARAMETER ReferenceToLaterError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
             # If no error was on the stack at this time, ReferenceToLaterError
             # must be a reference to $null ([ref]$null).
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work
@@ -984,15 +1013,16 @@ function Get-DOS83Path {
             #     $refLastKnownError = ([ref]$null)
             # }
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -1018,54 +1048,57 @@ function Get-DOS83Path {
             # None. You can't pipe objects to Test-ErrorOccurred.
             #
             # .OUTPUTS
-            # System.Boolean. Test-ErrorOccurred returns a boolean value indicating
-            # whether an error occurred during the time period in question. $true
-            # indicates an error occurred; $false indicates no error occurred.
+            # System.Boolean. Test-ErrorOccurred returns a boolean value
+            # indicating whether an error occurred during the time period in
+            # question. $true indicates an error occurred; $false indicates no
+            # error occurred.
             #
             # .NOTES
-            # This function also supports the use of positional parameters instead
-            # of named parameters. If positional parameters are used intead of
-            # named parameters, then two positional parameters are required:
+            # This function also supports the use of positional parameters
+            # instead of named parameters. If positional parameters are used
+            # instead of named parameters, then two positional parameters are
+            # required:
             #
-            # The first positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred. If
-            # no error was on the stack at this time, the first positional
-            # parameter must be a reference to $null ([ref]$null).
+            # The first positional parameter is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time, the first
+            # positional parameter must be a reference to $null ([ref]$null).
             #
-            # The second positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred. If no
-            # error was on the stack at this time, ReferenceToLaterError must be
-            # a reference to $null ([ref]$null).
+            # The second positional parameter is a reference (memory pointer)
+            # to a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time,
+            # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
             param (
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
@@ -1082,14 +1115,14 @@ function Get-DOS83Path {
             } else {
                 # One is $null, or both are $null
                 # NOTE: $ReferenceToEarlierError could be non-null, while
-                # $ReferenceToLaterError could be null if $error was cleared; this
-                # does not indicate an error.
+                # $ReferenceToLaterError could be null if $error was cleared;
+                # this does not indicate an error.
                 # So:
-                # - If both are null, no error
-                # - If $ReferenceToEarlierError is null and $ReferenceToLaterError
-                #   is non-null, error
+                # - If both are null, no error.
+                # - If $ReferenceToEarlierError is null and
+                #   $ReferenceToLaterError is non-null, error.
                 # - If $ReferenceToEarlierError is non-null and
-                #   $ReferenceToLaterError is null, no error
+                #   $ReferenceToLaterError is null, no error.
                 if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                     $boolErrorOccurred = $true
                 }
@@ -1189,7 +1222,7 @@ function Get-DOS83Path {
         #
         # .NOTES
         # This function also supports the use of positional parameters instead of
-        # named parameters. If positional parameters are used intead of named
+        # named parameters. If positional parameters are used instead of named
         # parameters, then three positional parameters are required:
         #
         # The first positional parameter is a reference to an object that will
@@ -1205,10 +1238,10 @@ function Get-DOS83Path {
         # The third positional parameter is a string containing the path to the
         # file for which this function will obtain the File COM object.
         #
-        # Version: 1.1.20241223.0
+        # Version: 1.1.20250215.0
 
         #region License ########################################################
-        # Copyright (c) 2024 Frank Lesniak
+        # Copyright (c) 2025 Frank Lesniak
         #
         # Permission is hereby granted, free of charge, to any person obtaining a
         # copy of this software and associated documentation files (the
@@ -1239,28 +1272,29 @@ function Get-DOS83Path {
         #region FunctionsToSupportErrorHandling ################################
         function Get-ReferenceToLastError {
             # .SYNOPSIS
-            # Gets a reference (memory pointer) to the last error that occurred.
+            # Gets a reference (memory pointer) to the last error that
+            # occurred.
             #
             # .DESCRIPTION
             # Returns a reference (memory pointer) to $null ([ref]$null) if no
-            # errors on on the $error stack; otherwise, returns a reference to the
-            # last error that occurred.
+            # errors on on the $error stack; otherwise, returns a reference to
+            # the last error that occurred.
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work:
             # $refLastKnownError = Get-ReferenceToLastError
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
             # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
+            # # error output. Terminating errors will not output anything, kick
+            # # to the empty trap statement and then continue on. Likewise, non-
             # # terminating errors will also not output anything, but they do not
             # # kick to the trap statement; they simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
@@ -1285,12 +1319,14 @@ function Get-DOS83Path {
             #     # NOTE: $refLastKnownError could be non-null, while
             #     # $refNewestCurrentError could be null if $error was cleared;
             #     # this does not indicate an error.
+            #     #
             #     # So:
-            #     # If both are null, no error
+            #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
-            #     # non-null, error
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError is
-            #     # null, no error
+            #     # non-null, error.
+            #     # If $refLastKnownError is non-null and $refNewestCurrentError
+            #     # is null, no error.
+            #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
             #     }
@@ -1301,36 +1337,37 @@ function Get-DOS83Path {
             #
             # .OUTPUTS
             # System.Management.Automation.PSReference ([ref]).
-            # Get-ReferenceToLastError returns a reference (memory pointer) to the
-            # last error that occurred. It returns a reference to $null
+            # Get-ReferenceToLastError returns a reference (memory pointer) to
+            # the last error that occurred. It returns a reference to $null
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
 
             if ($Error.Count -gt 0) {
                 return ([ref]($Error[0]))
@@ -1341,41 +1378,44 @@ function Get-DOS83Path {
 
         function Test-ErrorOccurred {
             # .SYNOPSIS
-            # Checks to see if an error occurred during a time period, i.e., during
-            # the execution of a command.
+            # Checks to see if an error occurred during a time period, i.e.,
+            # during the execution of a command.
             #
             # .DESCRIPTION
             # Using two references (memory pointers) to errors, this function
-            # checks to see if an error occurred based on differences between the
-            # two errors.
+            # checks to see if an error occurred based on differences between
+            # the two errors.
             #
-            # To use this function, you must first retrieve a reference to the last
-            # error that occurred prior to the command you are about to run. Then,
-            # run the command. After the command completes, retrieve a reference to
-            # the last error that occurred. Pass these two references to this
-            # function to determine if an error occurred.
+            # To use this function, you must first retrieve a reference to the
+            # last error that occurred prior to the command you are about to
+            # run. Then, run the command. After the command completes, retrieve
+            # a reference to the last error that occurred. Pass these two
+            # references to this function to determine if an error occurred.
             #
             # .PARAMETER ReferenceToEarlierError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
-            # If no error was on the stack at this time, ReferenceToEarlierError
-            # must be a reference to $null ([ref]$null).
+            # If no error was on the stack at this time,
+            # ReferenceToEarlierError must be a reference to $null
+            # ([ref]$null).
             #
             # .PARAMETER ReferenceToLaterError
-            # This parameter is required; it is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred.
+            # This parameter is required; it is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred.
             #
             # If no error was on the stack at this time, ReferenceToLaterError
             # must be a reference to $null ([ref]$null).
             #
             # .EXAMPLE
-            # # Intentionally empty trap statement to prevent terminating errors
-            # # from halting processing
+            # # Intentionally empty trap statement to prevent terminating
+            # # errors from halting processing
             # trap { }
             #
             # # Retrieve the newest error on the stack prior to doing work
@@ -1385,15 +1425,16 @@ function Get-DOS83Path {
             #     $refLastKnownError = ([ref]$null)
             # }
             #
-            # # Store current error preference; we will restore it after we do some
-            # # work:
+            # # Store current error preference; we will restore it after we do
+            # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick to
-            # # the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -1419,54 +1460,57 @@ function Get-DOS83Path {
             # None. You can't pipe objects to Test-ErrorOccurred.
             #
             # .OUTPUTS
-            # System.Boolean. Test-ErrorOccurred returns a boolean value indicating
-            # whether an error occurred during the time period in question. $true
-            # indicates an error occurred; $false indicates no error occurred.
+            # System.Boolean. Test-ErrorOccurred returns a boolean value
+            # indicating whether an error occurred during the time period in
+            # question. $true indicates an error occurred; $false indicates no
+            # error occurred.
             #
             # .NOTES
-            # This function also supports the use of positional parameters instead
-            # of named parameters. If positional parameters are used intead of
-            # named parameters, then two positional parameters are required:
+            # This function also supports the use of positional parameters
+            # instead of named parameters. If positional parameters are used
+            # instead of named parameters, then two positional parameters are
+            # required:
             #
-            # The first positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack earlier in time, i.e., prior to running the
-            # command for which you wish to determine whether an error occurred. If
-            # no error was on the stack at this time, the first positional
-            # parameter must be a reference to $null ([ref]$null).
+            # The first positional parameter is a reference (memory pointer) to
+            # a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack earlier in time, i.e., prior to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time, the first
+            # positional parameter must be a reference to $null ([ref]$null).
             #
-            # The second positional parameter is a reference (memory pointer) to a
-            # System.Management.Automation.ErrorRecord that represents the newest
-            # error on the stack later in time, i.e., after to running the command
-            # for which you wish to determine whether an error occurred. If no
-            # error was on the stack at this time, ReferenceToLaterError must be
-            # a reference to $null ([ref]$null).
+            # The second positional parameter is a reference (memory pointer)
+            # to a System.Management.Automation.ErrorRecord that represents the
+            # newest error on the stack later in time, i.e., after to running
+            # the command for which you wish to determine whether an error
+            # occurred. If no error was on the stack at this time,
+            # ReferenceToLaterError must be a reference to $null ([ref]$null).
             #
-            # Version: 2.0.20241223.0
+            # Version: 2.0.20250215.0
 
-            #region License ####################################################
-            # Copyright (c) 2024 Frank Lesniak
+            #region License ################################################
+            # Copyright (c) 2025 Frank Lesniak
             #
-            # Permission is hereby granted, free of charge, to any person obtaining
-            # a copy of this software and associated documentation files (the
-            # "Software"), to deal in the Software without restriction, including
-            # without limitation the rights to use, copy, modify, merge, publish,
-            # distribute, sublicense, and/or sell copies of the Software, and to
-            # permit persons to whom the Software is furnished to do so, subject to
-            # the following conditions:
+            # Permission is hereby granted, free of charge, to any person
+            # obtaining a copy of this software and associated documentation
+            # files (the "Software"), to deal in the Software without
+            # restriction, including without limitation the rights to use,
+            # copy, modify, merge, publish, distribute, sublicense, and/or sell
+            # copies of the Software, and to permit persons to whom the
+            # Software is furnished to do so, subject to the following
+            # conditions:
             #
             # The above copyright notice and this permission notice shall be
             # included in all copies or substantial portions of the Software.
             #
             # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            # SOFTWARE.
-            #endregion License ####################################################
+            # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+            # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+            # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+            # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+            # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            # OTHER DEALINGS IN THE SOFTWARE.
+            #endregion License ################################################
             param (
                 [ref]$ReferenceToEarlierError = ([ref]$null),
                 [ref]$ReferenceToLaterError = ([ref]$null)
@@ -1483,14 +1527,14 @@ function Get-DOS83Path {
             } else {
                 # One is $null, or both are $null
                 # NOTE: $ReferenceToEarlierError could be non-null, while
-                # $ReferenceToLaterError could be null if $error was cleared; this
-                # does not indicate an error.
+                # $ReferenceToLaterError could be null if $error was cleared;
+                # this does not indicate an error.
                 # So:
-                # - If both are null, no error
-                # - If $ReferenceToEarlierError is null and $ReferenceToLaterError
-                #   is non-null, error
+                # - If both are null, no error.
+                # - If $ReferenceToEarlierError is null and
+                #   $ReferenceToLaterError is non-null, error.
                 # - If $ReferenceToEarlierError is non-null and
-                #   $ReferenceToLaterError is null, no error
+                #   $ReferenceToLaterError is null, no error.
                 if (($null -eq $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
                     $boolErrorOccurred = $true
                 }

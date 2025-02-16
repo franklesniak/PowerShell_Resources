@@ -20,63 +20,132 @@
 ###############################################################################################
 #endregion License
 
-# Version: 1.0.20250106.0
+# Version: 1.0.20250106.1
 
 function Split-StringOnLiteralString {
-    # This function takes two positional arguments
-    # The first argument is a string, and the string to be split
-    # The second argument is a string or char, and it is that which is to split the string in the first parameter
+    # .SYNOPSIS
+    # Splits a string into an array using a literal string as the splitter.
     #
-    # Note: This function always returns an array, even when there is zero or one element in it.
+    # .DESCRIPTION
+    # Splits a string using a literal string (as opposed to regex). The
+    # function is designed to be backward-compatible with all versions of
+    # PowerShell and has been tested successfully on PowerShell v1. This
+    # function behaves more like VBScript's Split() function than other
+    # string splitting-approaches in PowerShell while avoiding the use of
+    # RegEx.
     #
-    # Example:
-    # $result = Split-StringOnLiteralString "foo" " "
+    # .PARAMETER StringToSplit
+    # This parameter is required; it is the string to be split into an
+    # array.
+    #
+    # .PARAMETER Splitter
+    # This parameter is required; it is the string that will be used to
+    # split the string specified in the StringToSplit parameter.
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'What do you think of this function?' -Splitter ' '
+    # # $result.Count is 7
+    # # $result[2] is 'you'
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString 'What do you think of this function?' ' '
+    # # $result.Count is 7
+    #
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'foo' -Splitter ' '
     # # $result.GetType().FullName is System.Object[]
     # # $result.Count is 1
     #
-    # Example 2:
-    # $result = Split-StringOnLiteralString "What do you think of this function?" " "
-    # # $result.Count is 7
+    # .EXAMPLE
+    # $result = Split-StringOnLiteralString -StringToSplit 'foo' -Splitter ''
+    # # $result.GetType().FullName is System.Object[]
+    # # $result.Count is 5 because of how .NET handles a split using an
+    # # empty string:
+    # # $result[0] is ''
+    # # $result[1] is 'f'
+    # # $result[2] is 'o'
+    # # $result[3] is 'o'
+    # # $result[4] is ''
+    #
+    # .INPUTS
+    # None. You can't pipe objects to Split-StringOnLiteralString.
+    #
+    # .OUTPUTS
+    # System.String[]. Split-StringOnLiteralString returns an array of
+    # strings, with each string being an element of the resulting array
+    # from the split operation. This function always returns an array, even
+    # when there is zero elements or one element in it.
+    #
+    # .NOTES
+    # This function also supports the use of positional parameters instead
+    # of named parameters. If positional parameters are used instead of
+    # named parameters, then two positional parameters are required:
+    #
+    # The first positional parameter is the string to be split into an
+    # array.
+    #
+    # The second positional parameter is the string that will be used to
+    # split the string specified in the first positional parameter.
+    #
+    # Also, please note that if -StringToSplit (or the first positional
+    # parameter) is $null, then the function will return an array with one
+    # element, which is an empty string. This is because the function
+    # converts $null to an empty string before splitting the string.
+    #
+    # Version: 3.0.20250211.1
 
-    trap {
-        Write-Error "An error occurred using the Split-StringOnLiteralString function. This was most likely caused by the arguments supplied not being strings"
-    }
+    #region License ####################################################
+    # Copyright (c) 2025 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining
+    # a copy of this software and associated documentation files (the
+    # "Software"), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to
+    # permit persons to whom the Software is furnished to do so, subject to
+    # the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be
+    # included in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+    # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+    # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+    # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    # SOFTWARE.
+    #endregion License ####################################################
 
-    if ($args.Length -ne 2) {
-        Write-Error "Split-StringOnLiteralString was called without supplying two arguments. The first argument should be the string to be split, and the second should be the string or character on which to split the string."
-    } else {
-        if ($null -eq $args[0]) {
-            # String to be split was $null; return an empty array. Leading comma ensures that
-            # PowerShell cooperates and returns the array as desired (without collapsing it)
-            , @()
-        } elseif ($null -eq $args[1]) {
-            # Splitter was $null; return string to be split within an array (of one element).
-            # Leading comma ensures that PowerShell cooperates and returns the array as desired
-            # (without collapsing it
-            , ($args[0])
-        } else {
-            if (($args[0]).GetType().Name -ne "String") {
-                Write-Warning "The first argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString."
-                $strToSplit = [string]$args[0]
-            } else {
-                $strToSplit = $args[0]
+    param (
+        [string]$StringToSplit = '',
+        [string]$Splitter = ''
+    )
+
+    $strSplitterInRegEx = [regex]::Escape($Splitter)
+    $result = @([regex]::Split($StringToSplit, $strSplitterInRegEx))
+
+    # The following code forces the function to return an array, always,
+    # even when there are zero or one elements in the array
+    $intElementCount = 1
+    if ($null -ne $result) {
+        if ($result.GetType().FullName.Contains('[]')) {
+            if (($result.Count -ge 2) -or ($result.Count -eq 0)) {
+                $intElementCount = $result.Count
             }
-
-            if ((($args[1]).GetType().Name -ne "String") -and (($args[1]).GetType().Name -ne "Char")) {
-                Write-Warning "The second argument supplied to Split-StringOnLiteralString was not a string. It will be attempted to be converted to a string. To avoid this warning, cast arguments to a string before calling Split-StringOnLiteralString."
-                $strSplitter = [string]$args[1]
-            } elseif (($args[1]).GetType().Name -eq "Char") {
-                $strSplitter = [string]$args[1]
-            } else {
-                $strSplitter = $args[1]
-            }
-
-            $strSplitterInRegEx = [regex]::Escape($strSplitter)
-
-            # With the leading comma, force encapsulation into an array so that an array is
-            # returned even when there is one element:
-            , [regex]::Split($strToSplit, $strSplitterInRegEx)
         }
+    }
+    $strLowercaseFunctionName = $MyInvocation.InvocationName.ToLower()
+    $boolArrayEncapsulation = $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ')') -or $MyInvocation.Line.ToLower().Contains('@(' + $strLowercaseFunctionName + ' ')
+    if ($boolArrayEncapsulation) {
+        return ($result)
+    } elseif ($intElementCount -eq 0) {
+        return (, @())
+    } elseif ($intElementCount -eq 1) {
+        return (, (, $StringToSplit))
+    } else {
+        return ($result)
     }
 }
 
@@ -86,7 +155,7 @@ function Get-PathToDotNetRuntimeEnvironment {
     $guid = [guid]::NewGuid()
     $strGUID = $guid.Guid
     $strWorkingPath = Join-Path $strPathToDotNetRuntimeEnvironment $strGUID
-    $arrPath = Split-StringOnLiteralString $strWorkingPath $strGUID
+    $arrPath = Split-StringOnLiteralString -StringToSplit $strWorkingPath -Splitter $strGUID
     $strPathWithSeparatorButWithoutGUID = $arrPath[0]
     $strScrubbedPath = $strPathWithSeparatorButWithoutGUID.Substring(0, $strPathWithSeparatorButWithoutGUID.Length - 1)
     $strScrubbedPath
@@ -229,8 +298,8 @@ function Test-Windows {
     #
     # .NOTES
     # This function also supports the use of a positional parameter instead of
-    # a named parameter. If a positional parameter is used intead of a named
-    # parameter, then one positional parameters is required: it must be the
+    # a named parameter. If a positional parameter is used instead of a named
+    # parameter, then one positional parameter is required: it must be the
     # version number of the running version of PowerShell. If the version of
     # PowerShell is already known, it can be passed in to this function to
     # avoid the overhead of unnecessarily determining the version of
@@ -238,7 +307,7 @@ function Test-Windows {
     # determine the version of PowerShell that is running as part of its
     # processing.
     #
-    # Version: 1.1.20250106.0
+    # Version: 1.1.20250106.1
 
     #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -354,7 +423,7 @@ function Get-WindowsOSVersion {
     #       caller already knows that the current PowerShell session is running on
     #       Windows and wants to avoid the overhead of checking again.
 
-    $strThisScriptVersionNumber = [version]'1.0.20250106.0'
+    $strThisScriptVersionNumber = [version]'1.0.20250106.1'
 
     function Get-PSVersion {
         # .SYNOPSIS
@@ -455,8 +524,8 @@ function Get-WindowsOSVersion {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of
-        # a named parameter. If a positional parameter is used intead of a named
-        # parameter, then one positional parameters is required: it must be the
+        # a named parameter. If a positional parameter is used instead of a named
+        # parameter, then one positional parameter is required: it must be the
         # version number of the running version of PowerShell. If the version of
         # PowerShell is already known, it can be passed in to this function to
         # avoid the overhead of unnecessarily determining the version of
@@ -464,7 +533,7 @@ function Get-WindowsOSVersion {
         # determine the version of PowerShell that is running as part of its
         # processing.
         #
-        # Version: 1.1.20250106.0
+        # Version: 1.1.20250106.1
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -613,7 +682,7 @@ function Get-PathToWindowsFolder {
     #       caller already knows that the current PowerShell session is running on
     #       Windows and wants to avoid the overhead of checking again.
 
-    # Version: 1.0.20250106.0
+    # Version: 1.0.20250106.1
 
     function Test-Windows {
         # .SYNOPSIS
@@ -653,8 +722,8 @@ function Get-PathToWindowsFolder {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of
-        # a named parameter. If a positional parameter is used intead of a named
-        # parameter, then one positional parameters is required: it must be the
+        # a named parameter. If a positional parameter is used instead of a named
+        # parameter, then one positional parameter is required: it must be the
         # version number of the running version of PowerShell. If the version of
         # PowerShell is already known, it can be passed in to this function to
         # avoid the overhead of unnecessarily determining the version of
@@ -662,7 +731,7 @@ function Get-PathToWindowsFolder {
         # determine the version of PowerShell that is running as part of its
         # processing.
         #
-        # Version: 1.1.20250106.0
+        # Version: 1.1.20250106.1
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -916,9 +985,9 @@ namespace FrankLesniak
     public class CheckUEFI
     {
         [DllImport("kernel32.dll", SetLastError=true)]
-        static extern UInt32 
+        static extern UInt32
         GetFirmwareEnvironmentVariableA(string lpName, string lpGuid, IntPtr pBuffer, UInt32 nSize);
-        const int ERROR_INVALID_FUNCTION = 1; 
+        const int ERROR_INVALID_FUNCTION = 1;
         public static bool IsUEFI()
         {
             // Try to call the GetFirmwareEnvironmentVariable API.  This is invalid on legacy BIOS.
@@ -1120,7 +1189,7 @@ function Get-HardwareModel {
     #       caller already knows that the current PowerShell session is running on
     #       Windows and wants to avoid the overhead of checking again.
 
-    # Version: 1.0.20250106.0
+    # Version: 1.0.20250106.1
 
     function Get-PSVersion {
         # .SYNOPSIS
@@ -1221,8 +1290,8 @@ function Get-HardwareModel {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of
-        # a named parameter. If a positional parameter is used intead of a named
-        # parameter, then one positional parameters is required: it must be the
+        # a named parameter. If a positional parameter is used instead of a named
+        # parameter, then one positional parameter is required: it must be the
         # version number of the running version of PowerShell. If the version of
         # PowerShell is already known, it can be passed in to this function to
         # avoid the overhead of unnecessarily determining the version of
@@ -1230,7 +1299,7 @@ function Get-HardwareModel {
         # determine the version of PowerShell that is running as part of its
         # processing.
         #
-        # Version: 1.1.20250106.0
+        # Version: 1.1.20250106.1
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -1381,7 +1450,7 @@ function Test-ThisSystemIsAHyperVVM {
     #       caller already knows that the current PowerShell session is running on
     #       Windows and wants to avoid the overhead of checking again.
 
-    # Version: 1.0.20250106.0
+    # Version: 1.0.20250106.1
 
     function Test-Windows {
         # .SYNOPSIS
@@ -1421,8 +1490,8 @@ function Test-ThisSystemIsAHyperVVM {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of
-        # a named parameter. If a positional parameter is used intead of a named
-        # parameter, then one positional parameters is required: it must be the
+        # a named parameter. If a positional parameter is used instead of a named
+        # parameter, then one positional parameter is required: it must be the
         # version number of the running version of PowerShell. If the version of
         # PowerShell is already known, it can be passed in to this function to
         # avoid the overhead of unnecessarily determining the version of
@@ -1430,7 +1499,7 @@ function Test-ThisSystemIsAHyperVVM {
         # determine the version of PowerShell that is running as part of its
         # processing.
         #
-        # Version: 1.1.20250106.0
+        # Version: 1.1.20250106.1
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -1546,7 +1615,7 @@ function Test-ThisSystemIsAHyperVVM {
         #       caller already knows that the current PowerShell session is running on
         #       Windows and wants to avoid the overhead of checking again.
 
-        # Version: 1.0.20250106.0
+        # Version: 1.0.20250106.1
 
         function Get-PSVersion {
             # .SYNOPSIS
@@ -1647,8 +1716,8 @@ function Test-ThisSystemIsAHyperVVM {
             #
             # .NOTES
             # This function also supports the use of a positional parameter instead of
-            # a named parameter. If a positional parameter is used intead of a named
-            # parameter, then one positional parameters is required: it must be the
+            # a named parameter. If a positional parameter is used instead of a named
+            # parameter, then one positional parameter is required: it must be the
             # version number of the running version of PowerShell. If the version of
             # PowerShell is already known, it can be passed in to this function to
             # avoid the overhead of unnecessarily determining the version of
@@ -1656,7 +1725,7 @@ function Test-ThisSystemIsAHyperVVM {
             # determine the version of PowerShell that is running as part of its
             # processing.
             #
-            # Version: 1.1.20250106.0
+            # Version: 1.1.20250106.1
 
             #region License ########################################################
             # Copyright (c) 2025 Frank Lesniak

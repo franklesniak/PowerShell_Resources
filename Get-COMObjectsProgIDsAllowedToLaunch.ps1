@@ -3,7 +3,7 @@
 # system that have ProgIds (friendly names). Each one of these COM objects is instantiated.
 # Those that are successful are returned.
 
-$strThisScriptVersionNumber = [version]'1.0.20250106.0'
+$strThisScriptVersionNumber = [version]'1.0.20250106.1'
 
 #region License
 ###############################################################################################
@@ -135,8 +135,8 @@ function Test-Windows {
     #
     # .NOTES
     # This function also supports the use of a positional parameter instead of
-    # a named parameter. If a positional parameter is used intead of a named
-    # parameter, then one positional parameters is required: it must be the
+    # a named parameter. If a positional parameter is used instead of a named
+    # parameter, then one positional parameter is required: it must be the
     # version number of the running version of PowerShell. If the version of
     # PowerShell is already known, it can be passed in to this function to
     # avoid the overhead of unnecessarily determining the version of
@@ -144,7 +144,7 @@ function Test-Windows {
     # determine the version of PowerShell that is running as part of its
     # processing.
     #
-    # Version: 1.1.20250106.0
+    # Version: 1.1.20250106.1
 
     #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak

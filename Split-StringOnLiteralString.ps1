@@ -54,7 +54,7 @@ function Split-StringOnLiteralString {
     #
     # .NOTES
     # This function also supports the use of positional parameters instead
-    # of named parameters. If positional parameters are used intead of
+    # of named parameters. If positional parameters are used instead of
     # named parameters, then two positional parameters are required:
     #
     # The first positional parameter is the string to be split into an
@@ -68,7 +68,7 @@ function Split-StringOnLiteralString {
     # element, which is an empty string. This is because the function
     # converts $null to an empty string before splitting the string.
     #
-    # Version: 3.0.20250211.0
+    # Version: 3.0.20250211.1
 
     #region License ####################################################
     # Copyright (c) 2025 Frank Lesniak

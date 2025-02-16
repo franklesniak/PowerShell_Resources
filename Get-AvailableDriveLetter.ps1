@@ -68,7 +68,7 @@ function Get-AvailableDriveLetter {
     # and that C: be reserved for the system drive.
     #
     # This function also supports the use of one positional parameter instead of
-    # named parameters. If the positional parameter is used intead of named
+    # named parameters. If the positional parameter is used instead of named
     # parameters, then one positional parameters is required: it must be the
     # version number of the running version of PowerShell. If the version of
     # PowerShell is already known, it can be passed in to this function to avoid
@@ -76,7 +76,7 @@ function Get-AvailableDriveLetter {
     # parameter is not supplied, the function will determine the version of
     # PowerShell that is running as part of its processing.
     #
-    # Version: 1.1.20250106.0
+    # Version: 1.1.20250106.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -108,6 +108,7 @@ function Get-AvailableDriveLetter {
         [switch]$ConsiderFloppyDriveLettersAsEligible
     )
 
+    #region FunctionsToSupportErrorHandling ####################################
     function Get-PSVersion {
         # .SYNOPSIS
         # Returns the version of PowerShell that is running.
@@ -207,8 +208,8 @@ function Get-AvailableDriveLetter {
         #
         # .NOTES
         # This function also supports the use of a positional parameter instead of
-        # a named parameter. If a positional parameter is used intead of a named
-        # parameter, then one positional parameters is required: it must be the
+        # a named parameter. If a positional parameter is used instead of a named
+        # parameter, then one positional parameter is required: it must be the
         # version number of the running version of PowerShell. If the version of
         # PowerShell is already known, it can be passed in to this function to
         # avoid the overhead of unnecessarily determining the version of
@@ -216,7 +217,7 @@ function Get-AvailableDriveLetter {
         # determine the version of PowerShell that is running as part of its
         # processing.
         #
-        # Version: 1.1.20250106.0
+        # Version: 1.1.20250106.1
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -321,6 +322,7 @@ function Get-AvailableDriveLetter {
             }
         }
     }
+    #endregion FunctionsToSupportErrorHandling ####################################
 
     #region Process Input ######################################################
     if ($null -ne $PSVersion) {
