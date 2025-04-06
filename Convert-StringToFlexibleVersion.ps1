@@ -2,8 +2,8 @@ function Convert-StringToFlexibleVersion {
     # .SYNOPSIS
     # Converts a string to a version object. However, when the string contains
     # characters not allowed in a version object, this function will attempt to
-    # convert the string to a version object by removing the characters that are
-    # not allowed, identifying the portions of the version object that are
+    # convert the string to a version object by removing the characters that
+    # are not allowed, identifying the portions of the version object that are
     # not allowed, which can be evaluated further if needed.
     #
     # .DESCRIPTION
@@ -440,11 +440,12 @@ function Convert-StringToFlexibleVersion {
             # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick
-            # # to the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -472,8 +473,8 @@ function Convert-StringToFlexibleVersion {
             #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
             #     # non-null, error.
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError
-            #     # is null, no error.
+            #     # If $refLastKnownError is non-null and
+            #     # $refNewestCurrentError is null, no error.
             #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
@@ -490,7 +491,7 @@ function Convert-StringToFlexibleVersion {
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20250215.0
+            # Version: 2.0.20250215.1
 
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
@@ -966,11 +967,12 @@ function Convert-StringToFlexibleVersion {
             # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick
-            # # to the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -998,8 +1000,8 @@ function Convert-StringToFlexibleVersion {
             #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
             #     # non-null, error.
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError
-            #     # is null, no error.
+            #     # If $refLastKnownError is non-null and
+            #     # $refNewestCurrentError is null, no error.
             #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
@@ -1016,7 +1018,7 @@ function Convert-StringToFlexibleVersion {
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20250215.0
+            # Version: 2.0.20250215.1
 
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
@@ -1365,11 +1367,12 @@ function Convert-StringToFlexibleVersion {
             # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick
-            # # to the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -1397,8 +1400,8 @@ function Convert-StringToFlexibleVersion {
             #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
             #     # non-null, error.
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError
-            #     # is null, no error.
+            #     # If $refLastKnownError is non-null and
+            #     # $refNewestCurrentError is null, no error.
             #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
@@ -1415,7 +1418,7 @@ function Convert-StringToFlexibleVersion {
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20250215.0
+            # Version: 2.0.20250215.1
 
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
@@ -1826,11 +1829,12 @@ function Convert-StringToFlexibleVersion {
             # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick
-            # # to the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -1858,8 +1862,8 @@ function Convert-StringToFlexibleVersion {
             #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
             #     # non-null, error.
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError
-            #     # is null, no error.
+            #     # If $refLastKnownError is non-null and
+            #     # $refNewestCurrentError is null, no error.
             #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
@@ -1876,7 +1880,7 @@ function Convert-StringToFlexibleVersion {
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20250215.0
+            # Version: 2.0.20250215.1
 
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
@@ -2225,11 +2229,12 @@ function Convert-StringToFlexibleVersion {
             # # some work:
             # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
             #
-            # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-            # # error output. Terminating errors will not output anything, kick
-            # # to the empty trap statement and then continue on. Likewise, non-
-            # # terminating errors will also not output anything, but they do not
-            # # kick to the trap statement; they simply continue on.
+            # # Set ErrorActionPreference to SilentlyContinue; this will
+            # # suppress error output. Terminating errors will not output
+            # # anything, kick to the empty trap statement and then continue
+            # # on. Likewise, non- terminating errors will also not output
+            # # anything, but they do not kick to the trap statement; they
+            # # simply continue on.
             # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
             #
             # # Do something that might trigger an error
@@ -2257,8 +2262,8 @@ function Convert-StringToFlexibleVersion {
             #     # If both are null, no error.
             #     # If $refLastKnownError is null and $refNewestCurrentError is
             #     # non-null, error.
-            #     # If $refLastKnownError is non-null and $refNewestCurrentError
-            #     # is null, no error.
+            #     # If $refLastKnownError is non-null and
+            #     # $refNewestCurrentError is null, no error.
             #     #
             #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
             #         $boolErrorOccurred = $true
@@ -2275,7 +2280,7 @@ function Convert-StringToFlexibleVersion {
             # ([ref]$null) if there are no errors on on the $error stack.
             #
             # .NOTES
-            # Version: 2.0.20250215.0
+            # Version: 2.0.20250215.1
 
             #region License ################################################
             # Copyright (c) 2025 Frank Lesniak
