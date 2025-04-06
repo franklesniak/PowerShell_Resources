@@ -71,6 +71,28 @@ function Get-WindowsProcessProcessorArchitecture {
     # SOFTWARE.
     #endregion License ############################################################
 
+    #region Acknowledgements ###################################################
+    # Microsoft, for providing a current reference on the SYSTEM_INFO struct, used
+    # by the GetSystemInfo Win32 function. This reference does not show the exact
+    # text of the PROCESSOR_ARCHITECTURE environment variable, but shows the
+    # universe of what's possible on a core system API:
+    # https://docs.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
+    #
+    # Microsoft, for including in the MSDN Library Jan 2003 information on this
+    # same SYSTEM_INFO struct that pre-dates Windows 2000 and enumerates additional
+    # processor architectures (MIPS, ALPHA, PowerPC, IA32_ON_WIN64). The MSDN
+    # Library Jan 2003 also lists SHX and ARM, explains nuiances in accessing
+    # environment variables on pre-Windows 2000 operating systems (namely that
+    # VBScript in Windows 9x can only access per-process environment variables),
+    # and that the PROCESSOR_ARCHITECTURE system environment variable is not
+    # available on Windows 98/ME.
+    # (link unavailable, check Internet Archive for source)
+    #
+    # "guga" for the first post in this thread that tipped me off to the
+    # SYSTEM_INFO struct and additional architectures:
+    # http://masm32.com/board/index.php?topic=3401.0
+    #endregion Acknowledgements ###################################################
+
     param (
         [ref]$ReferenceToProcessProcessorArchitecture = ([ref]$null)
     )
