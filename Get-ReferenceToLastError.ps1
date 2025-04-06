@@ -20,11 +20,12 @@ function Get-ReferenceToLastError {
     # # some work:
     # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
     #
-    # # Set ErrorActionPreference to SilentlyContinue; this will suppress
-    # # error output. Terminating errors will not output anything, kick
-    # # to the empty trap statement and then continue on. Likewise, non-
-    # # terminating errors will also not output anything, but they do not
-    # # kick to the trap statement; they simply continue on.
+    # # Set ErrorActionPreference to SilentlyContinue; this will
+    # # suppress error output. Terminating errors will not output
+    # # anything, kick to the empty trap statement and then continue
+    # # on. Likewise, non- terminating errors will also not output
+    # # anything, but they do not kick to the trap statement; they
+    # # simply continue on.
     # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
     #
     # # Do something that might trigger an error
@@ -52,8 +53,8 @@ function Get-ReferenceToLastError {
     #     # If both are null, no error.
     #     # If $refLastKnownError is null and $refNewestCurrentError is
     #     # non-null, error.
-    #     # If $refLastKnownError is non-null and $refNewestCurrentError
-    #     # is null, no error.
+    #     # If $refLastKnownError is non-null and
+    #     # $refNewestCurrentError is null, no error.
     #     #
     #     if (($null -eq $refLastKnownError.Value) -and ($null -ne $refNewestCurrentError.Value)) {
     #         $boolErrorOccurred = $true
@@ -70,7 +71,7 @@ function Get-ReferenceToLastError {
     # ([ref]$null) if there are no errors on on the $error stack.
     #
     # .NOTES
-    # Version: 2.0.20250215.0
+    # Version: 2.0.20250215.1
 
     #region License ################################################
     # Copyright (c) 2025 Frank Lesniak
