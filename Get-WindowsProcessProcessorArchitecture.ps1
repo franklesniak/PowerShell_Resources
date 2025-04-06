@@ -48,7 +48,7 @@ function Get-WindowsProcessProcessorArchitecture {
     # successfully. The string will be set to the processor architecture
     # (instruction set) of the currently running process.
     #
-    # Version: 1.0.20250405.0
+    # Version: 1.0.20250406.0
 
     #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak
