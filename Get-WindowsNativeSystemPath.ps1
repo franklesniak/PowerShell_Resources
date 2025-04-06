@@ -103,7 +103,6 @@ function Get-WindowsNativeSystemPath {
     # SOFTWARE.
     #endregion License ############################################################
 
-    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
     param (
         [ref]$ReferenceToSystemPath = ([ref]$null),
         [string]$OSProcessorArchitecture = '',
@@ -869,6 +868,9 @@ function Get-WindowsNativeSystemPath {
 
         $strSysnativePath = Join-Path -Path $strWindowsPath -ChildPath 'Sysnative'
         if (-not (Test-Path -LiteralPath $strSysnativePath)) {
+            # The C:\Windows\Sysnative path did not exist. This could happen on
+            # Windows XP or Windows Server 2003 systems that are missing
+            # KB942615
             return -10
         }
 
@@ -877,6 +879,21 @@ function Get-WindowsNativeSystemPath {
     } else {
         # Either 32-bit process on 32-bit OS, or 64-bit process on 64-bit OS
         # Need to get and return the system32 folder
+
+        if (-not [string]::IsNullOrEmpty([System.Environment]::SystemDirectory)) {
+            $strWindowsSystemPath = [System.Environment]::SystemDirectory
+        } elseif (-not [string]::IsNullOrEmpty($env:windir)) {
+            $strWindowsSystemPath = Join-Path -Path $env:windir -ChildPath 'System32'
+        } elseif (-not [string]::IsNullOrEmpty($env:SystemRoot)) {
+            $strWindowsSystemPath = Join-Path -Path $env:SystemRoot -ChildPath 'System32'
+        } else {
+            return -11
+        }
+
+        if (-not (Test-Path -LiteralPath $strWindowsSystemPath)) {
+            # The C:\Windows\System32 path did not exist.
+            return -12
+        }
 
         $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
         return 0
