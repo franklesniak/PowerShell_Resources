@@ -94,7 +94,7 @@ function Get-WindowsOSVersion {
     # GetWindowsOperatingSystemVersionNumberAsString.vbs from SysadminAccelerator:
     # https://github.com/franklesniak/sysadmin-accelerator/blob/99bb8b23bca51a118d39df0ee440e731498cf115/VBScript/02_Upfront_Encapsulated_Code_With_No_Dependencies/GetWindowsOperatingSystemVersionNumberAsString.vbs
     #
-    # Version: 0.1.20250406.0
+    # Version: 0.1.20250407.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -117,6 +117,20 @@ function Get-WindowsOSVersion {
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
     #endregion License ############################################################
+
+    #region Acknowledgements ###################################################
+    # User "Shem Sargent" on Super User, who provided sample code for augmenting
+    # WMI-based version numbers with their revision number:
+    # https://superuser.com/a/1160428/334370
+    #
+    # The NTFSSecurity PowerShell Module team, who provided this promising-looking
+    # snapshot of some C# code that uses RtlGetVersion:
+    # https://git.sern.network/Powershell-Modules/NTFSSecurity-Module/src/commit/d5f552df8cb60f6f3c7b554445da1b7631fa326f/AlphaFS/OperatingSystem.cs
+    #
+    # GitHub user "SevenLayerJedi", who posted this Gist that affirmed some
+    # approaches:
+    # https://gist.github.com/SevenLayerJedi/c0415c03cab1ff51aa49d2f4d708f265
+    #endregion Acknowledgements ###################################################
 
     param (
         [ref]$ReferenceToSystemVersion = ([ref]$null),
