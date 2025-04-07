@@ -116,7 +116,7 @@ function Get-WindowsOSVersionFromVerCommand {
     # or more warnings.
     #
     # .NOTES
-    # Version: 1.0.20250406.0
+    # Version: 1.0.20250406.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -140,7 +140,6 @@ function Get-WindowsOSVersionFromVerCommand {
     # SOFTWARE.
     #endregion License ############################################################
 
-    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
     param (
         [ref]$ReferenceToSystemVersion = ([ref]$null),
         [ref]$ReferenceToStringVersion = ([ref]$null),
