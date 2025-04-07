@@ -13,11 +13,11 @@ function Get-CommandPromptPath {
     #
     # .EXAMPLE
     # $strCommandPromptPath = ''
-    # $intReturnCode = Get-CommandPromptPath -ReferenceToCommandPromptPath ([ref]$strCommandPromptPath)
+    # $boolSuccess = Get-CommandPromptPath -ReferenceToCommandPromptPath ([ref]$strCommandPromptPath)
     #
     # .EXAMPLE
     # $strCommandPromptPath = ''
-    # $intReturnCode = Get-CommandPromptPath ([ref]$strCommandPromptPath)
+    # $boolSuccess = Get-CommandPromptPath ([ref]$strCommandPromptPath)
     #
     # .INPUTS
     # None. You can't pipe objects to Get-CommandPromptPath.
@@ -35,7 +35,7 @@ function Get-CommandPromptPath {
     # required: it is a reference to a string that will be used to store the
     # path to the command prompt executable (cmd.exe)
     #
-    # Version: 1.0.20250406.0
+    # Version: 1.0.20250406.1
 
     #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak
