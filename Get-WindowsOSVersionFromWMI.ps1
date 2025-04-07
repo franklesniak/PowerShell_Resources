@@ -98,13 +98,13 @@ function Get-WindowsOSVersionFromWMI {
     # $versionWindows = [version]'0.0'
     # $strWindowsVersion = ''
     # $arrLeftoverStrings = @('', '', '', '', '')
-    # $intReturnCode = Get-WindowsOSVersionFromWMI -ReferenceToSystemVersion ([ref]$versionWindows) -ReferenceToStringVersion ([ref]$versionWindows) -ReferenceToArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -PSVersion $versionPS
+    # $intReturnCode = Get-WindowsOSVersionFromWMI -ReferenceToSystemVersion ([ref]$versionWindows) -ReferenceToStringVersion ([ref]$strWindowsVersion) -ReferenceToArrayOfLeftoverStrings ([ref]$arrLeftoverStrings) -PSVersion $versionPS
     #
     # .EXAMPLE
     # $versionWindows = [version]'0.0'
     # $strWindowsVersion = ''
     # $arrLeftoverStrings = @('', '', '', '', '')
-    # $intReturnCode = Get-WindowsOSVersionFromWMI -ReferenceToSystemVersion ([ref]$versionWindows) -ReferenceToStringVersion ([ref]$versionWindows) -ReferenceToArrayOfLeftoverStrings ([ref]$arrLeftoverStrings)
+    # $intReturnCode = Get-WindowsOSVersionFromWMI -ReferenceToSystemVersion ([ref]$versionWindows) -ReferenceToStringVersion ([ref]$strWindowsVersion) -ReferenceToArrayOfLeftoverStrings ([ref]$arrLeftoverStrings)
     #
     # .INPUTS
     # None. You can't pipe objects to Get-WindowsOSVersionFromWMI.
@@ -117,7 +117,7 @@ function Get-WindowsOSVersionFromWMI {
     # warnings.
     #
     # .NOTES
-    # Version: 1.0.20250406.1
+    # Version: 1.0.20250406.2
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
