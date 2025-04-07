@@ -39,7 +39,7 @@ function Get-WindowsOSCaption {
     # warnings.
     #
     # .NOTES
-    # Version: 1.0.20250407.0
+    # Version: 1.0.20250407.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -435,7 +435,7 @@ function Get-WindowsOSCaption {
     # line in order for error handling to work correctly!
     ###############################################################################
     # $intFunctionReturn = 0
-    # if (($refPSCaption.Value).Major -ge 3) {
+    # if (($refPSVersion.Value).Major -ge 3) {
     #     $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Caption from Win32_OperatingSystem")
     #     if ($arrCIMInstanceOS.Count -eq 0) {
     #         return -1
@@ -455,7 +455,7 @@ function Get-WindowsOSCaption {
     #     }
     # }
     ###############################################################################
-    $intFunctionReturn = 0; if (($refPSCaption.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Caption from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToOSCaption.Value = ($arrCIMInstanceOS[0]).Caption; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select Caption from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToOSCaption.Value = ($arrManagementObjectOS[0]).Caption; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
+    $intFunctionReturn = 0; if (($refPSVersion.Value).Major -ge 3) { $arrCIMInstanceOS = @(Get-CimInstance -Query "Select Caption from Win32_OperatingSystem"); if ($arrCIMInstanceOS.Count -eq 0) { return -1 }; $ReferenceToOSCaption.Value = ($arrCIMInstanceOS[0]).Caption; if ($arrCIMInstanceOS.Count -gt 1) { $intFunctionReturn += 1 } } else { $arrManagementObjectOS = @(Get-WmiObject -Query "Select Caption from Win32_OperatingSystem"); if ($arrManagementObjectOS.Count -eq 0) { return -2 }; $ReferenceToOSCaption.Value = ($arrManagementObjectOS[0]).Caption; if ($arrManagementObjectOS.Count -gt 1) { $intFunctionReturn += 2 } }
 
     # Restore the former error preference
     $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
