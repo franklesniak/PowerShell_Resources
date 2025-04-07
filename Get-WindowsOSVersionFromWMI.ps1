@@ -4,7 +4,10 @@ function Get-WindowsOSVersionFromWMI {
     #
     # .DESCRIPTION
     # This function retrieves the Windows operating system version from WMI.
-    # It uses the Win32_OperatingSystem class to get the version information.
+    # It uses the Win32_OperatingSystem class to get the version information. The
+    # function attempts a conversion of the operating system version from string to
+    # .NET version (System.Version) object. If the conversion is successful, the
+    # function returns the version as a System.Version object.
     #
     # .PARAMETER ReferenceToSystemVersion
     # This parameter is required; it is a reference to a System.Version object that
@@ -114,7 +117,7 @@ function Get-WindowsOSVersionFromWMI {
     # warnings.
     #
     # .NOTES
-    # Version: 1.0.20250406.0
+    # Version: 1.0.20250406.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
