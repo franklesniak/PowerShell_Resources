@@ -39,7 +39,7 @@ function Get-WindowsOSSKU {
     # warnings.
     #
     # .NOTES
-    # Version: 1.0.20250407.0
+    # Version: 1.0.20250407.1
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -471,7 +471,7 @@ function Get-WindowsOSSKU {
     } else {
         # No error occurred
 
-        # Operating system SKU string is stored in
+        # Operating system SKU is stored in
         # $ReferenceToOSSKU.Value
         if ([string]::IsNullOrEmpty($ReferenceToOSSKU.Value)) {
             # No SKU information found; this is an error
