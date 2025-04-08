@@ -82,7 +82,7 @@ function Get-WindowsNativeSystemPath {
     # function will automatically attempt to retrieve the process processor
     # architecture.
     #
-    # Version: 1.0.20250406.1
+    # Version: 1.0.20250408.0
 
     #region License ########################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -920,7 +920,7 @@ function Get-WindowsNativeSystemPath {
             return -12
         }
 
-        $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
+        $ReferenceToSystemPath.Value = $strWindowsSystemPath
         return 0
     }
 }
