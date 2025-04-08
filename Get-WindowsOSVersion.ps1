@@ -94,7 +94,7 @@ function Get-WindowsOSVersion {
     # GetWindowsOperatingSystemVersionNumberAsString.vbs from SysadminAccelerator:
     # https://github.com/franklesniak/sysadmin-accelerator/blob/99bb8b23bca51a118d39df0ee440e731498cf115/VBScript/02_Upfront_Encapsulated_Code_With_No_Dependencies/GetWindowsOperatingSystemVersionNumberAsString.vbs
     #
-    # Version: 0.1.20250407.0
+    # Version: 0.1.20250408.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -6635,7 +6635,7 @@ function Get-WindowsOSVersion {
         # warnings.
         #
         # .NOTES
-        # Version: 1.0.20250406.0
+        # Version: 1.0.20250408.0
 
         #region License ############################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -7028,7 +7028,7 @@ function Get-WindowsOSVersion {
             # function will automatically attempt to retrieve the process processor
             # architecture.
             #
-            # Version: 1.0.20250406.1
+            # Version: 1.0.20250408.0
 
             #region License ########################################################
             # Copyright (c) 2025 Frank Lesniak
@@ -7866,7 +7866,7 @@ function Get-WindowsOSVersion {
                     return -12
                 }
 
-                $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
+                $ReferenceToSystemPath.Value = $strWindowsSystemPath
                 return 0
             }
         }
