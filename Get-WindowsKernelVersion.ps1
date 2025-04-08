@@ -138,7 +138,7 @@ function Get-WindowsKernelVersion {
     # warnings.
     #
     # .NOTES
-    # Version: 1.0.20250406.0
+    # Version: 1.0.20250408.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -531,7 +531,7 @@ function Get-WindowsKernelVersion {
         # function will automatically attempt to retrieve the process processor
         # architecture.
         #
-        # Version: 1.0.20250406.1
+        # Version: 1.0.20250408.0
 
         #region License ########################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -1369,7 +1369,7 @@ function Get-WindowsKernelVersion {
                 return -12
             }
 
-            $ReferenceToSystemPath.Value = [System.Environment]::SystemDirectory
+            $ReferenceToSystemPath.Value = $strWindowsSystemPath
             return 0
         }
     }
