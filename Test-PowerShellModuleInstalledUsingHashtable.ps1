@@ -90,7 +90,7 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # installed; $false means that at least one module was not installed.
     #
     # .NOTES
-    # Version: 2.0.20250216.0
+    # Version: 2.0.20250909.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -162,7 +162,7 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     $hashtableModuleNameToCustomMessageToThrowForMissingModule = @{}
     if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages) {
         if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages.Value) {
-            if ($ReferenceToHashtableOfCustomNotInstalledMessages.Value.GetType().FullName -ne 'System.Collections.Hashtable') {
+            if ($ReferenceToHashtableOfCustomNotInstalledMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
                 $arrMessages = @(($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Keys)
                 foreach ($strMessage in $arrMessages) {
                     $hashtableMessagesToThrowForMissingModule.Add($strMessage, $false)
