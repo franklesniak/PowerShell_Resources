@@ -78,6 +78,133 @@ function Test-ErrorOccurred {
     #     # No error occurred
     # }
     #
+    # .EXAMPLE
+    # # This example demonstrates the function returning $false when no
+    # # error occurs during the operation. A command that executes
+    # # successfully is run, and the function correctly identifies that
+    # # no error occurred.
+    #
+    # # Intentionally empty trap statement to prevent terminating
+    # # errors from halting processing
+    # trap { }
+    #
+    # # Retrieve the newest error on the stack prior to doing work
+    # if ($Error.Count -gt 0) {
+    #     $refLastKnownError = ([ref]($Error[0]))
+    # } else {
+    #     $refLastKnownError = ([ref]$null)
+    # }
+    #
+    # # Store current error preference; we will restore it after we do
+    # # some work:
+    # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+    #
+    # # Set ErrorActionPreference to SilentlyContinue
+    # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    #
+    # # Do something that will succeed
+    # Get-Item -Path $env:TEMP
+    #
+    # # Restore the former error preference
+    # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+    #
+    # # Retrieve the newest error on the error stack
+    # if ($Error.Count -gt 0) {
+    #     $refNewestCurrentError = ([ref]($Error[0]))
+    # } else {
+    #     $refNewestCurrentError = ([ref]$null)
+    # }
+    #
+    # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+    #     # Error occurred
+    # } else {
+    #     # No error occurred - this branch executes because Get-Item
+    #     # succeeded
+    # }
+    #
+    # .EXAMPLE
+    # # This example demonstrates a scenario where
+    # # ReferenceToEarlierError is non-null but ReferenceToLaterError
+    # # is null, simulating that $Error was cleared. The function
+    # # returns $false because this does not indicate a new error
+    # # occurred.
+    #
+    # # Intentionally empty trap statement to prevent terminating errors
+    # # from halting processing
+    # trap { }
+    #
+    # # Generate an error so that $Error has an entry
+    # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    # Get-Item -Path 'C:\DoesNotExist-ErrorClearing-Example.txt'
+    # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
+    #
+    # # Capture reference to the error
+    # if ($Error.Count -gt 0) {
+    #     $refLastKnownError = ([ref]($Error[0]))
+    # } else {
+    #     $refLastKnownError = ([ref]$null)
+    # }
+    #
+    # # Clear the $Error array
+    # $Error.Clear()
+    #
+    # # Capture reference after clearing (will be null)
+    # if ($Error.Count -gt 0) {
+    #     $refNewestCurrentError = ([ref]($Error[0]))
+    # } else {
+    #     $refNewestCurrentError = ([ref]$null)
+    # }
+    #
+    # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+    #     # Error occurred
+    # } else {
+    #     # No error occurred - this branch executes because clearing
+    #     # $Error does not indicate a new error
+    # }
+    #
+    # .EXAMPLE
+    # # This example demonstrates using the function with positional
+    # # parameters instead of named parameters. Both approaches work
+    # # correctly.
+    #
+    # # Intentionally empty trap statement to prevent terminating
+    # # errors from halting processing
+    # trap { }
+    #
+    # # Retrieve the newest error on the stack prior to doing work
+    # if ($Error.Count -gt 0) {
+    #     $refLastKnownError = ([ref]($Error[0]))
+    # } else {
+    #     $refLastKnownError = ([ref]$null)
+    # }
+    #
+    # # Store current error preference
+    # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+    #
+    # # Set ErrorActionPreference to SilentlyContinue
+    # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    #
+    # # Do something that might trigger an error
+    # Get-Item -Path 'C:\MayNotExist-Positional-Example.txt'
+    #
+    # # Restore the former error preference
+    # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+    #
+    # # Retrieve the newest error on the error stack
+    # if ($Error.Count -gt 0) {
+    #     $refNewestCurrentError = ([ref]($Error[0]))
+    # } else {
+    #     $refNewestCurrentError = ([ref]$null)
+    # }
+    #
+    # # Note: Using positional parameters - first parameter is
+    # # ReferenceToEarlierError, second is ReferenceToLaterError
+    # if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
+    #     # Error occurred
+    # } else {
+    #     # No error occurred
+    # }
+    #
     # .INPUTS
     # None. You can't pipe objects to Test-ErrorOccurred.
     #
@@ -88,6 +215,13 @@ function Test-ErrorOccurred {
     # error occurred.
     #
     # .NOTES
+    # This function supports Windows PowerShell 1.0 with .NET Framework
+    # 2.0 or newer, newer versions of Windows PowerShell (at least up
+    # to and including Windows PowerShell 5.1 with .NET Framework 4.8
+    # or newer), PowerShell Core 6.x, and PowerShell 7.x. This function
+    # supports Windows and, when run on PowerShell Core 6.x or
+    # PowerShell 7.x, also supports macOS and Linux.
+    #
     # This function also supports the use of positional parameters
     # instead of named parameters. If positional parameters are used
     # instead of named parameters, then two positional parameters are
@@ -107,7 +241,12 @@ function Test-ErrorOccurred {
     # occurred. If no error was on the stack at this time,
     # ReferenceToLaterError must be a reference to $null ([ref]$null).
     #
-    # Version: 2.0.20250215.0
+    # Version: 2.0.20251226.0
+
+    param (
+        [ref]$ReferenceToEarlierError = ([ref]$null),
+        [ref]$ReferenceToLaterError = ([ref]$null)
+    )
 
     #region License ################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -133,12 +272,6 @@ function Test-ErrorOccurred {
     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     # OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ################################################
-    param (
-        [ref]$ReferenceToEarlierError = ([ref]$null),
-        [ref]$ReferenceToLaterError = ([ref]$null)
-    )
-
-    # TODO: Validate input
 
     $boolErrorOccurred = $false
     if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {

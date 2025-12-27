@@ -5,7 +5,7 @@ function Get-ReferenceToLastError {
     #
     # .DESCRIPTION
     # Returns a reference (memory pointer) to $null ([ref]$null) if no
-    # errors on on the $error stack; otherwise, returns a reference to
+    # errors on the $error stack; otherwise, returns a reference to
     # the last error that occurred.
     #
     # .EXAMPLE
@@ -68,10 +68,23 @@ function Get-ReferenceToLastError {
     # System.Management.Automation.PSReference ([ref]).
     # Get-ReferenceToLastError returns a reference (memory pointer) to
     # the last error that occurred. It returns a reference to $null
-    # ([ref]$null) if there are no errors on on the $error stack.
+    # ([ref]$null) if there are no errors on the $error stack.
     #
     # .NOTES
-    # Version: 2.0.20250215.1
+    # This function accepts no parameters.
+    #
+    # This function is compatible with Windows PowerShell 1.0+ (with
+    # .NET Framework 2.0 or newer), PowerShell Core 6.x, and PowerShell
+    # 7.x on Windows, macOS, and Linux.
+    #
+    # Design Note: This function returns a [ref] object directly rather
+    # than following the author's standard v1.0 pattern of returning an
+    # integer status code. This design is intentional, as the
+    # function's sole purpose is to provide a reference for error
+    # tracking. Requiring a [ref] parameter would add unnecessary
+    # complexity to the calling pattern.
+    #
+    # Version: 2.0.20251226.0
 
     #region License ################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -97,6 +110,8 @@ function Get-ReferenceToLastError {
     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     # OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ################################################
+
+    param()
 
     if ($Error.Count -gt 0) {
         return ([ref]($Error[0]))
