@@ -1,5 +1,7 @@
 # PowerShell Writing Style
 
+**Version:** 1.2.20251230.1
+
 ## Table of Contents
 
 - [Executive Summary: Author Profile](#executive-summary-author-profile)
@@ -34,6 +36,8 @@ This checklist provides a quick reference for both human developers and LLMs (li
 - **[All]** No vertical operator alignment across multiple lines → [Operator Spacing and Alignment](#operator-spacing-and-alignment)
 - **[All]** Add extra indentation for multi-line method parameters → [Multi-line Method Indentation](#multi-line-method-indentation)
 - **[All]** Use blank lines sparingly: two around functions, one within → [Blank Line Usage](#blank-line-usage)
+- **[All]** Blank lines must not contain any whitespace (spaces or tabs) → [Blank Line Usage](#blank-line-usage)
+- **[All]** No lines may end with trailing whitespace → [Trailing Whitespace](#trailing-whitespace)
 - **[All]** Delimit variables in strings with `${}` or `-f` operator → [Variable Delimiting in Strings](#variable-delimiting-in-strings)
 
 ### Capitalization and Naming Conventions
@@ -78,6 +82,7 @@ This checklist provides a quick reference for both human developers and LLMs (li
 - **[v1.0]** Explicit return statements in v1.0-targeted functions → [Return Semantics: Explicit Status Codes](#return-semantics-explicit-status-codes)
 - **[v1.0]** Reference parameters ([ref]) for outputs requiring caller modification → [Input/Output Contract: Reference Parameters](#inputoutput-contract-reference-parameters)
 - **[v1.0]** Return single integer status code (0=success, 1-5=partial, -1=failure) → [Return Semantics: Explicit Status Codes](#return-semantics-explicit-status-codes)
+- **[v1.0]** Exception: Test-* functions may return Boolean when no practical error handling needed → [Return Semantics: Explicit Status Codes](#return-semantics-explicit-status-codes)
 - **[v1.0]** Support positional parameters for v1.0 usability → [Positional Parameter Support](#positional-parameter-support)
 - **[v1.0]** trap-based error handling (not try/catch) in v1.0-targeted functions → [Overview of Function Architecture](#overview-of-function-architecture)
 - **[Modern]** Must use [CmdletBinding()] attribute → [Rule: "Modern Advanced" Function/Script Requirements (v2.0+)](#rule-modern-advanced-functionscript-requirements-v20)
@@ -174,6 +179,30 @@ When a method call (like `.Add()`) is wrapped (e.g., in a `[void]` cast) and its
 
 Blank lines are used sparingly but effectively: two surround function definitions for visual separation, and single blanks group related logic within functions (e.g., before a block comment or between setup and main logic). Files end with a single blank line. Regions (#region ... #endregion) logically group elements like licenses or helper sections, improving navigability in larger scripts.
 
+**Important:** Blank lines must be completely empty—they **must not contain any whitespace characters** (spaces or tabs). This ensures consistency and prevents issues with some editors and linters.
+
+**Compliant (blank line is truly empty):**
+
+```powershell
+{
+    Invoke-SomeCmdlet
+
+    Invoke-AnotherCmdlet
+}
+```
+
+**Non-Compliant (blank line contains spaces):**
+
+```powershell
+{
+    Invoke-SomeCmdlet
+    
+    Invoke-AnotherCmdlet
+}
+```
+
+In the non-compliant example, the blank line (line 3) contains spaces, which is not allowed.
+
 Example snippet illustrating bracing, indentation, spacing, and blank lines:
 
 ```powershell
@@ -191,6 +220,34 @@ function ExampleFunction {
     return 0
 }
 ```
+
+### Trailing Whitespace
+
+**No lines may end with trailing whitespace** (spaces or tabs). Trailing whitespace can cause issues with version control systems, some editors, and linters. It also serves no functional purpose and reduces code consistency.
+
+**Compliant (no trailing whitespace):**
+
+```powershell
+function ExampleFunction {
+    param (
+        [string]$ParamOne
+    )
+}
+```
+
+**Non-Compliant (trailing spaces on line 3):**
+
+```powershell
+function ExampleFunction {
+    param (
+        [string]$ParamOne   # ← trailing spaces here (not shown)
+    )
+}
+```
+
+In the non-compliant example, line 3 would end with trailing spaces after `$ParamOne` (before the comment), which is not allowed. The actual trailing spaces are not shown in this documentation to avoid violating the rule within this file itself.
+
+Most modern editors can be configured to automatically remove trailing whitespace on save, which is recommended to maintain compliance with this rule.
 
 ### Variable Delimiting in Strings
 
@@ -346,7 +403,7 @@ PowerShell uses the `System.Management.Automation.VerbsCommon` enumeration class
 | `Set` (`s`) | Replaces data on an existing resource or creates a resource that contains some data. For example, the `Set-Date` cmdlet changes the system time on the local computer. (The `New` verb can also be used to create a resource.) This verb is paired with `Get`. | Write, Reset, Assign, Configure, Update |
 | `Show` (`sh`) | Makes a resource visible to the user. This verb is paired with `Hide`. | Display, Produce |
 | `Skip` (`sk`) | Bypasses one or more resources or points in a sequence. | Bypass, Jump |
-| `Split` (`sl`)    | Separates parts of a resource. For example, the `Split-Path` cmdlet returns different parts of a path. This verb is paired with `Join`. | Separate |
+| `Split` (`sl`) | Separates parts of a resource. For example, the `Split-Path` cmdlet returns different parts of a path. This verb is paired with `Join`. | Separate |
 | `Step` (`st`) | Moves to the next point or resource in a sequence. | |
 | `Switch` (`sw`) | Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states. | |
 | `Undo` (`un`) | Sets a resource to its previous state. | |
@@ -388,7 +445,7 @@ PowerShell uses the `System.Management.Automation.VerbsData` class to define act
 | `Initialize` (`in`) | Prepares a resource for use, and sets it to a default state. | Erase, Init, Renew, Rebuild, Reinitialize, Setup |
 | `Limit` (`l`) | Applies constraints to a resource. | Quota |
 | `Merge` (`mg`) | Creates a single resource from multiple resources. | Combine, Join |
-| `Mount` (`mt`)  | Attaches a named entity to a location. This verb is paired with `Dismount`. | Connect |
+| `Mount` (`mt`) | Attaches a named entity to a location. This verb is paired with `Dismount`. | Connect |
 | `Out` (`o`) | Sends data out of the environment. For example, the `Out-Printer` cmdlet sends data to a printer. | |
 | `Publish` (`pb`) | Makes a resource available to others. This verb is paired with `Unpublish`. | Deploy, Release, Install |
 | `Restore` (`rr`) | Sets a resource to a predefined state, such as a state set by `Checkpoint`. For example, the `Restore-Computer` cmdlet starts a system restore on the local computer. | Repair, Return, Undo, Fix |
@@ -564,9 +621,9 @@ This eliminates environment-dependent behavior and ensures deterministic executi
 The use of type prefixes on local variables represents a **stylistic fork** with no community-mandated "correct" answer. The guides explicitly state this is a **"matter of taste"** for private variables. Below is an analysis of the two viable paths:
 
 | Option | Description | Pros | Cons |
-|-------|-------------|------|------|
-| **1. Keep Type Prefixes**<br>e.g., `$strMessage`, `$intCount` | Retain current Hungarian-style notation | • Immediate type visibility in plain text<br>• Critical in v1.0 without IDE support<br>• Reduces runtime type errors<br>• Self-documenting in large functions | • Increases visual noise<br>• Feels dated in modern editors<br>• **Intentionally longer variable names** (as abbreviations are forbidden) |
-| **2. Use Plain camelCase**<br>e.g., `$message`, `$count` | Remove prefixes, rely on context/tools | • Cleaner, more modern aesthetic<br>• Aligns with .NET naming simplicity<br>• Shorter, easier to type | • Requires IDE/IntelliSense for type clarity<br>• Risk of confusion in complex logic<br>• Less resilient in plain-text review |
+| --- | --- | --- | --- |
+| **1. Keep Type Prefixes** (e.g., `$strMessage`, `$intCount`) | Retain current Hungarian-style notation | • Immediate type visibility in plain text • Critical in v1.0 without IDE support • Reduces runtime type errors • Self-documenting in large functions | • Increases visual noise • Feels dated in modern editors • **Intentionally longer variable names** (as abbreviations are forbidden) |
+| **2. Use Plain camelCase** (e.g., `$message`, `$count`) | Remove prefixes, rely on context/tools | • Cleaner, more modern aesthetic • Aligns with .NET naming simplicity • Shorter, easier to type | • Requires IDE/IntelliSense for type clarity • Risk of confusion in complex logic • Less resilient in plain-text review |
 
 **Recommendation**: **Retain prefixes in v1.0-targeted code**. The clarity benefit outweighs verbosity when IDE support cannot be assumed. In v2.0+ codebases with consistent tooling, transition to plain camelCase is acceptable.
 
@@ -606,7 +663,7 @@ All functions include **full comment-based help** using **single-line comments**
 **Required sections present in every function**:
 
 | Section | Purpose | Observed Implementation |
-|--------|--------|------------------------|
+| --- | --- | --- |
 | `.SYNOPSIS` | One-sentence purpose | Concise, imperative-voice summary |
 | `.DESCRIPTION` | Detailed behavior | Explains logic, edge cases, and failure modes |
 | `.PARAMETER` | Per-parameter documentation | One block per parameter, even for `[ref]` types |
@@ -706,20 +763,31 @@ This enables:
 
 All distributable functions and scripts must include a version number in the `.NOTES` section of their comment-based help. This version number provides critical change tracking and must follow a strict, `[System.Version]`-compatible format: `Major.Minor.Build.Revision`.
 
-- **`Major.Minor`**: These numbers are manually incremented based on the scope of the change.
-  - Increment the **Major** version (e.g., `1.0` to `2.0`) for breaking changes.
-  - Increment the **Minor** version (e.g., `1.0` to `1.1`) for new features or significant non-breaking improvements.
+- **`Major`**: Increment the **Major** version (e.g., `1.0.20251103.0` to `2.0.20251230.0`) **any time a breaking change is introduced**. Breaking changes include:
+  - Removing or renaming a function, parameter, or public interface
+  - Changing parameter types in incompatible ways
+  - Altering return types or output formats that break existing consumers
+  - Any modification that requires users to update their code
+- **`Minor`**: Increment the **Minor** version (e.g., `1.0.20251103.0` to `1.1.20251230.0`) **any time a feature or function change is introduced that is non-breaking**. This includes:
+  - Adding new functions or capabilities
+  - Adding new optional parameters
+  - Enhancing existing functionality without changing interfaces
+  - Performance improvements that don't affect behavior
 - **`Build`**: This component **must** be an integer in the format **`YYYYMMDD`**, representing the date the code was last modified. This date must be updated to the **current date** for *any* modification, however minor.
-- **`Revision`**: This component is typically `0` for the first commit of the day. It can be incremented (e.g., `1`, `2`) if multiple, distinct builds or revisions are created on the *same day*.
+- **`Revision`**: This component is typically `0` for the first commit of the day. It should be **bumped any time a minor change is made on the same date a change has already been made**. Revisions are typically reserved for:
+  - Trivial edits (typos, formatting, comments)
+  - Bug fixes that don't change functionality
+  - Documentation-only updates
+  - Multiple commits on the same day
 
 **Compliant Example:**
 
 ```powershell
 # .NOTES
-# Version: 1.2.20251103.0
+# Version: 1.2.20251230.0
 ```
 
-This example assumes that the current date is November 3, 2025. In any code you write, use the current date in place of November 3, 2025.
+This example assumes that the current date is December 30, 2025. In any code you write, use the current date in place of December 30, 2025.
 
 ---
 
@@ -744,8 +812,8 @@ param (
 )
 ```
 
-**Pros**: Immediate proximity  
-**Cons**: Risk of desync, visual noise  
+- **Pros**: Immediate proximity
+- **Cons**: Risk of desync, visual noise
 
 The author’s choice prioritizes **consistency and maintainability**.
 
@@ -756,9 +824,9 @@ The author’s choice prioritizes **consistency and maintainability**.
 The author uses **single-line comments** (`# .SECTION`) rather than **block comments** (`<# ... #>`).
 
 | Format | Pros | Cons |
-|-------|------|------|
-| **Single-line (`#`)** | • Granular editing<br>• Clear in diff tools<br>• No escaping issues | • More vertical space<br>• Slightly more typing |
-| **Block (`<# #>`)** | • Compact<br>• Modern aesthetic | • Harder to edit individual lines<br>• Risk of malformed blocks |
+| --- | --- | --- |
+| **Single-line (`#`)** | • Granular editing • Clear in diff tools • No escaping issues | • More vertical space • Slightly more typing |
+| **Block (`<# #>`)** | • Compact • Modern aesthetic | • Harder to edit individual lines • Risk of malformed blocks |
 
 **Finding**: Both are **equally valid** and **discoverable by `Get-Help`** in PowerShell v1.0+. The author’s choice of single-line format is **defensible and consistent** with the v1.0 compatibility goal.
 
@@ -847,7 +915,7 @@ In this scenario, the parameter should be left **un-typed** (or explicitly typed
 **Parameter typing examples**:
 
 | Parameter | Type | Purpose |
-|---------|------|-------|
+| --- | --- | --- |
 | `$ReferenceToResultObject` | `[ref]` | Output: stores processed result (used only when modification in caller scope is needed) |
 | `$ReferenceArrayOfExtraStrings` | `[ref]` | Output: array for additional data (used only for write-back) |
 | `$StringToProcess` | `[string]` | Input: string to handle |
@@ -878,10 +946,42 @@ This ensures the function can be called with minimal arguments while maintaining
 Every function returns a **single integer status code** via explicit `return` statement:
 
 | Code | Meaning |
-|------|--------|
+| --- | --- |
 | `0` | Full success |
 | `1–5` | Partial success with additional data |
 | `-1` | Complete failure |
+
+**Exception for `Test-*` Functions:**
+
+For PowerShell v1.0 scripts/functions that use the `Test-` verb (in a Verb-Noun naming convention) and are **not reasonably anticipated to encounter errors that the caller needs to detect and react to programmatically**, a **Boolean return** is allowed instead of an integer status code.
+
+This exception applies when:
+
+1. The function's verb is `Test-`
+2. The function is designed to return a simple true/false result (e.g., testing for the existence of a condition)
+3. There is no practical need for the caller to distinguish between different error conditions or partial success states
+
+**Example of Compliant Test Function with Boolean Return:**
+
+```powershell
+function Test-PathExists {
+    # .SYNOPSIS
+    # Tests whether a path exists.
+    # .DESCRIPTION
+    # Returns $true if the path exists, $false otherwise.
+    # .PARAMETER Path
+    # The path to test.
+    # .OUTPUTS
+    # [bool] $true if the path exists, $false otherwise.
+    param (
+        [string]$Path
+    )
+
+    return (Test-Path -Path $Path)
+}
+```
+
+For `Test-*` functions that may encounter meaningful errors (e.g., access denied, network issues) that the caller should be able to detect, the standard integer status code pattern should still be used.
 
 **Rationale for explicit `return`**:
 
@@ -968,7 +1068,7 @@ This enables:
 In v1.0 scripts, the author **emulates modern features** using v1.0 constructs:
 
 | Modern Feature | v1.0 Emulation |
-|---------------|----------------|
+| --- | --- |
 | `[CmdletBinding()]` | Comment-based help + strong typing |
 | `-WhatIf` support | Not applicable (no state change) |
 | `SupportsShouldProcess` | N/A |
@@ -982,9 +1082,9 @@ In v1.0 scripts, the author **emulates modern features** using v1.0 constructs:
 The use of explicit `return` vs. implicit output represents a **philosophical choice**:
 
 | Approach | Pros | Cons |
-|--------|------|------|
-| **Explicit `return` (current)** | • Full control<br>• No accidental output<br>• v1.0 compatible<br>• Clear contract | • Not pipeline-friendly<br>• Verbose |
-| **Implicit output (modern)** | • Pipeline composable<br>• Concise | • Risk of extra objects<br>• Requires v2.0+ for safety |
+| --- | --- | --- |
+| **Explicit `return` (current)** | • Full control • No accidental output • v1.0 compatible • Clear contract | • Not pipeline-friendly • Verbose |
+| **Implicit output (modern)** | • Pipeline composable • Concise | • Risk of extra objects • Requires v2.0+ for safety |
 
 **Conclusion**: The explicit `return` pattern is **correct and optimal** for v1.0-targeted, non-pipeline tools.
 
@@ -1176,7 +1276,7 @@ The system is **atomic**—each error-prone operation is isolated, measured, and
 The author uses **two complementary v1.0-native suppression techniques**:
 
 | Technique | Implementation | Purpose |
-|---------|----------------|--------|
+| --- | --- | --- |
 | **`trap { }`** | Empty trap block at function scope | Catches **terminating errors** (e.g., type cast failures) and prevents script termination |
 | **`$global:ErrorActionPreference = 'SilentlyContinue'`** | Temporarily set before risky operation, restored immediately after | Suppresses **non-terminating error output** to host |
 
@@ -1215,9 +1315,9 @@ $errorOccurred = Test-ErrorOccurred $refBefore $refAfter
 **Reference comparison logic**:
 
 | Before \ After | `$null` | Not `$null` (same) | Not `$null` (different) |
-|----------------|--------|--------------------|-------------------------|
-| `$null`        | No     | **YES**            | N/A                     |
-| Not `$null`    | No     | No                 | **YES**                 |
+| --- | --- | --- | --- |
+| `$null` | No | **YES** | N/A |
+| Not `$null` | No | No | **YES** |
 
 This eliminates false positives from `$error` array clearing and ensures **100% accurate error detection**.
 
@@ -1292,7 +1392,7 @@ if ($errorOccurred) {
 ### Comparison with Modern Alternatives
 
 | Feature | v1.0 Implementation | v2.0+ Equivalent |
-|-------|---------------------|------------------|
+| --- | --- | --- |
 | Error suppression | `trap { }` + preference toggle | `try/catch` with `-ErrorAction Stop` |
 | Error detection | Reference comparison | `catch` block execution |
 | State management | Manual preference restore | Automatic scope exit |
@@ -1364,7 +1464,7 @@ function Get-PSVersion {
 **Analysis of detection logic**:
 
 | Condition | PowerShell Version | Result |
-|---------|-------------------|--------|
+| --- | --- | --- |
 | `$PSVersionTable` exists | v2.0+ | Actual version (e.g., 5.1.22621.2506) |
 | `$PSVersionTable` missing | v1.0 | Hard-coded `[version]'1.0'` |
 
@@ -1396,7 +1496,7 @@ if ($versionPS.Major -ge 3) {
 **Progressive enhancement stack**:
 
 | PowerShell Version | .NET Type Used | Numeric Range |
-|--------------------|----------------|---------------|
+| --- | --- | --- |
 | v3.0+ | `[System.Numerics.BigInteger]` | Unlimited (subject to memory) |
 | v1.0–v2.0 | `[double]` | ±1.7 × 10³⁰⁸ (IEEE 754) |
 | All versions | `[int]`, `[int64]` | Built-in safe conversions |
@@ -1414,7 +1514,7 @@ if ($versionPS.Major -ge 3) {
 The author uses **direct .NET interop** in controlled scenarios:
 
 | .NET Usage | Implementation | Technical Justification |
-|-----------|----------------|------------------------|
+| --- | --- | --- |
 | **`[regex]::Escape()`** | `Split-StringOnLiteralString` | Ensures literal string splitting (not regex) in v1.0 |
 | **`[regex]::Split()`** | Same function | v1.0-compatible alternative to `-split` operator (v2.0+) |
 | **`[System.Numerics.BigInteger]`** | Overflow handling | Only when PS v3+ detected |
@@ -1490,7 +1590,7 @@ if ($PSVersion -eq ([version]'0.0')) {
 The author **avoids all relative path notation** and the `~` shortcut:
 
 | Avoided | Reason |
-|--------|--------|
+| --- | --- |
 | `.\file.txt` | Depends on `[Environment]::CurrentDirectory` |
 | `..\parent` | Same issue |
 | `~` | Behavior varies by provider (FileSystem vs. Registry) |
@@ -1512,7 +1612,7 @@ For file paths, the author would use:
 ### .NET Type Usage Summary
 
 | .NET Type | First Available | Used In | Technical Purpose |
-|----------|-----------------|--------|------------------|
+| --- | --- | --- | --- |
 | `[regex]` | .NET 2.0 (PS v1.0) | String operations | Literal string parsing |
 | `[System.Numerics.BigInteger]` | .NET 4.0 (PS v3.0+) | Overflow handling | Unlimited integer precision |
 | `[version]` | .NET 2.0 | Version handling | Standard version semantics |
@@ -1581,7 +1681,7 @@ return -1   # Complete failure
 **Key characteristics**:
 
 | Property | Implementation |
-|--------|----------------|
+| --- | --- |
 | **Type** | `[int]` (32-bit signed integer) |
 | **Source** | Explicit `return` statement |
 | **Stream** | Success (pipeline) |
@@ -1671,7 +1771,7 @@ $status   = 4
 The author uses **exactly three output Streams**, each with a **single, immutable purpose**:
 
 | Stream | Command | Purpose | Example |
-|--------|--------|--------|--------|
+| --- | --- | --- | --- |
 | **Success** | `return` | Primary result (status code) | `return 0` |
 | **Warning** | `Write-Warning` | Logical anomalies ("should not happen") | `"Operation failed despite valid inputs"` |
 | **Host** | *Never used* | Interactive feedback | **Prohibited** |
@@ -1761,7 +1861,7 @@ While not implemented in this v1.0 script, the author’s design **anticipates**
 ### Stream Interaction Matrix
 
 | Caller Context | Success Stream | Warning Stream | Host Stream |
-|----------------|----------------|----------------|-------------|
+| --- | --- | --- | --- |
 | Interactive | Status code visible | Warnings shown | **Never** |
 | Script | `$status` captured | Warnings logged | **Never** |
 | Pipeline | Status flows downstream | Warnings preserved | **Never** |
@@ -1850,7 +1950,7 @@ The author adopts a **"measure, then optimize"** philosophy, but within v1.0 con
 #### Key Performance Characteristics
 
 | Operation | Complexity | Technical Rationale |
-|---------|------------|------------------|
+| --- | --- | --- |
 | **String splitting** | O(n) | `[regex]::Split` with escaped delimiter — linear pass |
 | **Type casting loop** | O(1) per attempt, bounded | Bounded by input segments |
 | **Error detection** | O(1) | Reference comparison — no array scanning |
@@ -1860,24 +1960,29 @@ The author adopts a **"measure, then optimize"** philosophy, but within v1.0 con
 
 #### Performance-Critical Paths
 
-1. **Literal string splitting**  
-   Uses `[regex]::Escape()` + `[regex]::Split()` instead of `-split` operator  
-   **Reason**: `-split` is v2.0+; regex method is v1.0-compatible and **faster** for literal splits (no regex engine overhead for metacharacters)
+1. **Literal string splitting**
 
-2. **Conditional BigInteger usage**  
-   Only invoked when:
-   - Numeric segment > `[int32]::MaxValue`
-   - PowerShell version ≥ 3.0  
-   **Avoids** costly `BigInteger` allocation in v1.0/v2.0 environments
+    Uses `[regex]::Escape()` + `[regex]::Split()` instead of `-split` operator
+    **Reason**: `-split` is v2.0+; regex method is v1.0-compatible and **faster** for literal splits (no regex engine overhead for metacharacters)
 
-3. **Short-circuit processing**  
-   On first successful parse, **excess segments are stored** and processing halts  
+2. **Conditional BigInteger usage**
+    Only invoked when:
+
+    - Numeric segment > `[int32]::MaxValue`
+    - PowerShell version ≥ 3.0
+
+    **Avoids** costly `BigInteger` allocation in v1.0/v2.0 environments
+
+3. **Short-circuit processing**
+
+   On first successful parse, **excess segments are stored** and processing halts
+
    Prevents unnecessary type conversion attempts
 
 #### Performance Trade-offs
 
 | Trade-off | Decision | Technical Justification |
-|---------|----------|------------------------|
+| --- | --- | --- |
 | **Script vs. Pipeline** | Script constructs (`foreach`) | Avoids pipeline overhead; v1.0 has no optimized pipeline |
 | **Regex vs. String methods** | Regex for splitting | `[regex]::Escape()` ensures literal behavior; `String.Split()` has different empty-string semantics |
 | **Early version detection** | Optional `$PSVersion` parameter | Caller can skip `Get-PSVersion` if known → saves one `Test-Path` |
@@ -1893,7 +1998,7 @@ The function processes **untrusted inputs** (e.g., from external sources). The s
 #### Security Posture
 
 | Threat Vector | Mitigation | Evidence |
-|---------------|-----------|-------------------|
+| --- | --- | --- |
 | **Injection via string** | Strong typing + safe casting | Type casts fail fast if malformed |
 | **Path traversal** | No file system access | Function is pure computation |
 | **Memory exhaustion** | Bounded input handling | Max fixed segments + excess string |
@@ -1927,7 +2032,7 @@ With **SecureString** and **never** clear-text storage.
 #### Maintainability: High Cohesion, Controlled Coupling
 
 | Aspect | Implementation | Benefit |
-|-------|----------------|------------------|
+| --- | --- | --- |
 | **Single responsibility** | Targeted operations | Clear contract |
 | **No global state mutation** | Only `$global:ErrorActionPreference` (restored) | Predictable |
 | **Helper consolidation needed** | Duplicate error functions | **Action item**: nest in parent scope |
@@ -1936,7 +2041,7 @@ With **SecureString** and **never** clear-text storage.
 #### Extensibility Points
 
 | Extension | Method | v1.0 Compatibility |
-|---------|--------|-------------------|
+| --- | --- | --- |
 | **Custom number bases** | Add parameter `[int]$Base = 10` | Yes |
 | **Strict mode** | Add switch `[switch]$Strict` | Yes |
 | **Output object** | Return `[pscustomobject]` | No (requires v2.0+) |
