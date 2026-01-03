@@ -130,7 +130,7 @@ function Get-PowerShellModuleUsingHashtable {
     # parsing to avoid parser errors when loaded as a library function in older
     # environments.
     #
-    # Version: 2.0.20260103.1
+    # Version: 2.0.20260103.2
 
     param (
         [ref]$ReferenceToHashtable = ([ref]$null),
@@ -674,21 +674,6 @@ function Get-PowerShellModuleUsingHashtable {
         # processing
     }
 
-    $boolWriteErrorOnFailure = $false
-    $boolWriteWarningOnFailure = $false
-    if ($null -ne $WriteErrorOnFailure) {
-        if ($WriteErrorOnFailure.IsPresent -eq $true) {
-            $boolWriteErrorOnFailure = $true
-        }
-    }
-    if (-not $boolWriteErrorOnFailure) {
-        if ($null -ne $WriteWarningOnFailure) {
-            if ($WriteWarningOnFailure.IsPresent -eq $true) {
-                $boolWriteWarningOnFailure = $true
-            }
-        }
-    }
-
     #region Process input ######################################################
     # Validate that the required parameter was supplied:
     if ($null -eq $ReferenceToHashtable) {
@@ -723,6 +708,21 @@ function Get-PowerShellModuleUsingHashtable {
     if ($null -ne $DoNotCheckPowerShellVersion) {
         if ($DoNotCheckPowerShellVersion.IsPresent) {
             $boolCheckForPowerShellVersion = $false
+        }
+    }
+
+    $boolWriteErrorOnFailure = $false
+    $boolWriteWarningOnFailure = $false
+    if ($null -ne $WriteErrorOnFailure) {
+        if ($WriteErrorOnFailure.IsPresent -eq $true) {
+            $boolWriteErrorOnFailure = $true
+        }
+    }
+    if (-not $boolWriteErrorOnFailure) {
+        if ($null -ne $WriteWarningOnFailure) {
+            if ($WriteWarningOnFailure.IsPresent -eq $true) {
+                $boolWriteWarningOnFailure = $true
+            }
         }
     }
     #endregion Process input ######################################################
