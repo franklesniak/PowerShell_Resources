@@ -19,7 +19,20 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 2.0.20250215.1
+# Function template version: 2.0.20251228.0
+
+# TEMPLATE FILE NOTICE:
+# This is a template file. Before use, you MUST:
+# 1. Replace all placeholder comments (marked with TODO:)
+# 2. Replace generic parameter names (Parameter1, Parameter2, etc.) with descriptive names
+# 3. Update all documentation with actual function-specific content
+# 4. Replace placeholder code with actual implementation
+# 5. Update version number to current date (YYYYMMDD format)
+# 6. Update function name to match your use case
+# 7. Update licensing information if this will be distributed
+# 8. Choose between Parameters vs. Arguments approach and delete unused sections
+# 9. Configure the $boolOutput* variables based on your needs
+# 10. Remove this notice once the template has been fully customized
 
 function Invoke-SimpleFunction {
     # .SYNOPSIS
@@ -65,21 +78,37 @@ function Invoke-SimpleFunction {
     # .EXAMPLE
     # $hashtableConfigIni = $null
     # $intReturnCode = Invoke-SimpleFunction -Parameter1 ([ref]$hashtableConfigIni) -Parameter2 '.\config.ini' -Parameter3 @(';') -Parameter4 $true -Parameter5 $true -Parameter6 'NoSection' -Parameter7 $true
+    # # $intReturnCode is 0 (success)
+    # # $hashtableConfigIni contains the parsed configuration data as a hashtable
+    # # where keys are section/setting names and values are the corresponding
+    # # configuration values from the INI file.
+    #
+    # This example demonstrates calling the function with named parameters to
+    # process a configuration file with specific parsing options.
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
     # $intReturnCode = Invoke-SimpleFunction ([ref]$hashtableConfigIni) '.\config.ini' @(';') $true $true 'NoSection' $true
+    # # $intReturnCode is 0 (success)
+    # # $hashtableConfigIni contains the parsed configuration data as a hashtable
+    # # where keys are section/setting names and values are the corresponding
+    # # configuration values from the INI file.
+    #
+    # This example demonstrates calling the function using positional parameters
+    # instead of named parameters. The positional parameters follow the same order
+    # as defined in the .NOTES section.
     #
     # .INPUTS
     # None. You can't pipe objects to Invoke-SimpleFunction.
     #
     # .OUTPUTS
-    # System.Boolean. Invoke-SimpleFunction returns a boolean value indiciating
-    # whether the process completed successfully. $true means the process
-    # completed successfully; $false means there was an error.
+    # System.Int32. Invoke-SimpleFunction returns an integer status code indicating
+    # whether the process completed successfully. 0 means success. The operation
+    # completed successfully. -1 means failure. An error occurred during the
+    # operation.
     #
     # .NOTES
-    ################### IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT ###################
+    # TODO: IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT
     # This function also supports the use of positional parameters instead of named
     # parameters. If positional parameters are used instead of named parameters,
     # then X positional parameters are required:
@@ -103,7 +132,7 @@ function Invoke-SimpleFunction {
     # If supplied, the eighth positional parameter is a string representation of
     # ...
     #
-    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # TODO: IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE THIS ENTIRE BLOCK
     # This function uses arguments instead of parameters. X positional arguments
     # are required:
     #
@@ -124,8 +153,26 @@ function Invoke-SimpleFunction {
     #
     # If supplied, the eighth argument is a string representation of ...
     #
-    ################### DESCRIBE THE FUNCTION'S VERSION ###################
+    # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
+    # newer, newer versions of Windows PowerShell (at least up to and including
+    # Windows PowerShell 5.1 with .NET Framework 4.8 or newer), PowerShell Core
+    # 6.x, and PowerShell 7.x. This function supports Windows and, when run on
+    # PowerShell Core 6.x or PowerShell 7.x, also supports macOS and Linux.
+    #
+    # TODO: DESCRIBE THE FUNCTION'S VERSION
     # Version: 1.0.YYYYMMDD.0
+
+    # TODO: UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED
+    param (
+        [ref]$Parameter1 = ([ref]$null),
+        [string]$Parameter2 = '',
+        [char[]]$Parameter3 = @(),
+        [boolean]$Parameter4 = $false,
+        [boolean]$Parameter5 = $false,
+        [string]$Parameter6 = '',
+        [boolean]$Parameter7 = $false,
+        [string]$Parameter8 = ''
+    )
 
     #region License ############################################################
     # Copyright (c) 20xx First Last
@@ -150,14 +197,14 @@ function Invoke-SimpleFunction {
     #endregion License ############################################################
 
     #region Acknowledgements ###################################################
-    ################### GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE ###################
+    # TODO: GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE
     # This function is derived from Get-FooInfo at the website:
     # https://github.com/foo/foo
     # retrieved on YYYY-MM-DD
     #endregion Acknowledgements ###################################################
 
     #region Original Licenses ##################################################
-    ################### INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE ###################
+    # TODO: INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE
     # Although substantial modifications have been made, the original portions of
     # Get-FooInfo that are incorporated into Invoke-SimpleFunction are subject to
     # the following license:
@@ -183,18 +230,6 @@ function Invoke-SimpleFunction {
     # SOFTWARE.
     #endregion Original Licenses ##################################################
 
-    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
-    param (
-        [ref]$Parameter1 = ([ref]$null),
-        [string]$Parameter2 = '',
-        [char[]]$Parameter3 = @(),
-        [boolean]$Parameter4 = $false,
-        [boolean]$Parameter5 = $false,
-        [string]$Parameter6 = '',
-        [boolean]$Parameter7 = $false,
-        [string]$Parameter8 = ''
-    )
-
     #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
@@ -203,7 +238,7 @@ function Invoke-SimpleFunction {
         #
         # .DESCRIPTION
         # Returns a reference (memory pointer) to $null ([ref]$null) if no
-        # errors on on the $error stack; otherwise, returns a reference to
+        # errors on the $error stack; otherwise, returns a reference to
         # the last error that occurred.
         #
         # .EXAMPLE
@@ -266,10 +301,23 @@ function Invoke-SimpleFunction {
         # System.Management.Automation.PSReference ([ref]).
         # Get-ReferenceToLastError returns a reference (memory pointer) to
         # the last error that occurred. It returns a reference to $null
-        # ([ref]$null) if there are no errors on on the $error stack.
+        # ([ref]$null) if there are no errors on the $error stack.
         #
         # .NOTES
-        # Version: 2.0.20250215.1
+        # This function accepts no parameters.
+        #
+        # This function is compatible with Windows PowerShell 1.0+ (with
+        # .NET Framework 2.0 or newer), PowerShell Core 6.x, and PowerShell
+        # 7.x on Windows, macOS, and Linux.
+        #
+        # Design Note: This function returns a [ref] object directly rather
+        # than following the author's standard v1.0 pattern of returning an
+        # integer status code. This design is intentional, as the
+        # function's sole purpose is to provide a reference for error
+        # tracking. Requiring a [ref] parameter would add unnecessary
+        # complexity to the calling pattern.
+        #
+        # Version: 2.0.20251226.0
 
         #region License ################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -295,6 +343,8 @@ function Invoke-SimpleFunction {
         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
         # OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################
+
+        param()
 
         if ($Error.Count -gt 0) {
             return ([ref]($Error[0]))
@@ -383,6 +433,133 @@ function Invoke-SimpleFunction {
         #     # No error occurred
         # }
         #
+        # .EXAMPLE
+        # # This example demonstrates the function returning $false when no
+        # # error occurs during the operation. A command that executes
+        # # successfully is run, and the function correctly identifies that
+        # # no error occurred.
+        #
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
+        # trap { }
+        #
+        # # Retrieve the newest error on the stack prior to doing work
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Store current error preference; we will restore it after we do
+        # # some work:
+        # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+        #
+        # # Set ErrorActionPreference to SilentlyContinue
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        #
+        # # Do something that will succeed
+        # Get-Item -Path $env:TEMP
+        #
+        # # Restore the former error preference
+        # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+        #
+        # # Retrieve the newest error on the error stack
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred - this branch executes because Get-Item
+        #     # succeeded
+        # }
+        #
+        # .EXAMPLE
+        # # This example demonstrates a scenario where
+        # # ReferenceToEarlierError is non-null but ReferenceToLaterError
+        # # is null, simulating that $Error was cleared. The function
+        # # returns $false because this does not indicate a new error
+        # # occurred.
+        #
+        # # Intentionally empty trap statement to prevent terminating errors
+        # # from halting processing
+        # trap { }
+        #
+        # # Generate an error so that $Error has an entry
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        # Get-Item -Path 'C:\DoesNotExist-ErrorClearing-Example.txt'
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
+        #
+        # # Capture reference to the error
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Clear the $Error array
+        # $Error.Clear()
+        #
+        # # Capture reference after clearing (will be null)
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred - this branch executes because clearing
+        #     # $Error does not indicate a new error
+        # }
+        #
+        # .EXAMPLE
+        # # This example demonstrates using the function with positional
+        # # parameters instead of named parameters. Both approaches work
+        # # correctly.
+        #
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
+        # trap { }
+        #
+        # # Retrieve the newest error on the stack prior to doing work
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Store current error preference
+        # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+        #
+        # # Set ErrorActionPreference to SilentlyContinue
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        #
+        # # Do something that might trigger an error
+        # Get-Item -Path 'C:\MayNotExist-Positional-Example.txt'
+        #
+        # # Restore the former error preference
+        # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+        #
+        # # Retrieve the newest error on the error stack
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # # Note: Using positional parameters - first parameter is
+        # # ReferenceToEarlierError, second is ReferenceToLaterError
+        # if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred
+        # }
+        #
         # .INPUTS
         # None. You can't pipe objects to Test-ErrorOccurred.
         #
@@ -393,6 +570,13 @@ function Invoke-SimpleFunction {
         # error occurred.
         #
         # .NOTES
+        # This function supports Windows PowerShell 1.0 with .NET Framework
+        # 2.0 or newer, newer versions of Windows PowerShell (at least up
+        # to and including Windows PowerShell 5.1 with .NET Framework 4.8
+        # or newer), PowerShell Core 6.x, and PowerShell 7.x. This function
+        # supports Windows and, when run on PowerShell Core 6.x or
+        # PowerShell 7.x, also supports macOS and Linux.
+        #
         # This function also supports the use of positional parameters
         # instead of named parameters. If positional parameters are used
         # instead of named parameters, then two positional parameters are
@@ -412,7 +596,12 @@ function Invoke-SimpleFunction {
         # occurred. If no error was on the stack at this time,
         # ReferenceToLaterError must be a reference to $null ([ref]$null).
         #
-        # Version: 2.0.20250215.0
+        # Version: 2.0.20251226.0
+
+        param (
+            [ref]$ReferenceToEarlierError = ([ref]$null),
+            [ref]$ReferenceToLaterError = ([ref]$null)
+        )
 
         #region License ################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -438,12 +627,6 @@ function Invoke-SimpleFunction {
         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
         # OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################
-        param (
-            [ref]$ReferenceToEarlierError = ([ref]$null),
-            [ref]$ReferenceToLaterError = ([ref]$null)
-        )
-
-        # TODO: Validate input
 
         $boolErrorOccurred = $false
         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
@@ -476,16 +659,21 @@ function Invoke-SimpleFunction {
         # processing
     }
 
-    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # TODO: IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE THIS ENTIRE REGION
     #region Assign Arguments to Internally-Used Variables ######################
+    # Variable naming convention: Local variables use type-prefixing (str, int,
+    # bool, arr, ref, obj, etc.) followed by camelCase descriptive names with no
+    # abbreviations. For example: $strFilePath, $intReturnCode, $boolUsePSDrive.
+    #
     if (($args.Count -lt 7) -or ($args.Count -gt 8)) {
         # Error condition; return failure indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-        return $false
+        # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE
+        return -1
     }
     # Correct number of arguments supplied
+
     $refOutput = $args[0]
-    $strFilePath = $args[3]
+    $strFilePath = $args[1]
     $arrCharDriveLetters = $args[2]
     $boolUsePSDrive = $args[3]
     $boolRefreshPSDrive = $args[4]
@@ -493,33 +681,45 @@ function Invoke-SimpleFunction {
     $boolQuitOnError = $args[6]
 
     if ($args.Count -eq 8) {
-        $strServerName = $args[9]
+        $strServerName = $args[7]
     } else {
         $strServerName = ''
     }
     #endregion Assign Arguments to Internally-Used Variables ######################
 
-    ################### IF WARRANTED, VALIDATE INPUT HERE ###################
+    # TODO: IF WARRANTED, VALIDATE INPUT HERE
 
-    ################### THE FOLLOWING LINES CONTROL SIMPLE ERROR/WARNING/VERBOSE/ETC OUTPUT; REPLACE OR DELETE AS NECESSARY ###################
+    # TODO: THE FOLLOWING LINES CONTROL SIMPLE ERROR/WARNING/VERBOSE/ETC OUTPUT; REPLACE OR DELETE AS NECESSARY
 
-    ################### REPLACE THIS WITH A DESCRIPTION OF WHAT THIS FUNCTION IS DOING; IT'S USED IN ERROR/WARNING OUTPUT ###################
+    # TODO: REPLACE THIS WITH A DESCRIPTION OF WHAT THIS FUNCTION IS DOING; IT'S USED IN ERROR/WARNING OUTPUT
     $strDescriptionOfWhatWeAreDoingInThisFunction = "getting some data"
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
+    # Use Write-Error for functions that are part of a larger script where the
+    # caller needs to know an error occurred (e.g., $? will be $false).
     $boolOutputErrorOnError = $false
 
-    ################### SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
+    # Use Write-Warning for user-facing anomalies that don't prevent overall
+    # success (e.g., "Could not retrieve optional data from source X").
     $boolOutputWarningOnError = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
+    # Use Write-Verbose for operational details that help users understand what
+    # the function is doing (e.g., "Attempting to connect to server Y").
     $boolOutputVerboseOnError = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
+    # Use Write-Debug for internal diagnostic information helpful for developers
+    # but not relevant to end users (e.g., "Pre-operation error count: 3").
     $boolOutputDebugOnError = $false
 
-    ################### PLACE ANY RELIABLE CODE HERE THAT SETS UP THE REAL WORK WE ARE DOING IN THIS FUNCTION ###################
-    # <Placeholder>
+    # TODO: PLACE ANY RELIABLE CODE HERE THAT SETS UP THE REAL WORK WE ARE DOING IN THIS FUNCTION
+    # Place initialization code here that must run before the main operation.
+    # Examples: variable initialization, opening file handles, creating temporary
+    # objects, or building request parameters. This code should be reliable and
+    # not require error handling.
+    # TODO: Add initialization code here
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
@@ -536,7 +736,7 @@ function Invoke-SimpleFunction {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Do the work of this function...
-    ################### REPLACE THE FOLLOWING LINE WITH WHATEVER REQUIRES ERROR HANDLING. WHATEVER YOU PLACE HERE MUST BE A ONE-LINER FOR ERROR HANDLING TO WORK CORRECTLY! ###################
+    # TODO: REPLACE THE FOLLOWING LINE WITH WHATEVER REQUIRES ERROR HANDLING. WHATEVER YOU PLACE HERE MUST BE A ONE-LINER FOR ERROR HANDLING TO WORK CORRECTLY!
     $output = @(Get-DataFromSampleUnreliableCmdlet $strFilePath)
 
     # Restore the former error preference
@@ -557,25 +757,37 @@ function Invoke-SimpleFunction {
             Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
         }
 
-        ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS *NOT* SUCCESSFULLY EXECUTED ###################
-        # <Placeholder>
+        # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS *NOT* SUCCESSFULLY EXECUTED
+        # Place cleanup or rollback code here that should run only on failure.
+        # Examples: closing file handles, releasing resources, logging failure
+        # details, or reverting partial changes. This code should be reliable and
+        # not require error handling.
+        # TODO: Add failure cleanup code here
 
         # Return failure indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-        return $false
+        # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE
+        return -1
     } else {
         # No error occurred
-        ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED BUT BEFORE THE OUTPUT OBJECT IS COPIED ###################
-        # <Placeholder>
+        # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED BUT BEFORE THE OUTPUT OBJECT IS COPIED
+        # Place post-processing code here that should run only on success and
+        # before the output is returned to the caller. Examples: transforming the
+        # output data, calculating derived values, or validating the output format.
+        # This code should be reliable and not require error handling.
+        # TODO: Add success processing code here
 
         # Return data by reference:
         $refOutput.Value = $output
 
-        ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED AND AFTER THE OUTPUT OBJECT IS COPIED ###################
-        # <Placeholder>
+        # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED AND AFTER THE OUTPUT OBJECT IS COPIED
+        # Place finalization code here that should run only on success and after
+        # the output has been returned to the caller. Examples: closing file
+        # handles, logging success messages, or cleaning up temporary resources.
+        # This code should be reliable and not require error handling.
+        # TODO: Add success finalization code here
 
         # Return success indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A SUCCESS ###################
-        return $true
+        # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A SUCCESS
+        return 0
     }
 }

@@ -19,7 +19,18 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion License ####################################################################
 
-# Function template version: 2.0.20250215.1
+# Function template version: 2.0.20251228.0
+
+# TEMPLATE FILE NOTICE:
+# This is a template file. Before use, you MUST:
+# 1. Replace all placeholder comments (marked with TODO:)
+# 2. Replace generic parameter names (Parameter1, Parameter2, etc.) with descriptive names
+# 3. Update all documentation with actual function-specific content
+# 4. Replace placeholder code with actual implementation
+# 5. Update version number to current date (YYYYMMDD format)
+# 6. Update function name to match your use case
+# 7. Update licensing information if this will be distributed
+# 8. Remove this notice once the template has been fully customized
 
 function Get-DataFromCloudServiceCmdletRobust {
     # .SYNOPSIS
@@ -72,22 +83,23 @@ function Get-DataFromCloudServiceCmdletRobust {
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
-    # $boolSuccess = Get-DataFromCloudServiceCmdletRobust -Parameter1 ([ref]$hashtableConfigIni) -CurrentAttemptNumber 1 -MaxAttempts 4 -Parameter4 '.\config.ini' -Parameter5 @(';') -Parameter6 $true -Parameter7 $true -Parameter8 'NoSection' -Parameter9 $true
+    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust -Parameter1 ([ref]$hashtableConfigIni) -CurrentAttemptNumber 1 -MaxAttempts 4 -Parameter4 '.\config.ini' -Parameter5 @(';') -Parameter6 $true -Parameter7 $true -Parameter8 'NoSection' -Parameter9 $true
     #
     # .EXAMPLE
     # $hashtableConfigIni = $null
-    # $boolSuccess = Get-DataFromCloudServiceCmdletRobust ([ref]$hashtableConfigIni) 1 4 '.\config.ini' @(';') $true $true 'NoSection' $true
+    # $intReturnCode = Get-DataFromCloudServiceCmdletRobust ([ref]$hashtableConfigIni) 1 4 '.\config.ini' @(';') $true $true 'NoSection' $true
     #
     # .INPUTS
     # None. You can't pipe objects to Get-DataFromCloudServiceCmdletRobust.
     #
     # .OUTPUTS
-    # System.Boolean. Get-DataFromCloudServiceCmdletRobust returns a boolean value
-    # indiciating whether the process completed successfully. $true means the
-    # process completed successfully; $false means there was an error.
+    # System.Int32. Get-DataFromCloudServiceCmdletRobust returns an integer status
+    # code indicating whether the process completed successfully.
+    # - 0 indicates full success
+    # - -1 indicates failure
     #
     # .NOTES
-    ################### IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT ###################
+    # TODO: IF PARAMETERS ARE BEING USED FOR THIS FUNCTION, THEN THIS BLURB SHOULD BE INCLUDED. HOWEVER, BE MINDFUL THAT [SWITCH] PARAMETERS ARE NOT INCLUDED IN POSITIONAL PARAMETERS BY DEFAULT
     # This function also supports the use of positional parameters instead of named
     # parameters. If positional parameters are used instead of named parameters,
     # then X positional parameters are required:
@@ -116,7 +128,7 @@ function Get-DataFromCloudServiceCmdletRobust {
     #
     # If supplied, the tenth positional parameter is a string representation of ...
     #
-    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # TODO: IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT
     # This function uses arguments instead of parameters. X positional arguments
     # are required:
     #
@@ -143,8 +155,28 @@ function Get-DataFromCloudServiceCmdletRobust {
     #
     # If supplied, the tenth argument is a string representation of ...
     #
-    ################### DESCRIBE THE FUNCTION'S VERSION ###################
+    # TODO: DESCRIBE THE FUNCTION'S VERSION
+    # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
+    # newer, newer versions of Windows PowerShell (at least up to and including
+    # Windows PowerShell 5.1 with .NET Framework 4.8 or newer), PowerShell Core
+    # 6.x, and PowerShell 7.x. This function supports Windows and, when run on
+    # PowerShell Core 6.x or PowerShell 7.x, also supports macOS and Linux.
+    #
     # Version: 1.0.YYYYMMDD.0
+
+    # TODO: UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED
+    param (
+        [ref]$Parameter1 = ([ref]$null),
+        [int]$CurrentAttemptNumber = 1,
+        [int]$MaxAttempts = 1,
+        [string]$Parameter4 = '',
+        [char[]]$Parameter5 = @(),
+        [boolean]$Parameter6 = $false,
+        [boolean]$Parameter7 = $false,
+        [string]$Parameter8 = '',
+        [boolean]$Parameter9 = $false,
+        [string]$Parameter10 = ''
+    )
 
     #region License ############################################################
     # Copyright (c) 20xx First Last
@@ -169,14 +201,14 @@ function Get-DataFromCloudServiceCmdletRobust {
     #endregion License ############################################################
 
     #region Acknowledgements ###################################################
-    ################### GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE ###################
+    # TODO: GIVE ACKNOWLEDGEMENT TO ANYONE ELSE THAT CONTRIBUTED AND INCLUDE ORIGINAL LICENSE IF APPLICABLE
     # This function is derived from Get-FooInfo at the website:
     # https://github.com/foo/foo
     # retrieved on YYYY-MM-DD
     #endregion Acknowledgements ###################################################
 
     #region Original Licenses ##################################################
-    ################### INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE ###################
+    # TODO: INCLUDE ORIGINAL LICENSE FROM DERIVED WORKS IF APPLICABLE
     # Although substantial modifications have been made, the original portions of
     # Get-FooInfo that are incorporated into Get-DataFromCloudServiceCmdletRobust
     # are subject to the following license:
@@ -202,20 +234,6 @@ function Get-DataFromCloudServiceCmdletRobust {
     # SOFTWARE.
     #endregion Original Licenses ##################################################
 
-    ################### UPDATE PARAMETER LIST AS NECESSARY; SET DEFAULT VALUES IF YOU WANT TO DEFAULT TO SOMETHING OTHER THAN NULL IF THE PARAMETER IS OMITTED ###################
-    param (
-        [ref]$Parameter1 = ([ref]$null),
-        [int]$CurrentAttemptNumber = 1,
-        [int]$MaxAttempts = 1,
-        [string]$Parameter4 = '',
-        [char[]]$Parameter5 = @(),
-        [boolean]$Parameter6 = $false,
-        [boolean]$Parameter7 = $false,
-        [string]$Parameter8 = '',
-        [boolean]$Parameter9 = $false,
-        [string]$Parameter10 = ''
-    )
-
     #region FunctionsToSupportErrorHandling ####################################
     function Get-ReferenceToLastError {
         # .SYNOPSIS
@@ -224,7 +242,7 @@ function Get-DataFromCloudServiceCmdletRobust {
         #
         # .DESCRIPTION
         # Returns a reference (memory pointer) to $null ([ref]$null) if no
-        # errors on on the $error stack; otherwise, returns a reference to
+        # errors on the $error stack; otherwise, returns a reference to
         # the last error that occurred.
         #
         # .EXAMPLE
@@ -287,10 +305,23 @@ function Get-DataFromCloudServiceCmdletRobust {
         # System.Management.Automation.PSReference ([ref]).
         # Get-ReferenceToLastError returns a reference (memory pointer) to
         # the last error that occurred. It returns a reference to $null
-        # ([ref]$null) if there are no errors on on the $error stack.
+        # ([ref]$null) if there are no errors on the $error stack.
         #
         # .NOTES
-        # Version: 2.0.20250215.1
+        # This function accepts no parameters.
+        #
+        # This function is compatible with Windows PowerShell 1.0+ (with
+        # .NET Framework 2.0 or newer), PowerShell Core 6.x, and PowerShell
+        # 7.x on Windows, macOS, and Linux.
+        #
+        # Design Note: This function returns a [ref] object directly rather
+        # than following the author's standard v1.0 pattern of returning an
+        # integer status code. This design is intentional, as the
+        # function's sole purpose is to provide a reference for error
+        # tracking. Requiring a [ref] parameter would add unnecessary
+        # complexity to the calling pattern.
+        #
+        # Version: 2.0.20251226.0
 
         #region License ################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -316,6 +347,8 @@ function Get-DataFromCloudServiceCmdletRobust {
         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
         # OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################
+
+        param()
 
         if ($Error.Count -gt 0) {
             return ([ref]($Error[0]))
@@ -404,6 +437,133 @@ function Get-DataFromCloudServiceCmdletRobust {
         #     # No error occurred
         # }
         #
+        # .EXAMPLE
+        # # This example demonstrates the function returning $false when no
+        # # error occurs during the operation. A command that executes
+        # # successfully is run, and the function correctly identifies that
+        # # no error occurred.
+        #
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
+        # trap { }
+        #
+        # # Retrieve the newest error on the stack prior to doing work
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Store current error preference; we will restore it after we do
+        # # some work:
+        # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+        #
+        # # Set ErrorActionPreference to SilentlyContinue
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        #
+        # # Do something that will succeed
+        # Get-Item -Path $env:TEMP
+        #
+        # # Restore the former error preference
+        # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+        #
+        # # Retrieve the newest error on the error stack
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred - this branch executes because Get-Item
+        #     # succeeded
+        # }
+        #
+        # .EXAMPLE
+        # # This example demonstrates a scenario where
+        # # ReferenceToEarlierError is non-null but ReferenceToLaterError
+        # # is null, simulating that $Error was cleared. The function
+        # # returns $false because this does not indicate a new error
+        # # occurred.
+        #
+        # # Intentionally empty trap statement to prevent terminating errors
+        # # from halting processing
+        # trap { }
+        #
+        # # Generate an error so that $Error has an entry
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        # Get-Item -Path 'C:\DoesNotExist-ErrorClearing-Example.txt'
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
+        #
+        # # Capture reference to the error
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Clear the $Error array
+        # $Error.Clear()
+        #
+        # # Capture reference after clearing (will be null)
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # if (Test-ErrorOccurred -ReferenceToEarlierError $refLastKnownError -ReferenceToLaterError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred - this branch executes because clearing
+        #     # $Error does not indicate a new error
+        # }
+        #
+        # .EXAMPLE
+        # # This example demonstrates using the function with positional
+        # # parameters instead of named parameters. Both approaches work
+        # # correctly.
+        #
+        # # Intentionally empty trap statement to prevent terminating
+        # # errors from halting processing
+        # trap { }
+        #
+        # # Retrieve the newest error on the stack prior to doing work
+        # if ($Error.Count -gt 0) {
+        #     $refLastKnownError = ([ref]($Error[0]))
+        # } else {
+        #     $refLastKnownError = ([ref]$null)
+        # }
+        #
+        # # Store current error preference
+        # $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+        #
+        # # Set ErrorActionPreference to SilentlyContinue
+        # $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        #
+        # # Do something that might trigger an error
+        # Get-Item -Path 'C:\MayNotExist-Positional-Example.txt'
+        #
+        # # Restore the former error preference
+        # $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+        #
+        # # Retrieve the newest error on the error stack
+        # if ($Error.Count -gt 0) {
+        #     $refNewestCurrentError = ([ref]($Error[0]))
+        # } else {
+        #     $refNewestCurrentError = ([ref]$null)
+        # }
+        #
+        # # Note: Using positional parameters - first parameter is
+        # # ReferenceToEarlierError, second is ReferenceToLaterError
+        # if (Test-ErrorOccurred $refLastKnownError $refNewestCurrentError) {
+        #     # Error occurred
+        # } else {
+        #     # No error occurred
+        # }
+        #
         # .INPUTS
         # None. You can't pipe objects to Test-ErrorOccurred.
         #
@@ -414,6 +574,13 @@ function Get-DataFromCloudServiceCmdletRobust {
         # error occurred.
         #
         # .NOTES
+        # This function supports Windows PowerShell 1.0 with .NET Framework
+        # 2.0 or newer, newer versions of Windows PowerShell (at least up
+        # to and including Windows PowerShell 5.1 with .NET Framework 4.8
+        # or newer), PowerShell Core 6.x, and PowerShell 7.x. This function
+        # supports Windows and, when run on PowerShell Core 6.x or
+        # PowerShell 7.x, also supports macOS and Linux.
+        #
         # This function also supports the use of positional parameters
         # instead of named parameters. If positional parameters are used
         # instead of named parameters, then two positional parameters are
@@ -433,7 +600,12 @@ function Get-DataFromCloudServiceCmdletRobust {
         # occurred. If no error was on the stack at this time,
         # ReferenceToLaterError must be a reference to $null ([ref]$null).
         #
-        # Version: 2.0.20250215.0
+        # Version: 2.0.20251226.0
+
+        param (
+            [ref]$ReferenceToEarlierError = ([ref]$null),
+            [ref]$ReferenceToLaterError = ([ref]$null)
+        )
 
         #region License ################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -459,12 +631,6 @@ function Get-DataFromCloudServiceCmdletRobust {
         # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
         # OTHER DEALINGS IN THE SOFTWARE.
         #endregion License ################################################
-        param (
-            [ref]$ReferenceToEarlierError = ([ref]$null),
-            [ref]$ReferenceToLaterError = ([ref]$null)
-        )
-
-        # TODO: Validate input
 
         $boolErrorOccurred = $false
         if (($null -ne $ReferenceToEarlierError.Value) -and ($null -ne $ReferenceToLaterError.Value)) {
@@ -497,12 +663,12 @@ function Get-DataFromCloudServiceCmdletRobust {
         # processing
     }
 
-    ################### IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT ###################
+    # TODO: IF YOU ARE USING ARGUMENTS INSTEAD OF PARAMETERS, THEN INCLUDE THIS BLOCK; OTHERWISE, DELETE IT
     #region Assign Arguments to Internally-Used Variables ######################
     if (($args.Count -lt 9) -or ($args.Count -gt 10)) {
         # Error condition; return failure indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-        return $false
+        # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE
+        return -1
     }
     # Correct number of arguments supplied
     $refOutput = $args[0]
@@ -522,46 +688,46 @@ function Get-DataFromCloudServiceCmdletRobust {
     }
     #endregion Assign Arguments to Internally-Used Variables ######################
 
-    ################### IF WARRANTED, VALIDATE INPUT HERE ###################
+    # TODO: IF WARRANTED, VALIDATE INPUT HERE
 
-    ################### THE FOLLOWING LINES CONTROL SIMPLE ERROR/WARNING/VERBOSE/ETC OUTPUT; REPLACE OR DELETE AS NECESSARY ###################
+    # TODO: THE FOLLOWING LINES CONTROL SIMPLE ERROR/WARNING/VERBOSE/ETC OUTPUT; REPLACE OR DELETE AS NECESSARY
 
-    ################### REPLACE THIS WITH A DESCRIPTION OF WHAT THIS FUNCTION IS DOING; IT'S USED IN ERROR/WARNING OUTPUT ###################
+    # TODO: REPLACE THIS WITH A DESCRIPTION OF WHAT THIS FUNCTION IS DOING; IT'S USED IN ERROR/WARNING OUTPUT
     $strDescriptionOfWhatWeAreDoingInThisFunction = "getting some data"
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RETRIES ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RETRIES
     $boolOutputErrorOnFunctionRetry = $false
 
-    ################### SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RETRIES ###################
+    # TODO: SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RETRIES
     $boolOutputWarningOnFunctionRetry = $true
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RETRIES ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RETRIES
     $boolOutputVerboseOnFunctionRetry = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RETRIES ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RETRIES
     $boolOutputDebugOnFunctionRetry = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT A NON-TERMINATING ERROR (Write-Error) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
     $boolOutputErrorOnFunctionMaximumAttemptsExceeded = $true
 
-    ################### SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $false IF YOU DO NOT WANT TO OUTPUT A WARNING (Write-Warning) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
     $boolOutputWarningOnFunctionMaximumAttemptsExceeded = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT VERBOSE INFORMATION (Write-Verbose) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
     $boolOutputVerboseOnFunctionMaximumAttemptsExceeded = $false
 
-    ################### SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP ###################
+    # TODO: SET THIS TO $true IF YOU WANT TO OUTPUT DEBUGGING INFORMATION (Write-Debug) WHEN THE FUNCTION RUNS OUT OF RETRIES AND GIVES UP
     $boolOutputDebugOnFunctionMaximumAttemptsExceeded = $false
 
-    ################### PLACE ANY RELIABLE CODE HERE THAT SETS UP THE REAL WORK WE ARE DOING IN THIS FUNCTION ###################
-    # <Placeholder>
+    # TODO: PLACE ANY RELIABLE CODE HERE THAT SETS UP THE REAL WORK WE ARE DOING IN THIS FUNCTION
+    # TODO: Add initialization code here
 
     # Retrieve the newest error on the stack prior to doing work
     $refLastKnownError = Get-ReferenceToLastError
 
     # Store current error preference; we will restore it after we do the work of
     # this function
-    $actionPreferenceFormerErrorPreference = $global:ErrorActionPreference
+    $actionpreferenceFormerErrorPreference = $global:ErrorActionPreference
 
     # Set ErrorActionPreference to SilentlyContinue; this will suppress error
     # output. Terminating errors will not output anything, kick to the empty trap
@@ -571,11 +737,11 @@ function Get-DataFromCloudServiceCmdletRobust {
     $global:ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
 
     # Do the work of this function...
-    ################### REPLACE THE FOLLOWING LINE WITH WHATEVER REQUIRES ERROR HANDLING. WHATEVER YOU PLACE HERE MUST BE A ONE-LINER FOR ERROR HANDLING TO WORK CORRECTLY! ###################
-    $output = @(Get-DataFromCloudServiceCmdlet $objPlaceHolderInputObject)
+    # TODO: REPLACE THE FOLLOWING LINE WITH WHATEVER REQUIRES ERROR HANDLING. WHATEVER YOU PLACE HERE MUST BE A ONE-LINER FOR ERROR HANDLING TO WORK CORRECTLY!
+    $arrOutput = @(Get-DataFromCloudServiceCmdlet $objPlaceHolderInputObject)
 
     # Restore the former error preference
-    $global:ErrorActionPreference = $actionPreferenceFormerErrorPreference
+    $global:ErrorActionPreference = $actionpreferenceFormerErrorPreference
 
     # Retrieve the newest error on the error stack
     $refNewestCurrentError = Get-ReferenceToLastError
@@ -584,67 +750,67 @@ function Get-DataFromCloudServiceCmdletRobust {
         # Error occurred
         if ($CurrentAttemptNumber -lt $MaxAttempts) {
             if ($boolOutputErrorOnFunctionRetry) {
-                Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
+                Write-Error ("An error occurred {0}. Waiting for {1} seconds, then retrying..." -f $strDescriptionOfWhatWeAreDoingInThisFunction, [string]([math]::Pow(2, $CurrentAttemptNumber)))
             } elseif ($boolOutputWarningOnFunctionRetry) {
-                Write-Warning ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
+                Write-Warning ("An error occurred {0}. Waiting for {1} seconds, then retrying..." -f $strDescriptionOfWhatWeAreDoingInThisFunction, [string]([math]::Pow(2, $CurrentAttemptNumber)))
             } elseif ($boolOutputVerboseOnFunctionRetry) {
-                Write-Verbose ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
+                Write-Verbose ("An error occurred {0}. Waiting for {1} seconds, then retrying..." -f $strDescriptionOfWhatWeAreDoingInThisFunction, [string]([math]::Pow(2, $CurrentAttemptNumber)))
             } elseif ($boolOutputDebugOnFunctionRetry) {
-                Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Waiting for " + [string]([math]::Pow(2, ($args[1]))) + " seconds, then retrying...")
+                Write-Debug ("An error occurred {0}. Waiting for {1} seconds, then retrying..." -f $strDescriptionOfWhatWeAreDoingInThisFunction, [string]([math]::Pow(2, $CurrentAttemptNumber)))
             }
             Start-Sleep -Seconds ([math]::Pow(2, $CurrentAttemptNumber))
 
-            ################### REPLACE THIS CALL WITH A RECURSIVE CALL TO THIS SAME FUNCTION; PAY ATTENTION TO THE PARAMETERS ###################
+            # TODO: REPLACE THIS CALL WITH A RECURSIVE CALL TO THIS SAME FUNCTION; PAY ATTENTION TO THE PARAMETERS
             $objResultIndicator = Get-DataFromCloudServiceCmdletRobust -Parameter1 $refOutput -CurrentAttemptNumber ($CurrentAttemptNumber + 1) -MaxAttempts $MaxAttempts -Parameter4 $strFilePath -Parameter5 $arrCharDriveLetters -Parameter6 $boolUsePSDrive -Parameter7 $boolRefreshPSDrive -Parameter8 $strSecondaryPath -Parameter9 $boolQuitOnError -Parameter10 $strServerName
             return $objResultIndicator
         } else {
             # Number of attempts exceeded maximum
             if ($boolOutputErrorOnFunctionMaximumAttemptsExceeded) {
                 if ($MaxAttempts -ge 2) {
-                    Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
+                    Write-Error ("An error occurred {0}. Giving up after too many attempts!" -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 } else {
-                    Write-Error ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
+                    Write-Error ("An error occurred {0}." -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 }
             } elseif ($boolOutputWarningOnFunctionMaximumAttemptsExceeded) {
                 if ($MaxAttempts -ge 2) {
-                    Write-Warning ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
+                    Write-Warning ("An error occurred {0}. Giving up after too many attempts!" -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 } else {
-                    Write-Warning ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
+                    Write-Warning ("An error occurred {0}." -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 }
             } elseif ($boolOutputVerboseOnFunctionMaximumAttemptsExceeded) {
                 if ($MaxAttempts -ge 2) {
-                    Write-Verbose ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
+                    Write-Verbose ("An error occurred {0}. Giving up after too many attempts!" -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 } else {
-                    Write-Verbose ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
+                    Write-Verbose ("An error occurred {0}." -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 }
             } elseif ($boolOutputDebugOnFunctionMaximumAttemptsExceeded) {
                 if ($MaxAttempts -ge 2) {
-                    Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ". Giving up after too many attempts!")
+                    Write-Debug ("An error occurred {0}. Giving up after too many attempts!" -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 } else {
-                    Write-Debug ("An error occurred " + $strDescriptionOfWhatWeAreDoingInThisFunction + ".")
+                    Write-Debug ("An error occurred {0}." -f $strDescriptionOfWhatWeAreDoingInThisFunction)
                 }
             }
 
-            ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS *NOT* SUCCESSFULLY EXECUTED ###################
-            # <Placeholder>
+            # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS *NOT* SUCCESSFULLY EXECUTED
+            # TODO: Add failure cleanup code here
 
             # Return failure indicator:
-            ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE ###################
-            return $false
+            # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A FAILURE
+            return -1
         }
     } else {
         # No error occurred
-        ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED BUT BEFORE THE OUTPUT OBJECT IS COPIED ###################
-        # <Placeholder>
+        # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED BUT BEFORE THE OUTPUT OBJECT IS COPIED
+        # TODO: Add success processing code here
 
         # Return data by reference:
-        $refOutput.Value = $output
+        $refOutput.Value = $arrOutput
 
-        ################### PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED AND AFTER THE OUTPUT OBJECT IS COPIED ###################
-        # <Placeholder>
+        # TODO: PLACE ANY RELIABLE CODE HERE THAT NEEDS TO RUN AFTER THE WORK IN THIS FUNCTION WAS SUCCESSFULLY EXECUTED AND AFTER THE OUTPUT OBJECT IS COPIED
+        # TODO: Add success finalization code here
 
         # Return success indicator:
-        ################### UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A SUCCESS ###################
-        return $true
+        # TODO: UPDATE WITH WHATEVER WE WANT TO RETURN INDICATING A SUCCESS
+        return 0
     }
 }
