@@ -11,18 +11,18 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # installed. If all modules are installed, the function returns $true;
     # otherwise, if any module is not installed, the function returns $false.
     #
-    # .PARAMETER ReferenceToHashtableOfInstalledModules
-    # This parameter is required; it is a reference to a hashtable. The hashtable
-    # must have keys that are the names of PowerShell modules with each hashtable
-    # entry's value (in the key-value pair) populated with arrays of
-    # ModuleInfoGrouping objects (i.e., the object returned from Get-Module).
+    # .PARAMETER HashtableOfInstalledModules
+    # This parameter is required; it is a hashtable. The hashtable must have keys
+    # that are the names of PowerShell modules with each hashtable entry's value
+    # (in the key-value pair) populated with arrays of ModuleInfoGrouping objects
+    # (i.e., the object returned from Get-Module).
     #
-    # .PARAMETER ReferenceToHashtableOfCustomNotInstalledMessages
-    # This parameter is optional; if supplied, it is a reference to a hashtable.
-    # The hashtable must have keys that are custom error or warning messages
-    # (string) to be displayed if one or more modules are not installed. The value
-    # for each key must be an array of PowerShell module names (strings) relevant
-    # to that error or warning message.
+    # .PARAMETER HashtableOfCustomNotInstalledMessages
+    # This parameter is optional; if supplied, it is a hashtable. The hashtable
+    # must have keys that are custom error or warning messages (string) to be
+    # displayed if one or more modules are not installed. The value for each key
+    # must be an array of PowerShell module names (strings) relevant to that error
+    # or warning message.
     #
     # If this parameter is not supplied, or if a custom error or warning message is
     # not supplied in the hashtable for a given module, the script will default to
@@ -63,21 +63,52 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # $hashtableModuleNameToInstalledModules.Add('Microsoft.Graph.Groups', @())
     # $hashtableModuleNameToInstalledModules.Add('Microsoft.Graph.Users', @())
     # $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
-    # Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules
+    # $intReturnCode = Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules
+    # if ($intReturnCode -ne 0) {
+    #     Write-Error 'Failed to get the list of installed PowerShell modules.'
+    #     return
+    # }
     #
     # $hashtableCustomNotInstalledMessageToModuleNames = @{}
     # $strGraphNotInstalledMessage = 'Microsoft.Graph.Authentication, Microsoft.Graph.Groups, and/or Microsoft.Graph.Users modules were not found. Please install the full Microsoft.Graph module and then try again.' + [System.Environment]::NewLine + 'You can install the Microsoft.Graph PowerShell module from the PowerShell Gallery by running the following command:' + [System.Environment]::NewLine + 'Install-Module Microsoft.Graph;' + [System.Environment]::NewLine + [System.Environment]::NewLine + 'If the installation command fails, you may need to upgrade the version of PowerShellGet. To do so, run the following commands, then restart PowerShell:' + [System.Environment]::NewLine + 'Set-ExecutionPolicy Bypass -Scope Process -Force;' + [System.Environment]::NewLine + '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;' + [System.Environment]::NewLine + 'Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force;' + [System.Environment]::NewLine + 'Install-Module PowerShellGet -MinimumVersion 2.2.4 -SkipPublisherCheck -Force -AllowClobber;' + [System.Environment]::NewLine + [System.Environment]::NewLine
     # $hashtableCustomNotInstalledMessageToModuleNames.Add($strGraphNotInstalledMessage, @('Microsoft.Graph.Authentication', 'Microsoft.Graph.Groups', 'Microsoft.Graph.Users'))
-    # $refhashtableCustomNotInstalledMessageToModuleNames = [ref]$hashtableCustomNotInstalledMessageToModuleNames
     #
-    # $boolResult = Test-PowerShellModuleInstalledUsingHashtable -ReferenceToHashtableOfInstalledModules $refHashtableModuleNameToInstalledModules -ReferenceToHashtableOfCustomNotInstalledMessages $refhashtableCustomNotInstalledMessageToModuleNames -ThrowErrorIfModuleNotInstalled
+    # $boolResult = Test-PowerShellModuleInstalledUsingHashtable -HashtableOfInstalledModules $hashtableModuleNameToInstalledModules -HashtableOfCustomNotInstalledMessages $hashtableCustomNotInstalledMessageToModuleNames -ThrowErrorIfModuleNotInstalled
+    # if ($boolResult -eq $false) {
+    #     Write-Warning 'One or more required modules are not installed.'
+    #     return
+    # }
     #
     # This example checks to see if the PnP.PowerShell,
     # Microsoft.Graph.Authentication, Microsoft.Graph.Groups, and
-    # Microsoft.Graph.Users modules are installed. If any of these modules are not
-    # installed, an error is thrown for the PnP.PowerShell module or the group of
-    # Microsoft.Graph modules, respectively, and $boolResult is set to $false. If
-    # all modules are installed, $boolResult is set to $true.
+    # Microsoft.Graph.Users modules are installed using named parameters. If any of
+    # these modules are not installed, an error is thrown for the PnP.PowerShell
+    # module or the group of Microsoft.Graph modules, respectively, and $boolResult
+    # is set to $false. If all modules are installed, $boolResult is set to $true.
+    # The function returns a boolean value indicating whether all modules are
+    # installed.
+    #
+    # .EXAMPLE
+    # $hashtableModuleNameToInstalledModules = @{}
+    # $hashtableModuleNameToInstalledModules.Add('PnP.PowerShell', @())
+    # $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
+    # $intReturnCode = Get-PowerShellModuleUsingHashtable $refHashtableModuleNameToInstalledModules
+    # if ($intReturnCode -ne 0) {
+    #     Write-Error 'Failed to get the list of installed PowerShell modules.'
+    #     return
+    # }
+    #
+    # $boolResult = Test-PowerShellModuleInstalledUsingHashtable $hashtableModuleNameToInstalledModules $null $true
+    # if ($boolResult -eq $false) {
+    #     Write-Warning 'PnP.PowerShell module is not installed.'
+    #     return
+    # }
+    #
+    # This example demonstrates using positional parameters instead of named
+    # parameters. The first positional parameter is the hashtable of installed
+    # modules, the second is the hashtable of custom messages (null in this case),
+    # and the third is the switch to throw an error if a module is not installed.
+    # The function returns $true if the module is installed, $false otherwise.
     #
     # .INPUTS
     # None. You can't pipe objects to Test-PowerShellModuleInstalledUsingHashtable.
@@ -85,12 +116,27 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # .OUTPUTS
     # System.Boolean. Test-PowerShellModuleInstalledUsingHashtable returns a
     # boolean value indiciating whether all modules were installed. $true means
-    # that every module specified in the referenced hashtable (i.e., the one
-    # referenced in the ReferenceToHashtableOfInstalledModules parameter) was
-    # installed; $false means that at least one module was not installed.
+    # that every module specified in the hashtable (i.e., the one passed in the
+    # HashtableOfInstalledModules parameter) was installed; $false means that at
+    # least one module was not installed.
     #
     # .NOTES
-    # Version: 2.0.20250909.0
+    # Version: 3.0.20251231.1
+    #
+    # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
+    # newer, newer versions of Windows PowerShell (at least up to and including
+    # Windows PowerShell 5.1 with .NET Framework 4.8 or newer), PowerShell Core
+    # 6.x, and PowerShell 7.x. This function supports Windows and, when run on
+    # PowerShell Core 6.x or PowerShell 7.x, also supports macOS and Linux.
+    #
+    # This function also supports the use of positional parameters instead of named
+    # parameters. If positional parameters are used instead of named parameters,
+    # then five positional parameters are supported in the following order:
+    # 1. HashtableOfInstalledModules (required)
+    # 2. HashtableOfCustomNotInstalledMessages (optional)
+    # 3. ThrowErrorIfModuleNotInstalled (optional switch)
+    # 4. ThrowWarningIfModuleNotInstalled (optional switch)
+    # 5. ReferenceToArrayOfMissingModules (optional)
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -115,29 +161,29 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     #endregion License ############################################################
 
     param (
-        [ref]$ReferenceToHashtableOfInstalledModules = ([ref]$null),
-        [ref]$ReferenceToHashtableOfCustomNotInstalledMessages = ([ref]$null),
+        [hashtable]$HashtableOfInstalledModules = $null,
+        [hashtable]$HashtableOfCustomNotInstalledMessages = $null,
         [switch]$ThrowErrorIfModuleNotInstalled,
         [switch]$ThrowWarningIfModuleNotInstalled,
         [ref]$ReferenceToArrayOfMissingModules = ([ref]$null)
     )
 
+    trap {
+        # Intentionally left empty to prevent terminating errors from halting
+        # processing
+    }
+
     #region Process input ######################################################
     # Validate that the required parameter was supplied:
-    if ($null -eq $ReferenceToHashtableOfInstalledModules) {
-        $strMessage = 'The Test-PowerShellModuleUpdatesAvailableUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
+    if ($null -eq $HashtableOfInstalledModules) {
+        $strMessage = 'The Test-PowerShellModuleInstalledUsingHashtable function requires a parameter (-HashtableOfInstalledModules), which must be a hashtable.'
         Write-Error -Message $strMessage
-        return
+        return $false
     }
-    if ($null -eq $ReferenceToHashtableOfInstalledModules.Value) {
-        $strMessage = 'The Test-PowerShellModuleUpdatesAvailableUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
+    if ($HashtableOfInstalledModules.GetType().FullName -ne 'System.Collections.Hashtable') {
+        $strMessage = 'The Test-PowerShellModuleInstalledUsingHashtable function requires a parameter (-HashtableOfInstalledModules), which must be a hashtable.'
         Write-Error -Message $strMessage
-        return
-    }
-    if ($ReferenceToHashtableOfInstalledModules.Value.GetType().FullName -ne 'System.Collections.Hashtable') {
-        $strMessage = 'The Test-PowerShellModuleUpdatesAvailableUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
-        Write-Error -Message $strMessage
-        return
+        return $false
     }
 
     $boolThrowErrorForMissingModule = $false
@@ -160,24 +206,22 @@ function Test-PowerShellModuleInstalledUsingHashtable {
 
     $hashtableMessagesToThrowForMissingModule = @{}
     $hashtableModuleNameToCustomMessageToThrowForMissingModule = @{}
-    if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages) {
-        if ($null -ne $ReferenceToHashtableOfCustomNotInstalledMessages.Value) {
-            if ($ReferenceToHashtableOfCustomNotInstalledMessages.Value.GetType().FullName -eq 'System.Collections.Hashtable') {
-                $arrMessages = @(($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Keys)
-                foreach ($strMessage in $arrMessages) {
-                    $hashtableMessagesToThrowForMissingModule.Add($strMessage, $false)
+    if ($null -ne $HashtableOfCustomNotInstalledMessages) {
+        if ($HashtableOfCustomNotInstalledMessages.GetType().FullName -eq 'System.Collections.Hashtable') {
+            $arrMessages = @($HashtableOfCustomNotInstalledMessages.Keys)
+            foreach ($strMessage in $arrMessages) {
+                $hashtableMessagesToThrowForMissingModule.Add($strMessage, $false)
 
-                    ($ReferenceToHashtableOfCustomNotInstalledMessages.Value).Item($strMessage) | ForEach-Object {
-                        $hashtableModuleNameToCustomMessageToThrowForMissingModule.Add($_, $strMessage)
-                    }
+                $HashtableOfCustomNotInstalledMessages.Item($strMessage) | ForEach-Object {
+                    $hashtableModuleNameToCustomMessageToThrowForMissingModule.Add($_, $strMessage)
                 }
             }
         }
     }
 
-    $arrModuleNames = @(($ReferenceToHashtableOfInstalledModules.Value).Keys)
+    $arrModuleNames = @($HashtableOfInstalledModules.Keys)
     foreach ($strModuleName in $arrModuleNames) {
-        $arrInstalledModules = @(($ReferenceToHashtableOfInstalledModules.Value).Item($strModuleName))
+        $arrInstalledModules = @($HashtableOfInstalledModules.Item($strModuleName))
         if ($arrInstalledModules.Count -eq 0) {
             $boolResult = $false
 
