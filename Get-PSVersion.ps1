@@ -41,13 +41,15 @@ function Get-PSVersion {
     # the version of PowerShell that is running.
     #
     # .NOTES
-    # Version: 1.0.20251226.0
+    # Version: 1.0.20251231.0
     #
     # This function is compatible with all versions of PowerShell: Windows
     # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
     # newer. It is compatible with Windows, macOS, and Linux.
     #
     # This function has no parameters.
+
+    param()
 
     #region License ####################################################
     # Copyright (c) 2025 Frank Lesniak
