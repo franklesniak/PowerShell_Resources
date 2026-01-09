@@ -1,0 +1,177 @@
+function Test-Linux {
+    # .SYNOPSIS
+    # Returns $true if PowerShell is running on Linux; otherwise, returns
+    # $false.
+    #
+    # .DESCRIPTION
+    # Returns a boolean ($true or $false) indicating whether the current
+    # PowerShell session is running on Linux. This function is useful for
+    # writing scripts that need to behave differently on Linux and non-Linux
+    # platforms (Windows, macOS, etc.). Additionally, this function is useful
+    # because it works on Windows PowerShell 1.0 through 5.1, which do not
+    # have the $IsLinux global variable.
+    #
+    # .PARAMETER PSVersion
+    # This parameter is optional; if supplied, it must be the version number of
+    # the running version of PowerShell. If the version of PowerShell is
+    # already known, it can be passed in to this function to avoid the overhead
+    # of unnecessarily determining the version of PowerShell. If this parameter
+    # is not supplied, the function will determine the version of PowerShell
+    # that is running as part of its processing.
+    #
+    # .EXAMPLE
+    # $boolIsLinux = Test-Linux
+    #
+    # .EXAMPLE
+    # # The version of PowerShell is known to be 2.0 or above:
+    # $boolIsLinux = Test-Linux -PSVersion $PSVersionTable.PSVersion
+    #
+    # .INPUTS
+    # None. You can't pipe objects to Test-Linux.
+    #
+    # .OUTPUTS
+    # System.Boolean. Test-Linux returns a boolean value indicating whether
+    # PowerShell is running on Linux. $true means that PowerShell is running
+    # on Linux; $false means that PowerShell is not running on Linux.
+    #
+    # .NOTES
+    # This function also supports the use of a positional parameter instead of
+    # a named parameter. If a positional parameter is used instead of a named
+    # parameter, then one positional parameter is required: it must be the
+    # version number of the running version of PowerShell. If the version of
+    # PowerShell is already known, it can be passed in to this function to
+    # avoid the overhead of unnecessarily determining the version of
+    # PowerShell. If this parameter is not supplied, the function will
+    # determine the version of PowerShell that is running as part of its
+    # processing.
+    #
+    # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
+    # newer, newer versions of Windows PowerShell (at least up to and including
+    # Windows PowerShell 5.1 with .NET Framework 4.8 or newer), PowerShell Core
+    # 6.x, and PowerShell 7.x. This function supports Windows, and when run on
+    # PowerShell Core 6.x or PowerShell 7.x, also supports macOS and Linux.
+    #
+    # Version: 1.0.20260109.0
+
+    param (
+        [version]$PSVersion = ([version]'0.0')
+    )
+
+    #region License ########################################################
+    # Copyright (c) 2026 Frank Lesniak
+    #
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # "Software"), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
+    #
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
+    #endregion License ########################################################
+
+    function Get-PSVersion {
+        # .SYNOPSIS
+        # Returns the version of PowerShell that is running.
+        #
+        # .DESCRIPTION
+        # The function outputs a [version] object representing the version of
+        # PowerShell that is running. This function detects the PowerShell
+        # runtime version but does not detect the underlying .NET Framework or
+        # .NET Core version.
+        #
+        # On versions of PowerShell greater than or equal to version 2.0, this
+        # function returns the equivalent of $PSVersionTable.PSVersion
+        #
+        # PowerShell 1.0 does not have a $PSVersionTable variable, so this
+        # function returns [version]('1.0') on PowerShell 1.0.
+        #
+        # .EXAMPLE
+        # $versionPS = Get-PSVersion
+        # # $versionPS now contains the version of PowerShell that is running.
+        # # On versions of PowerShell greater than or equal to version 2.0,
+        # # this function returns the equivalent of $PSVersionTable.PSVersion.
+        #
+        # .EXAMPLE
+        # $versionPS = Get-PSVersion
+        # if ($versionPS.Major -ge 2) {
+        #     Write-Host "PowerShell 2.0 or later detected"
+        # } else {
+        #     Write-Host "PowerShell 1.0 detected"
+        # }
+        # # This example demonstrates storing the returned version object in a
+        # # variable and using it to make conditional decisions based on
+        # # PowerShell version. The returned [version] object has properties
+        # # like Major, Minor, Build, and Revision that can be used for
+        # # version-based logic.
+        #
+        # .INPUTS
+        # None. You can't pipe objects to Get-PSVersion.
+        #
+        # .OUTPUTS
+        # System.Version. Get-PSVersion returns a [version] value indicating
+        # the version of PowerShell that is running.
+        #
+        # .NOTES
+        # Version: 1.0.20251231.0
+        #
+        # This function is compatible with all versions of PowerShell: Windows
+        # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
+        # newer. It is compatible with Windows, macOS, and Linux.
+        #
+        # This function has no parameters.
+
+        param()
+
+        #region License ####################################################
+        # Copyright (c) 2025 Frank Lesniak
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining
+        # a copy of this software and associated documentation files (the
+        # "Software"), to deal in the Software without restriction, including
+        # without limitation the rights to use, copy, modify, merge, publish,
+        # distribute, sublicense, and/or sell copies of the Software, and to
+        # permit persons to whom the Software is furnished to do so, subject to
+        # the following conditions:
+        #
+        # The above copyright notice and this permission notice shall be
+        # included in all copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+        # BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+        # ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #endregion License ####################################################
+
+        if (Test-Path variable:\PSVersionTable) {
+            return ($PSVersionTable.PSVersion)
+        } else {
+            return ([version]('1.0'))
+        }
+    }
+
+    $versionPS = $PSVersion
+    if ($null -eq $versionPS -or $versionPS -eq ([version]'0.0')) {
+        $versionPS = Get-PSVersion
+    }
+
+    if ($versionPS.Major -ge 6) {
+        return $IsLinux
+    } else {
+        return $false
+    }
+}

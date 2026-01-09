@@ -30,7 +30,7 @@ function Test-Windows {
     # None. You can't pipe objects to Test-Windows.
     #
     # .OUTPUTS
-    # System.Boolean. Test-Windows returns a boolean value indiciating whether
+    # System.Boolean. Test-Windows returns a boolean value indicating whether
     # PowerShell is running on Windows. $true means that PowerShell is running
     # on Windows; $false means that PowerShell is not running on Windows.
     #
@@ -45,10 +45,20 @@ function Test-Windows {
     # determine the version of PowerShell that is running as part of its
     # processing.
     #
-    # Version: 1.1.20250106.1
+    # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
+    # newer, newer versions of Windows PowerShell (at least up to and including
+    # Windows PowerShell 5.1 with .NET Framework 4.8 or newer), PowerShell Core
+    # 6.x, and PowerShell 7.x. This function supports Windows, and when run on
+    # PowerShell Core 6.x or PowerShell 7.x, also supports macOS and Linux.
+    #
+    # Version: 1.1.20260109.0
+
+    param (
+        [version]$PSVersion = ([version]'0.0')
+    )
 
     #region License ########################################################
-    # Copyright (c) 2025 Frank Lesniak
+    # Copyright (c) 2026 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a
     # copy of this software and associated documentation files (the
@@ -70,17 +80,15 @@ function Test-Windows {
     # USE OR OTHER DEALINGS IN THE SOFTWARE.
     #endregion License ########################################################
 
-    param (
-        [version]$PSVersion = ([version]'0.0')
-    )
-
     function Get-PSVersion {
         # .SYNOPSIS
         # Returns the version of PowerShell that is running.
         #
         # .DESCRIPTION
         # The function outputs a [version] object representing the version of
-        # PowerShell that is running.
+        # PowerShell that is running. This function detects the PowerShell
+        # runtime version but does not detect the underlying .NET Framework or
+        # .NET Core version.
         #
         # On versions of PowerShell greater than or equal to version 2.0, this
         # function returns the equivalent of $PSVersionTable.PSVersion
@@ -94,15 +102,36 @@ function Test-Windows {
         # # On versions of PowerShell greater than or equal to version 2.0,
         # # this function returns the equivalent of $PSVersionTable.PSVersion.
         #
+        # .EXAMPLE
+        # $versionPS = Get-PSVersion
+        # if ($versionPS.Major -ge 2) {
+        #     Write-Host "PowerShell 2.0 or later detected"
+        # } else {
+        #     Write-Host "PowerShell 1.0 detected"
+        # }
+        # # This example demonstrates storing the returned version object in a
+        # # variable and using it to make conditional decisions based on
+        # # PowerShell version. The returned [version] object has properties
+        # # like Major, Minor, Build, and Revision that can be used for
+        # # version-based logic.
+        #
         # .INPUTS
         # None. You can't pipe objects to Get-PSVersion.
         #
         # .OUTPUTS
-        # System.Version. Get-PSVersion returns a [version] value indiciating
+        # System.Version. Get-PSVersion returns a [version] value indicating
         # the version of PowerShell that is running.
         #
         # .NOTES
-        # Version: 1.0.20250106.0
+        # Version: 1.0.20251231.0
+        #
+        # This function is compatible with all versions of PowerShell: Windows
+        # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
+        # newer. It is compatible with Windows, macOS, and Linux.
+        #
+        # This function has no parameters.
+
+        param()
 
         #region License ####################################################
         # Copyright (c) 2025 Frank Lesniak
@@ -135,18 +164,14 @@ function Test-Windows {
         }
     }
 
-    if ($PSVersion -ne ([version]'0.0')) {
-        if ($PSVersion.Major -ge 6) {
-            return $IsWindows
-        } else {
-            return $true
-        }
-    } else {
+    $versionPS = $PSVersion
+    if ($null -eq $versionPS -or $versionPS -eq ([version]'0.0')) {
         $versionPS = Get-PSVersion
-        if ($versionPS.Major -ge 6) {
-            return $IsWindows
-        } else {
-            return $true
-        }
+    }
+
+    if ($versionPS.Major -ge 6) {
+        return $IsWindows
+    } else {
+        return $true
     }
 }
