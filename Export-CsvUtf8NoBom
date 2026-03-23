@@ -1,0 +1,156 @@
+# This example code provides a cross-functional way
+# to export CSVs without a BOM in UTF-8 encoding
+# all the way back to PowerShell v1.0
+
+function ConvertTo-CsvFieldV1 {
+    param(
+        $Value
+    )
+
+    if ($null -eq $Value) {
+        $Text = ""
+    } else {
+        $Text = [string]$Value
+    }
+
+    $Text = $Text -replace '"', '""'
+    '"' + $Text + '"'
+}
+
+function Export-CsvUtf8NoBomV1 {
+    param(
+        $InputObject,
+        [string]$Path,
+        [string[]]$Property,
+        [string]$Delimiter
+    )
+
+    $stream = $null
+    $writer = $null
+
+    trap {
+        if ($writer) {
+            $writer.Close()
+        } elseif ($stream) {
+            $stream.Close()
+        }
+        break
+    }
+
+    if ($null -eq $Delimiter -or $Delimiter -eq "") {
+        $Delimiter = ","
+    }
+
+    if ($null -eq $Path -or $Path -eq "") {
+        throw "Path is required."
+    }
+
+    if ($null -eq $InputObject) {
+        $InputObject = @()
+    } elseif ($InputObject -isnot [System.Array]) {
+        $InputObject = @($InputObject)
+    }
+
+    if ($null -eq $Property -or $Property.Count -eq 0) {
+        $Property = @()
+
+        if ($InputObject.Count -gt 0) {
+            foreach ($P in $InputObject[0].PSObject.Properties) {
+                $Property += $P.Name
+            }
+        }
+    }
+
+    $directory = [System.IO.Path]::GetDirectoryName($Path)
+    if ($directory -and -not [System.IO.Directory]::Exists($directory)) {
+        [void][System.IO.Directory]::CreateDirectory($directory)
+    }
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    $stream = New-Object System.IO.FileStream(
+        $Path,
+        [System.IO.FileMode]::Create,
+        [System.IO.FileAccess]::Write,
+        [System.IO.FileShare]::Read
+    )
+    $writer = New-Object System.IO.StreamWriter($stream, $utf8NoBom)
+
+    if ($Property.Count -gt 0) {
+        $headerFields = @()
+        foreach ($name in $Property) {
+            $headerFields += (ConvertTo-CsvFieldV1 $name)
+        }
+        $writer.WriteLine([string]::Join($Delimiter, $headerFields))
+
+        foreach ($row in $InputObject) {
+            $fields = @()
+
+            foreach ($name in $Property) {
+                $value = $null
+
+                foreach ($P in $row.PSObject.Properties) {
+                    if ($P.Name -eq $name) {
+                        $value = $P.Value
+                        break
+                    }
+                }
+
+                $fields += (ConvertTo-CsvFieldV1 $value)
+            }
+
+            $writer.WriteLine([string]::Join($Delimiter, $fields))
+        }
+    }
+
+    $writer.Close()
+}
+
+function New-CustomObjectV1 {
+    param(
+        [hashtable]$Properties
+    )
+
+    $obj = New-Object PSObject
+
+    foreach ($name in $Properties.Keys) {
+        $obj | Add-Member NoteProperty $name $Properties[$name]
+    }
+
+    $obj
+}
+
+# v1-safe sample data creation
+$MyData = @(
+    (New-CustomObjectV1 @{ Name = "Alice"; Role = "Admin"; Note = "ASCII only" })
+    (New-CustomObjectV1 @{ Name = "Zoë"; Role = "User"; Note = "Contains ö and ë" })
+    (New-CustomObjectV1 @{ Name = "漢字"; Role = "Guest"; Note = 'Contains "quotes", commas, and unicode' })
+)
+
+$FilePath = "C:\temp\output.csv"
+
+if (-not (Test-Path variable:\PSVersionTable)) {
+    Write-Host "Detected PowerShell v1.0 - Using custom CSV serializer"
+
+    Export-CsvUtf8NoBomV1 `
+        -InputObject $MyData `
+        -Path $FilePath `
+        -Property @("Name", "Role", "Note")
+} elseif ($PSVersionTable.PSVersion.Major -lt 6) {
+    Write-Host "Detected PowerShell v$($PSVersionTable.PSVersion.Major) - Using ConvertTo-Csv + .NET"
+
+    $directory = [System.IO.Path]::GetDirectoryName($FilePath)
+    if ($directory -and -not [System.IO.Directory]::Exists($directory)) {
+        [void][System.IO.Directory]::CreateDirectory($directory)
+    }
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    $csvLines = $MyData | ConvertTo-Csv -NoTypeInformation
+
+    [System.IO.File]::WriteAllLines($FilePath, $csvLines, $utf8NoBom)
+} else {
+    Write-Host "Detected PowerShell v$($PSVersionTable.PSVersion.Major) - Using native utf8NoBOM"
+
+    $MyData | Export-Csv -Path $FilePath -NoTypeInformation -Encoding utf8NoBOM
+}
+
+Write-Host "Export complete!"
