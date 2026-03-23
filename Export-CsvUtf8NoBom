@@ -34,7 +34,7 @@ function Export-CsvUtf8NoBomV1 {
         } elseif ($stream) {
             $stream.Close()
         }
-        break
+        throw $_
     }
 
     if ($null -eq $Delimiter -or $Delimiter -eq "") {
