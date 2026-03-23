@@ -1,5 +1,5 @@
-# This example code provides a cross-functional way
-# to export CSVs without a BOM in UTF-8 encoding
+# This example code provides a backward-compatible
+# way to export CSVs without a BOM in UTF-8 encoding
 # all the way back to PowerShell v1.0
 
 function ConvertTo-CsvFieldV1 {
@@ -22,7 +22,7 @@ function Export-CsvUtf8NoBomV1 {
         $InputObject,
         [string]$Path,
         [string[]]$Property,
-        [string]$Delimiter
+        [char]$Delimiter
     )
 
     $stream = $null
@@ -37,8 +37,8 @@ function Export-CsvUtf8NoBomV1 {
         throw $_
     }
 
-    if ($null -eq $Delimiter -or $Delimiter -eq "") {
-        $Delimiter = ","
+    if ($null -eq $Delimiter -or [string]$Delimiter -eq "") {
+        $Delimiter = ','
     }
 
     if ($null -eq $Path -or $Path -eq "") {
@@ -80,7 +80,7 @@ function Export-CsvUtf8NoBomV1 {
         foreach ($name in $Property) {
             $headerFields += (ConvertTo-CsvFieldV1 $name)
         }
-        $writer.WriteLine([string]::Join($Delimiter, $headerFields))
+        $writer.WriteLine([string]::Join([string]$Delimiter, $headerFields))
 
         foreach ($row in $InputObject) {
             $fields = @()
@@ -98,7 +98,7 @@ function Export-CsvUtf8NoBomV1 {
                 $fields += (ConvertTo-CsvFieldV1 $value)
             }
 
-            $writer.WriteLine([string]::Join($Delimiter, $fields))
+            $writer.WriteLine([string]::Join([string]$Delimiter, $fields))
         }
     }
 
@@ -127,30 +127,31 @@ $MyData = @(
 )
 
 $FilePath = "C:\temp\output.csv"
+[char]$Delimiter = ';'
 
 if (-not (Test-Path variable:\PSVersionTable)) {
-    Write-Host "Detected PowerShell v1.0 - Using custom CSV serializer"
-
     Export-CsvUtf8NoBomV1 `
         -InputObject $MyData `
         -Path $FilePath `
-        -Property @("Name", "Role", "Note")
+        -Property @("Name", "Role", "Note") `
+        -Delimiter $Delimiter
 } elseif ($PSVersionTable.PSVersion.Major -lt 6) {
-    Write-Host "Detected PowerShell v$($PSVersionTable.PSVersion.Major) - Using ConvertTo-Csv + .NET"
-
     $directory = [System.IO.Path]::GetDirectoryName($FilePath)
     if ($directory -and -not [System.IO.Directory]::Exists($directory)) {
         [void][System.IO.Directory]::CreateDirectory($directory)
     }
 
     $utf8NoBom = New-Object System.Text.UTF8Encoding $false
-    $csvLines = $MyData | ConvertTo-Csv -NoTypeInformation
+    $csvLines = $MyData | ConvertTo-Csv -NoTypeInformation -Delimiter $Delimiter -ErrorAction Stop
 
     [System.IO.File]::WriteAllLines($FilePath, $csvLines, $utf8NoBom)
 } else {
-    Write-Host "Detected PowerShell v$($PSVersionTable.PSVersion.Major) - Using native utf8NoBOM"
-
-    $MyData | Export-Csv -Path $FilePath -NoTypeInformation -Encoding utf8NoBOM
+    $MyData | Export-Csv `
+        -Path $FilePath `
+        -NoTypeInformation `
+        -Encoding utf8NoBOM `
+        -Delimiter $Delimiter `
+        -ErrorAction Stop
 }
 
 Write-Host "Export complete!"
