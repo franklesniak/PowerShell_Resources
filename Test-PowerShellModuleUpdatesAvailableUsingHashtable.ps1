@@ -164,7 +164,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     # .NOTES
     # Requires PowerShell v5.0 or later.
     #
-    # Version: 2.1.20250218.0
+    # Version: 2.1.20260629.0
 
     #region License ############################################################
     # Copyright (c) 2025 Frank Lesniak
@@ -3107,6 +3107,9 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
         }
     }
 
+    $listMissingModule = New-Object -TypeName 'System.Collections.Generic.List[string]'
+    $listOutOfDateModule = New-Object -TypeName 'System.Collections.Generic.List[string]'
+
     foreach ($strModuleName in @(($ReferenceToHashtableOfInstalledModules.Value).Keys)) {
         if (@(($ReferenceToHashtableOfInstalledModules.Value).Item($strModuleName)).Count -eq 0) {
             # Module is not installed
@@ -3120,11 +3123,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
                 $hashtableMessagesToThrowForMissingModule.Add($strMessage, $true)
             }
 
-            if ($null -ne $ReferenceToArrayOfMissingModules) {
-                if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
-                    ($ReferenceToArrayOfMissingModules.Value) += $strModuleName
-                }
-            }
+            $listMissingModule.Add($strModuleName)
         } else {
             # Module is installed
             $versionNewestInstalledModule = (@(($ReferenceToHashtableOfInstalledModules.Value).Item($strModuleName)) | ForEach-Object { [version]($_.Version) } | Sort-Object)[-1]
@@ -3162,11 +3161,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
                             $hashtableMessagesToThrowForOutdatedModule.Add($strMessage, $true)
                         }
 
-                        if ($null -ne $ReferenceToArrayOfOutOfDateModules) {
-                            if ($null -ne $ReferenceToArrayOfOutOfDateModules.Value) {
-                                ($ReferenceToArrayOfOutOfDateModules.Value) += $strModuleName
-                            }
-                        }
+                        $listOutOfDateModule.Add($strModuleName)
                     }
                 } else {
                     # Conversion of the string version object from Find-Module
@@ -3176,6 +3171,22 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
                 }
             } else {
                 # Couldn't find the module in the PowerShell Gallery
+            }
+        }
+    }
+
+    if ($listMissingModule.Count -gt 0) {
+        if ($null -ne $ReferenceToArrayOfMissingModules) {
+            if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
+                ($ReferenceToArrayOfMissingModules.Value) = @($ReferenceToArrayOfMissingModules.Value) + $listMissingModule.ToArray()
+            }
+        }
+    }
+
+    if ($listOutOfDateModule.Count -gt 0) {
+        if ($null -ne $ReferenceToArrayOfOutOfDateModules) {
+            if ($null -ne $ReferenceToArrayOfOutOfDateModules.Value) {
+                ($ReferenceToArrayOfOutOfDateModules.Value) = @($ReferenceToArrayOfOutOfDateModules.Value) + $listOutOfDateModule.ToArray()
             }
         }
     }
