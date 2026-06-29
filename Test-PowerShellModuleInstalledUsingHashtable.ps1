@@ -115,13 +115,13 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     #
     # .OUTPUTS
     # System.Boolean. Test-PowerShellModuleInstalledUsingHashtable returns a
-    # boolean value indiciating whether all modules were installed. $true means
+    # boolean value indicating whether all modules were installed. $true means
     # that every module specified in the hashtable (i.e., the one passed in the
     # HashtableOfInstalledModules parameter) was installed; $false means that at
     # least one module was not installed.
     #
     # .NOTES
-    # Version: 3.0.20260629.0
+    # Version: 3.0.20260629.1
     #
     # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
     # newer, newer versions of Windows PowerShell (at least up to and including
@@ -138,8 +138,16 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # 4. ThrowWarningIfModuleNotInstalled (optional switch)
     # 5. ReferenceToArrayOfMissingModules (optional)
 
+    param (
+        [hashtable]$HashtableOfInstalledModules = $null,
+        [hashtable]$HashtableOfCustomNotInstalledMessages = $null,
+        [switch]$ThrowErrorIfModuleNotInstalled,
+        [switch]$ThrowWarningIfModuleNotInstalled,
+        [ref]$ReferenceToArrayOfMissingModules = ([ref]$null)
+    )
+
     #region License ############################################################
-    # Copyright (c) 2025 Frank Lesniak
+    # Copyright (c) 2026 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy
     # of this software and associated documentation files (the "Software"), to deal
@@ -159,14 +167,6 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
     #endregion License ############################################################
-
-    param (
-        [hashtable]$HashtableOfInstalledModules = $null,
-        [hashtable]$HashtableOfCustomNotInstalledMessages = $null,
-        [switch]$ThrowErrorIfModuleNotInstalled,
-        [switch]$ThrowWarningIfModuleNotInstalled,
-        [ref]$ReferenceToArrayOfMissingModules = ([ref]$null)
-    )
 
     trap {
         # Intentionally left empty to prevent terminating errors from halting

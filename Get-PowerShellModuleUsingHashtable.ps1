@@ -46,7 +46,7 @@ function Get-PowerShellModuleUsingHashtable {
     # $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
     # $intReturnCode = Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules
     # if ($intReturnCode -ne 0) {
-    #     Write-Host 'Failed to get the list of installed PowerShell modules.'
+    #     Write-Warning 'Failed to get the list of installed PowerShell modules.'
     #     return
     # }
     #
@@ -63,7 +63,7 @@ function Get-PowerShellModuleUsingHashtable {
     # $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
     # $intReturnCode = Get-PowerShellModuleUsingHashtable $refHashtableModuleNameToInstalledModules
     # if ($intReturnCode -eq 0) {
-    #     Write-Host 'Successfully retrieved module information.'
+    #     Write-Output 'Successfully retrieved module information.'
     # }
     #
     # This example demonstrates using positional parameters instead of named
@@ -76,7 +76,7 @@ function Get-PowerShellModuleUsingHashtable {
     # $refHashtableModuleNameToInstalledModules = [ref]$hashtableModuleNameToInstalledModules
     # $intReturnCode = Get-PowerShellModuleUsingHashtable -ReferenceToHashtable $refHashtableModuleNameToInstalledModules -WriteWarningOnFailure
     # if ($intReturnCode -ne 0) {
-    #     Write-Host 'Function returned an error status'
+    #     Write-Warning 'Function returned an error status'
     # }
     #
     # This example demonstrates using the WriteWarningOnFailure switch parameter. If
@@ -130,7 +130,7 @@ function Get-PowerShellModuleUsingHashtable {
     # parsing to avoid parser errors when loaded as a library function in older
     # environments.
     #
-    # Version: 2.0.20260103.2
+    # Version: 2.0.20260629.0
 
     param (
         [ref]$ReferenceToHashtable = ([ref]$null),
@@ -611,9 +611,9 @@ function Get-PowerShellModuleUsingHashtable {
         # .EXAMPLE
         # $versionPS = Get-PSVersion
         # if ($versionPS.Major -ge 2) {
-        #     Write-Host "PowerShell 2.0 or later detected"
+        #     Write-Output "PowerShell 2.0 or later detected"
         # } else {
-        #     Write-Host "PowerShell 1.0 detected"
+        #     Write-Output "PowerShell 1.0 detected"
         # }
         # # This example demonstrates storing the returned version object in a
         # # variable and using it to make conditional decisions based on
@@ -629,7 +629,7 @@ function Get-PowerShellModuleUsingHashtable {
         # the version of PowerShell that is running.
         #
         # .NOTES
-        # Version: 1.0.20251226.0
+        # Version: 1.0.20260629.0
         #
         # This function is compatible with all versions of PowerShell: Windows
         # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
@@ -637,8 +637,10 @@ function Get-PowerShellModuleUsingHashtable {
         #
         # This function has no parameters.
 
+        param()
+
         #region License ####################################################
-        # Copyright (c) 2025 Frank Lesniak
+        # Copyright (c) 2026 Frank Lesniak
         #
         # Permission is hereby granted, free of charge, to any person obtaining
         # a copy of this software and associated documentation files (the
@@ -675,6 +677,21 @@ function Get-PowerShellModuleUsingHashtable {
     }
 
     #region Process input ######################################################
+    $boolWriteErrorOnFailure = $false
+    $boolWriteWarningOnFailure = $false
+    if ($null -ne $WriteErrorOnFailure) {
+        if ($WriteErrorOnFailure.IsPresent -eq $true) {
+            $boolWriteErrorOnFailure = $true
+        }
+    }
+    if (-not $boolWriteErrorOnFailure) {
+        if ($null -ne $WriteWarningOnFailure) {
+            if ($WriteWarningOnFailure.IsPresent -eq $true) {
+                $boolWriteWarningOnFailure = $true
+            }
+        }
+    }
+
     # Validate that the required parameter was supplied:
     if ($null -eq $ReferenceToHashtable) {
         $strMessage = 'The Get-PowerShellModuleUsingHashtable function requires a parameter (-ReferenceToHashtable), which must reference a hashtable.'
@@ -708,21 +725,6 @@ function Get-PowerShellModuleUsingHashtable {
     if ($null -ne $DoNotCheckPowerShellVersion) {
         if ($DoNotCheckPowerShellVersion.IsPresent) {
             $boolCheckForPowerShellVersion = $false
-        }
-    }
-
-    $boolWriteErrorOnFailure = $false
-    $boolWriteWarningOnFailure = $false
-    if ($null -ne $WriteErrorOnFailure) {
-        if ($WriteErrorOnFailure.IsPresent -eq $true) {
-            $boolWriteErrorOnFailure = $true
-        }
-    }
-    if (-not $boolWriteErrorOnFailure) {
-        if ($null -ne $WriteWarningOnFailure) {
-            if ($WriteWarningOnFailure.IsPresent -eq $true) {
-                $boolWriteWarningOnFailure = $true
-            }
         }
     }
     #endregion Process input ######################################################

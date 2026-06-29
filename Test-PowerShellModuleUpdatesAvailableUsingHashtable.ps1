@@ -156,7 +156,7 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     #
     # .OUTPUTS
     # System.Boolean. Test-PowerShellModuleUpdatesAvailableUsingHashtable returns a
-    # boolean value indiciating whether all modules are installed and up to date.
+    # boolean value indicating whether all modules are installed and up to date.
     # If all modules are installed and up to date, the function returns $true;
     # otherwise, if any module is not installed or not up to date, the function
     # returns $false.
@@ -164,10 +164,23 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     # .NOTES
     # Requires PowerShell v5.0 or later.
     #
-    # Version: 2.1.20260629.0
+    # Version: 2.1.20260629.1
+
+    param (
+        [ref]$ReferenceToHashtableOfInstalledModules = ([ref]$null),
+        [switch]$ThrowErrorIfModuleNotInstalled,
+        [switch]$ThrowWarningIfModuleNotInstalled,
+        [switch]$ThrowErrorIfModuleNotUpToDate,
+        [switch]$ThrowWarningIfModuleNotUpToDate,
+        [ref]$ReferenceToHashtableOfCustomNotInstalledMessages = ([ref]$null),
+        [ref]$ReferenceToHashtableOfCustomNotUpToDateMessages = ([ref]$null),
+        [ref]$ReferenceToArrayOfMissingModules = ([ref]$null),
+        [ref]$ReferenceToArrayOfOutOfDateModules = ([ref]$null),
+        [switch]$DoNotCheckPowerShellVersion
+    )
 
     #region License ############################################################
-    # Copyright (c) 2025 Frank Lesniak
+    # Copyright (c) 2026 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining a copy
     # of this software and associated documentation files (the "Software"), to deal
@@ -188,26 +201,15 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
     # SOFTWARE.
     #endregion License ############################################################
 
-    param (
-        [ref]$ReferenceToHashtableOfInstalledModules = ([ref]$null),
-        [switch]$ThrowErrorIfModuleNotInstalled,
-        [switch]$ThrowWarningIfModuleNotInstalled,
-        [switch]$ThrowErrorIfModuleNotUpToDate,
-        [switch]$ThrowWarningIfModuleNotUpToDate,
-        [ref]$ReferenceToHashtableOfCustomNotInstalledMessages = ([ref]$null),
-        [ref]$ReferenceToHashtableOfCustomNotUpToDateMessages = ([ref]$null),
-        [ref]$ReferenceToArrayOfMissingModules = ([ref]$null),
-        [ref]$ReferenceToArrayOfOutOfDateModules = ([ref]$null),
-        [switch]$DoNotCheckPowerShellVersion
-    )
-
     function Get-PSVersion {
         # .SYNOPSIS
         # Returns the version of PowerShell that is running.
         #
         # .DESCRIPTION
         # The function outputs a [version] object representing the version of
-        # PowerShell that is running.
+        # PowerShell that is running. This function detects the PowerShell
+        # runtime version but does not detect the underlying .NET Framework or
+        # .NET Core version.
         #
         # On versions of PowerShell greater than or equal to version 2.0, this
         # function returns the equivalent of $PSVersionTable.PSVersion
@@ -221,18 +223,39 @@ function Test-PowerShellModuleUpdatesAvailableUsingHashtable {
         # # On versions of PowerShell greater than or equal to version 2.0,
         # # this function returns the equivalent of $PSVersionTable.PSVersion.
         #
+        # .EXAMPLE
+        # $versionPS = Get-PSVersion
+        # if ($versionPS.Major -ge 2) {
+        #     Write-Output "PowerShell 2.0 or later detected"
+        # } else {
+        #     Write-Output "PowerShell 1.0 detected"
+        # }
+        # # This example demonstrates storing the returned version object in a
+        # # variable and using it to make conditional decisions based on
+        # # PowerShell version. The returned [version] object has properties
+        # # like Major, Minor, Build, and Revision that can be used for
+        # # version-based logic.
+        #
         # .INPUTS
         # None. You can't pipe objects to Get-PSVersion.
         #
         # .OUTPUTS
-        # System.Version. Get-PSVersion returns a [version] value indiciating
+        # System.Version. Get-PSVersion returns a [version] value indicating
         # the version of PowerShell that is running.
         #
         # .NOTES
-        # Version: 1.0.20250106.0
+        # Version: 1.0.20260629.0
+        #
+        # This function is compatible with all versions of PowerShell: Windows
+        # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
+        # newer. It is compatible with Windows, macOS, and Linux.
+        #
+        # This function has no parameters.
+
+        param()
 
         #region License ####################################################
-        # Copyright (c) 2025 Frank Lesniak
+        # Copyright (c) 2026 Frank Lesniak
         #
         # Permission is hereby granted, free of charge, to any person obtaining
         # a copy of this software and associated documentation files (the

@@ -23,9 +23,9 @@ function Get-PSVersion {
     # .EXAMPLE
     # $versionPS = Get-PSVersion
     # if ($versionPS.Major -ge 2) {
-    #     Write-Host "PowerShell 2.0 or later detected"
+    #     Write-Output "PowerShell 2.0 or later detected"
     # } else {
-    #     Write-Host "PowerShell 1.0 detected"
+    #     Write-Output "PowerShell 1.0 detected"
     # }
     # # This example demonstrates storing the returned version object in a
     # # variable and using it to make conditional decisions based on
@@ -41,7 +41,7 @@ function Get-PSVersion {
     # the version of PowerShell that is running.
     #
     # .NOTES
-    # Version: 1.0.20251231.0
+    # Version: 1.0.20260629.0
     #
     # This function is compatible with all versions of PowerShell: Windows
     # PowerShell (v1.0 - 5.1), PowerShell Core 6.x, and PowerShell 7.x and
@@ -52,7 +52,7 @@ function Get-PSVersion {
     param()
 
     #region License ####################################################
-    # Copyright (c) 2025 Frank Lesniak
+    # Copyright (c) 2026 Frank Lesniak
     #
     # Permission is hereby granted, free of charge, to any person obtaining
     # a copy of this software and associated documentation files (the
