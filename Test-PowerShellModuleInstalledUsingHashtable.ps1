@@ -121,7 +121,7 @@ function Test-PowerShellModuleInstalledUsingHashtable {
     # least one module was not installed.
     #
     # .NOTES
-    # Version: 3.0.20251231.1
+    # Version: 3.0.20260629.0
     #
     # This function supports Windows PowerShell 1.0 with .NET Framework 2.0 or
     # newer, newer versions of Windows PowerShell (at least up to and including
@@ -219,6 +219,8 @@ function Test-PowerShellModuleInstalledUsingHashtable {
         }
     }
 
+    $listMissingModule = New-Object -TypeName 'System.Collections.Generic.List[string]'
+
     $arrModuleNames = @($HashtableOfInstalledModules.Keys)
     foreach ($strModuleName in $arrModuleNames) {
         $arrInstalledModules = @($HashtableOfInstalledModules.Item($strModuleName))
@@ -233,10 +235,14 @@ function Test-PowerShellModuleInstalledUsingHashtable {
                 $hashtableMessagesToThrowForMissingModule.Add($strMessage, $true)
             }
 
-            if ($null -ne $ReferenceToArrayOfMissingModules) {
-                if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
-                    ($ReferenceToArrayOfMissingModules.Value) += $strModuleName
-                }
+            $listMissingModule.Add($strModuleName)
+        }
+    }
+
+    if ($listMissingModule.Count -gt 0) {
+        if ($null -ne $ReferenceToArrayOfMissingModules) {
+            if ($null -ne $ReferenceToArrayOfMissingModules.Value) {
+                ($ReferenceToArrayOfMissingModules.Value) = @($ReferenceToArrayOfMissingModules.Value) + $listMissingModule.ToArray()
             }
         }
     }
