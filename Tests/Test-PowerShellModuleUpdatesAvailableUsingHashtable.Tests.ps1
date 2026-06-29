@@ -2,7 +2,8 @@
 param ()
 
 BeforeAll {
-    . (Join-Path -Path $PSScriptRoot -ChildPath '..\Test-PowerShellModuleUpdatesAvailableUsingHashtable.ps1')
+    $strParentPath = Split-Path -Path $PSScriptRoot -Parent
+    . (Join-Path -Path $strParentPath -ChildPath 'Test-PowerShellModuleUpdatesAvailableUsingHashtable.ps1')
 
     function Get-InstalledModuleFixture {
         param (
